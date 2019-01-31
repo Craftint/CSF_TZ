@@ -11,8 +11,6 @@ app_color = "green"
 app_email = "info@aakvatech.com"
 app_license = "MIT"
 
-fixtures = [{"doctype":"Print Format", "filters": [{"module":"CSF TZ"}]}]
-
 # Includes in <head>
 # ------------------
 
