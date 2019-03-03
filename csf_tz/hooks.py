@@ -81,13 +81,11 @@ fixtures = [{"doctype":"Print Format", "filters": [{"module":"CSF TZ"}]}, {"doct
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-#	}
-# }
+doc_events = {
+ 	"Open Invoice Exchange Rate Revaluation": {
+ 		"validate": "csf_tz.custom_api.getInvoiceExchangeRate"
+	}
+ }
 
 # Scheduled Tasks
 # ---------------
