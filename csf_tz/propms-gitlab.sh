@@ -7,9 +7,9 @@ if [ $# -eq 0 ]
 fi
 
 
-vi apps/csf_tz/csf_tz/__init__.py
-cp *sh apps/csf_tz/csf_tz
-cd apps/csf_tz
+vi apps/propms/propms/__init__.py
+bench --site dev-propms.aakvatech.com export-fixtures
+cd apps/propms
 git add .
 git commit -m "$1"
 git push upstream master

@@ -54,9 +54,9 @@ def getInvoiceExchangeRate(date,currency):
 @frappe.whitelist()
 def getInvoice(currency,name):
 	try:
-		sinv_details=frappe.get_all("Sales Invoice",filters=[["Sales Invoice","currency","=",str(currency)],["Sales Invoice","status","=","Unpaid"]],fields=["name","grand_total","conversion_rate","currency"])
+		sinv_details=frappe.get_all("Sales Invoice",filters = [["Sales Invoice","currency","=",str(currency)],["Sales Invoice","status","=","Unpaid"]],fields = ["name","grand_total","conversion_rate","currency"])
 		doc=frappe.get_doc("Open Invoice Exchange Rate Revaluation",name)
-		doc.inv_err_detail=[]
+		doc.inv_err_detail = []
 		doc.save()
 		if sinv_details:
 			for sinv in sinv_details:
@@ -67,18 +67,18 @@ def getInvoice(currency,name):
 
 
 def addChildItem(name,inv_no,invoice_type,invoice_exchange_rate,invoice_currency,invoice_amount,current_exchange):
-	gain_loss=flt(invoice_amount)*flt(current_exchange)
-	child_doc=frappe.get_doc(dict(
-		doctype="Inv ERR Detail",
-		parent=name,
-		parenttype="Open Invoice Exchange Rate Revaluation",
-		parentfield="inv_err_detail",
-		invoice_number=inv_no,
-		invoice_type=invoice_type,
-		invoice_exchange_rate=invoice_exchange_rate,
-		invoice_currency=invoice_currency,
-		invoice_gain_or_loss=gain_loss,
-		invoice_amount=invoice_amount
+	gain_loss = flt(invoice_amount) * flt(invoice_exchange_rate)-flt(invoice_amount) * flt(current_exchange)
+	child_doc = frappe.get_doc(dict(
+		doctype = "Inv ERR Detail",
+		parent = name,
+		parenttype = "Open Invoice Exchange Rate Revaluation",
+		parentfield = "inv_err_detail",
+		invoice_number = inv_no,
+		invoice_type = invoice_type,
+		invoice_exchange_rate = invoice_exchange_rate,
+		invoice_currency = invoice_currency,
+		invoice_gain_or_loss = gain_loss,
+		invoice_amount = invoice_amount
 	)).insert()
 
 

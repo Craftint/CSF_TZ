@@ -7,9 +7,9 @@ if [ $# -eq 0 ]
 fi
 
 
-vi apps/csf_tz/csf_tz/__init__.py
-cp *sh apps/csf_tz/csf_tz
-cd apps/csf_tz
+vi apps/payware/payware/__init__.py
+bench --site demo.payware.co.tz export-fixtures
+cd apps/payware
 git add .
 git commit -m "$1"
 git push upstream master
