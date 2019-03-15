@@ -48,26 +48,36 @@ def getInvoiceExchangeRate(date,currency):
 		return exchange_rate
 
 	except Exception as e:
-		error_log=app_error_log(frappe.session.user,str(e))
+		error_log = app_error_log(frappe.session.user,str(e))
 
 
 @frappe.whitelist()
 def getInvoice(currency,name):
 	try:
-		sinv_details=frappe.get_all("Sales Invoice",filters = [["Sales Invoice","currency","=",str(currency)],["Sales Invoice","status","=","Unpaid"]],fields = ["name","grand_total","conversion_rate","currency"])
-		doc=frappe.get_doc("Open Invoice Exchange Rate Revaluation",name)
+		sinv_details = frappe.get_all("Sales Invoice",filters = [["Sales Invoice","currency","=",str(currency)],["Sales Invoice","status","in",["Unpaid","Overdue"]]],fields = ["name","grand_total","conversion_rate","currency"])
+		pinv_details = frappe.get_all("Purchase Invoice",filters = [["Purchase Invoice","currency","=",str(currency)],["Purchase Invoice","status","in",["Unpaid","Overdue"]]],fields = ["name","grand_total","conversion_rate","currency"])
+		doc = frappe.get_doc("Open Invoice Exchange Rate Revaluation",name)
 		doc.inv_err_detail = []
 		doc.save()
 		if sinv_details:
+			count = 1
 			for sinv in sinv_details:
-				addChildItem(name,sinv.name,'Sales Invoice',sinv.conversion_rate,sinv.currency,sinv.grand_total,doc.exchange_rate_to_company_currency)
+				if not flt(sinv.conversion_rate) == flt(doc.exchange_rate_to_company_currency):
+					addChildItem(name,sinv.name,'Sales Invoice',sinv.conversion_rate,sinv.currency,sinv.grand_total,doc.exchange_rate_to_company_currency,count)
+					count += 1
+		if pinv_details:
+			for pinv in pinv_details:
+				if not flt(pinv.conversion_rate) == flt(doc.exchange_rate_to_company_currency):
+					addChildItem(name,pinv.name,'Purchase Invoice',pinv.conversion_rate,pinv.currency,pinv.grand_total,doc.exchange_rate_to_company_currency,count)
+					count += 1
 		return sinv_details
+
 	except Exception as e:
-		error_log=app_error_log(frappe.session.user,str(e))
+		error_log = app_error_log(frappe.session.user,str(e))
 
 
-def addChildItem(name,inv_no,invoice_type,invoice_exchange_rate,invoice_currency,invoice_amount,current_exchange):
-	gain_loss = flt(invoice_amount) * flt(invoice_exchange_rate)-flt(invoice_amount) * flt(current_exchange)
+def addChildItem(name,inv_no,invoice_type,invoice_exchange_rate,invoice_currency,invoice_amount,current_exchange,idx):
+	gain_loss = (flt(invoice_amount) * flt(invoice_exchange_rate))-(flt(invoice_amount) * flt(current_exchange))
 	child_doc = frappe.get_doc(dict(
 		doctype = "Inv ERR Detail",
 		parent = name,
@@ -78,7 +88,8 @@ def addChildItem(name,inv_no,invoice_type,invoice_exchange_rate,invoice_currency
 		invoice_exchange_rate = invoice_exchange_rate,
 		invoice_currency = invoice_currency,
 		invoice_gain_or_loss = gain_loss,
-		invoice_amount = invoice_amount
+		invoice_amount = invoice_amount,
+		idx = idx
 	)).insert()
 
 

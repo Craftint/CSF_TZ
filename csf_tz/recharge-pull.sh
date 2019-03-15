@@ -1,5 +1,5 @@
 #!/bin/bash
 
 cd apps/recharge/
-git pull
+git pull upstream master
 git status

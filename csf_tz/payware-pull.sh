@@ -1,5 +1,5 @@
 #!/bin/bash
 
 cd apps/payware/
-git pull
+git pull upstream master
 git status

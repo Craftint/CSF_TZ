@@ -6,6 +6,7 @@ if [ $# -eq 0 ]
     exit 1
 fi
 
+bench --site dev-csf-tz.aakvatech.com export-fixtures
 
 vi apps/csf_tz/csf_tz/__init__.py
 cp *sh apps/csf_tz/csf_tz

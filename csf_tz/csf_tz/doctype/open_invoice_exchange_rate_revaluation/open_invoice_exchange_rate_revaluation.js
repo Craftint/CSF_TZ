@@ -22,6 +22,9 @@ frappe.ui.form.on('Open Invoice Exchange Rate Revaluation', {
 
 	},
 	get_invoices:function(frm,cdt,cdn){
+		if(frm.doc.__islocal) {
+			frappe.throw("Save Document Before Get Invoice")
+		}
 		if(frm.doc.currency && frm.doc.name){
 			frappe.call({
 				method:"csf_tz.custom_api.getInvoice",

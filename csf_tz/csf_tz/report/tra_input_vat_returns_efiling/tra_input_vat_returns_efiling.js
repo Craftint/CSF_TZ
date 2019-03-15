@@ -16,12 +16,6 @@ frappe.query_reports["TRA Input VAT Returns eFiling"] = {
 			"label": __("To Date"),
 			"fieldtype": "Date",
 			"default": frappe.datetime.get_today()
-		},
-		{
-			"fieldname":"supplier",
-			"label": __("Supplier"),
-			"fieldtype": "Link",
-			"options": "Supplier"
 		}
 	]
 }
