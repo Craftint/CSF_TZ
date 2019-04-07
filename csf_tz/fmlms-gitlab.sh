@@ -6,9 +6,9 @@ if [ $# -eq 0 ]
     exit 1
 fi
 
-vi apps/grantsms/grantsms/__init__.py
-bench --site dev-stcl.kuungatech.com export-fixtures
-cd apps/grantsms
+vi apps/fmlms/fmlms/__init__.py
+bench --site gsl5299.aakvatech.com export-fixtures
+cd apps/fmlms
 git add .
 git commit -m "$1"
 git push upstream master
