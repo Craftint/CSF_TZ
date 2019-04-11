@@ -7,9 +7,9 @@ if [ $# -eq 0 ]
 fi
 
 
-vi apps/logisticsms/logisticsms/__init__.py
-bench --site erp.toshtz.com export-fixtures
-cd apps/logisticsms
+vi apps/smepayware/smepayware/__init__.py
+bench --site dev-sme.payware.co.tz export-fixtures
+cd apps/smepayware
 git add .
 git commit -m "$1"
 git push upstream master
