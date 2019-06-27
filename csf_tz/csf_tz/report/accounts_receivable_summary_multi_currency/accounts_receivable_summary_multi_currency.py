@@ -1,4 +1,4 @@
-# Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors and contributors
+# Copyright (c) 2013, Aakvatech and contributors
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
@@ -6,7 +6,7 @@ import frappe
 from frappe import _, scrub
 from frappe.utils import flt
 from erpnext.accounts.party import get_partywise_advanced_payment_amount
-from erpnext.accounts.report.accounts_receivable.accounts_receivable import ReceivablePayableReport
+from csf_tz.csf_tz.report.accounts_receivable_summary_multi_currency.accounts_receivable_utils import ReceivablePayableReport
 
 from six import iteritems
 from six.moves import zip

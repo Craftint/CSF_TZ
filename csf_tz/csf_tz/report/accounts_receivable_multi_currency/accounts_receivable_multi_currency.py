@@ -1,5 +1,5 @@
-# Copyright (c) 2015, Frappe Technologies Pvt. Ltd.
-# License: GNU General Public License v3. See license.txt
+# Copyright (c) 2013, Aakvatech and contributors
+# For license information, please see license.txt
 
 from __future__ import unicode_literals
 import frappe, erpnext
@@ -197,6 +197,7 @@ class ReceivablePayableReport(object):
 			self.payment_term_map = self.get_payment_term_detail(voucher_nos)
 
 		for gle in gl_entries_data:
+
 			if self.is_receivable_or_payable(gle, self.dr_or_cr, future_vouchers, return_entries):
 				outstanding_amount, credit_note_amount, payment_amount = self.get_outstanding_amount(
 					gle,self.filters.report_date, self.dr_or_cr, return_entries)
@@ -287,6 +288,10 @@ class ReceivablePayableReport(object):
 
 	def prepare_row(self, party_naming_by, args, gle, outstanding_amount, credit_note_amount,
 		due_date=None, paid_amt=None, payment_term_amount=None, payment_term=None, pdc_amount=None, pdc_details=None):
+
+		currency = self.voucher_details.get(gle.voucher_no, {}).get("currency", "")
+		conversion_rate = self.voucher_details.get(gle.voucher_no, {}).get("conversion_rate", "")
+
 		row = [gle.posting_date, gle.party]
 
 		# customer / supplier name
@@ -320,7 +325,7 @@ class ReceivablePayableReport(object):
 
 		if not payment_term_amount:
 			paid_amt = invoiced_amount - outstanding_amount - credit_note_amount
-		row += [invoiced_amount, paid_amt, credit_note_amount, outstanding_amount]
+		row += [invoiced_amount / conversion_rate, paid_amt / conversion_rate, credit_note_amount / conversion_rate, outstanding_amount / conversion_rate]
 
 		# ageing data
 		if self.filters.ageing_based_on == "Due Date":
@@ -331,7 +336,7 @@ class ReceivablePayableReport(object):
 			entry_date = gle.posting_date
 
 		row += get_ageing_data(cint(self.filters.range1), cint(self.filters.range2),
-			cint(self.filters.range3), cint(self.filters.range4), self.age_as_on, entry_date, outstanding_amount)
+			cint(self.filters.range3), cint(self.filters.range4), self.age_as_on, entry_date, outstanding_amount, conversion_rate)
 
 		# issue 6371-Ageing buckets should not have amounts if due date is not reached
 		if self.filters.ageing_based_on == "Due Date" \
@@ -343,10 +348,13 @@ class ReceivablePayableReport(object):
 
 			row[-1]=row[-2]=row[-3]=row[-4]=row[-5]=0
 
-		if self.filters.get(scrub(args.get("party_type"))):
-			row.append(gle.account_currency)
-		else:
-			row.append(self.company_currency)
+		# if self.filters.get(scrub(args.get("party_type"))):
+		# 	row.append("USD")
+		# 	#row.append(gle.account_currency)
+		# else:
+		# 	row.append("USD")
+		# 	#row.append(self.company_currency)
+		row.append(currency)
 
 		remaining_balance = outstanding_amount - flt(pdc_amount)
 		pdc_details = ", ".join(pdc_details)
@@ -613,7 +621,7 @@ def execute(filters=None):
 	return ReceivablePayableReport(filters).run(args)
 
 def get_ageing_data(first_range, second_range, third_range,
-	fourth_range, age_as_on, entry_date, outstanding_amount):
+	fourth_range, age_as_on, entry_date, outstanding_amount, conversion_rate):
 	# [0-30, 30-60, 60-90, 90-120, 120-above]
 	outstanding_range = [0.0, 0.0, 0.0, 0.0, 0.0]
 
@@ -628,7 +636,7 @@ def get_ageing_data(first_range, second_range, third_range,
 			break
 
 	if index is None: index = 4
-	outstanding_range[index] = outstanding_amount
+	outstanding_range[index] = outstanding_amount / conversion_rate
 
 	return [age] + outstanding_range
 
@@ -713,7 +721,7 @@ def get_voucher_details(party_type, voucher_nos, dn_details):
 
 	if party_type == "Customer":
 		for si in frappe.db.sql("""
-			select inv.name, inv.due_date, inv.po_no, GROUP_CONCAT(steam.sales_person SEPARATOR ', ') as sales_person
+			select inv.name, inv.due_date, inv.po_no, inv.conversion_rate, inv.currency, GROUP_CONCAT(steam.sales_person SEPARATOR ', ') as sales_person
 			from `tabSales Invoice` inv
 			left join `tabSales Team` steam on steam.parent = inv.name and steam.parenttype = 'Sales Invoice'
 			where inv.docstatus=1 and inv.name in (%s)
@@ -723,7 +731,7 @@ def get_voucher_details(party_type, voucher_nos, dn_details):
 				voucher_details.setdefault(si.name, si)
 
 	if party_type == "Supplier":
-		for pi in frappe.db.sql("""select name, due_date, bill_no, bill_date
+		for pi in frappe.db.sql("""select name, due_date, bill_no, bill_date, conversion_rate, currency,
 			from `tabPurchase Invoice` where docstatus = 1 and name in (%s)
 			""" %(','.join(['%s'] *len(voucher_nos))), (tuple(voucher_nos)), as_dict=1):
 			voucher_details.setdefault(pi.name, pi)

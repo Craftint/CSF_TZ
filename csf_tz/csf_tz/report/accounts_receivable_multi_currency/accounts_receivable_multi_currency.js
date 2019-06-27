@@ -1,7 +1,8 @@
-// Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
-// License: GNU General Public License v3. See license.txt
+// Copyright (c) 2016, Aakvatech and contributors
+// For license information, please see license.txt
+/* eslint-disable */
 
-frappe.query_reports["Accounts Receivable"] = {
+frappe.query_reports["Accounts Receivable Multi Currency"] = {
 	"filters": [
 		{
 			"fieldname":"company",
@@ -151,9 +152,9 @@ frappe.query_reports["Accounts Receivable"] = {
 	],
 
 	onload: function(report) {
-		report.page.add_inner_button(__("Accounts Receivable Summary"), function() {
+		report.page.add_inner_button(__("Accounts Receivable Summary Multi Currency"), function() {
 			var filters = report.get_values();
-			frappe.set_route('query-report', 'Accounts Receivable Summary', {company: filters.company});
+			frappe.set_route('query-report', 'Accounts Receivable Summary Multi Currency', {company: filters.company});
 		});
 	}
 }

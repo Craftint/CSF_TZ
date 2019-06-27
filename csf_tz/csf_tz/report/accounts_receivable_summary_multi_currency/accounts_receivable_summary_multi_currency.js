@@ -1,7 +1,8 @@
-// Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
-// License: GNU General Public License v3. See license.txt
+// Copyright (c) 2016, Aakvatech and contributors
+// For license information, please see license.txt
+/* eslint-disable */
 
-frappe.query_reports["Accounts Receivable Summary"] = {
+frappe.query_reports["Accounts Receivable Summary Multi Currency"] = {
 	"filters": [
 		{
 			"fieldname":"company",
@@ -92,6 +93,13 @@ frappe.query_reports["Accounts Receivable Summary"] = {
 			"label": __("Sales Person"),
 			"fieldtype": "Link",
 			"options": "Sales Person"
+		},
+		{
+			"fieldname":"currency",
+			"label": __("Currency"),
+			"fieldtype": "Link",
+			"options": "Currency",
+			"default": "TZS"
 		}
 	],
 
