@@ -289,8 +289,8 @@ class ReceivablePayableReport(object):
 	def prepare_row(self, party_naming_by, args, gle, outstanding_amount, credit_note_amount,
 		due_date=None, paid_amt=None, payment_term_amount=None, payment_term=None, pdc_amount=None, pdc_details=None):
 
-		currency = self.voucher_details.get(gle.voucher_no, {}).get("currency", "")
-		conversion_rate = self.voucher_details.get(gle.voucher_no, {}).get("conversion_rate", "")
+		currency = self.voucher_details.get(gle.voucher_no, {}).get("currency", "TZS")
+		conversion_rate = self.voucher_details.get(gle.voucher_no, {}).get("conversion_rate", 1)
 
 		row = [gle.posting_date, gle.party]
 
@@ -358,7 +358,7 @@ class ReceivablePayableReport(object):
 
 		remaining_balance = outstanding_amount - flt(pdc_amount)
 		pdc_details = ", ".join(pdc_details)
-		row += [pdc_details, pdc_amount, remaining_balance]
+		row += [pdc_details, pdc_amount, remaining_balance / conversion_rate]
 
 		if args.get('party_type') == 'Customer':
 			# customer LPO
