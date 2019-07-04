@@ -139,4 +139,4 @@ def check_zero_total_qty(columns, data):
 				del row[col_num - index]
 			del columns[col_num - index]
 			index += 1
-	frappe.msgprint(str(columns) + " " + str(data))
+	# frappe.msgprint(str(columns) + " " + str(data))
