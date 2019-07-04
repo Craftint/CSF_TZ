@@ -71,7 +71,8 @@ def execute(filters=None):
 	# frappe.msgprint("Debug start")
 	# frappe.msgprint(str(data))
 	add_warehouse_column(columns, warehouse_list)
-	frappe.msgprint(str(columns))
+	check_zero_total_qty(columns, data)
+	# frappe.msgprint(str(columns) + " " + str(data))
 	return columns, data
 
 def get_columns(filters):
@@ -116,3 +117,26 @@ def add_warehouse_column(columns, warehouse_list):
 
 	for wh in warehouse_list:
 		columns += [_(wh.name)+":Int:100"]
+
+def check_zero_total_qty(columns, data):
+	zero_qty_columns = []
+	# frappe.msgprint("Number of rows: " + str(len(data)) + " and number of columns " + str(len(columns)))
+	for column_num in range(5, len(columns)):
+		column_total = 0
+		for row_num in range(0, len(data)):
+			# frappe.msgprint("row " + str(row_num + 1) + " column " + str(column_num + 1) + " value" + str(data[row_num][column_num]))
+			column_total += data[row_num][column_num]
+		if column_total == 0:
+			zero_qty_columns.append(column_num)
+	# frappe.msgprint("These columns should be removed: " + str(zero_qty_columns))
+
+	if len(zero_qty_columns) > 0:
+		# frappe.msgprint("Total number of columns to be deleted: " + str(len(zero_qty_columns)))
+		index = 0
+		for col_num in zero_qty_columns:
+			# frappe.msgprint("Deleting column " + str(col_num - index))
+			for row in data:
+				del row[col_num - index]
+			del columns[col_num - index]
+			index += 1
+	frappe.msgprint(str(columns) + " " + str(data))
