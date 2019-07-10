@@ -31,7 +31,8 @@ frappe.query_reports["Itemwise Stock Movement"] = {
 			"label": __("Warehouse"),
 			"fieldtype": "Link",
 			"options": "Warehouse",
-			"default": "DAR - VC"
+			"default": "DAR - VC",
+			"reqd": 1
 		},
 		{
 			"fieldname":"item_group",
