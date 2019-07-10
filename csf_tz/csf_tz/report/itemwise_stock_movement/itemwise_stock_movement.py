@@ -15,38 +15,43 @@ def execute(filters=None):
 	items = get_items(filters)
 
 	sl_entries = get_stock_ledger_entries(filters, items)
-	item_details = get_item_details(items, sl_entries, include_uom)
+	# item_details = get_item_details(items, sl_entries, include_uom)
 	# opening_row = get_item_balance(filters, columns, filters.from_date, "Opening", "Halotel 500")
 	# closing_row = get_item_balance(filters, columns, filters.to_date, "Closing", "Halotel 500")
-	frappe.msgprint("sle entries are: " + str(sl_entries))
+	# frappe.msgprint("sle entries are: " + str(sl_entries))
 	# below is to try overcome issue of not getting column names in pivot_table 
 	colnames = [key for key in sl_entries[0].keys()]
 	# frappe.msgprint("colnames are: " + str(colnames))
-	df = pd.DataFrame(sl_entries)
-	df.columns = colnames
-	frappe.msgprint("dataframe is: " + str(pd.DataFrame(sl_entries).columns))
-	# pvt = pd.pivot_table(df,index=["item_code"])
-	pvt = pd.pivot_table(df,index=["posting_date","Particulars"],values=["actual_qty"],columns=["item_code"],aggfunc=[np.sum], fill_value=0)
+	df = pd.DataFrame.from_records(sl_entries, columns=colnames)
+	# frappe.msgprint("dataframe columns are is: " + str(df.columns.tolist()))
+	pvt = pd.pivot_table(
+		df,
+		values='actual_qty',
+		index=['posting_date', 'Particulars'],
+		columns='item_code',
+		fill_value=0
+	)
 	# frappe.msgprint(str(pvt))
-	# Reset the 
-	pvtri = pvt.reset_index(level=[0,1])
-	columns += pvt.columns.levels[2].values.tolist()
-	data = pvt.reset_index().values.tolist()
 
-	conversion_factors = []
+	data = pvt.reset_index().values.tolist()
+	# frappe.msgprint("Data is: " + str(data))
+
+	columns += pvt.columns.values.tolist()
+
+	# conversion_factors = []
 	# if opening_row:
 	# 	data.append(opening_row)
 
-	for sle in sl_entries:
-		item_detail = item_details[sle.item_code]
+	# for sle in sl_entries:
+		# item_detail = item_details[sle.item_code]
 
-		sle.update(item_detail)
-		data.append(sle)
+		# sle.update(item_detail)
+		# data.append(sle)
 
-		if include_uom:
-			conversion_factors.append(item_detail.conversion_factor)
+		# if include_uom:
+			# conversion_factors.append(item_detail.conversion_factor)
 
-	update_included_uom_in_report(columns, data, include_uom, conversion_factors)
+	# update_included_uom_in_report(columns, data, include_uom, conversion_factors)
 
 	# if closing_row:
 	# 	data.append(closing_row)
@@ -55,7 +60,7 @@ def execute(filters=None):
 
 def get_columns():
 	columns = [
-		{"label": _("Date"), "fieldname": "date", "fieldtype": "Datetime", "width": 95},
+		{"label": _("Date"), "fieldname": "date", "fieldtype": "Date", "width": 95},
 		{"label": _("Particulars"), "fieldname": "particulars", "width": 110},
 	]
 
@@ -91,8 +96,7 @@ def get_stock_ledger_entries(filters, items):
 									{sle_conditions}
 									{item_conditions_sql}
 							GROUP BY sle.posting_date, `Particulars`, sle.item_code
-							ORDER BY sle.posting_date asc
-							LIMIT 100"""\
+							ORDER BY sle.posting_date asc"""\
 		.format(
 			sle_conditions=get_sle_conditions(filters),
 			item_conditions_sql = item_conditions_sql
