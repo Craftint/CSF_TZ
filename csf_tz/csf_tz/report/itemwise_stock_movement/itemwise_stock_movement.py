@@ -12,49 +12,56 @@ def execute(filters=None):
 	# frappe.msgprint(str(filters))
 	include_uom = filters.get("include_uom")
 	columns = get_columns()
+	data = []
 	items = get_items(filters)
 
-	sl_entries = get_stock_ledger_entries(filters, items)
+	# Get opening balances as first row in the sl_entries
+	sl_entries =  get_opening_balance_entries(filters, items)
+	# frappe.msgprint("sle entries are: " + str(sl_entries))
+	# Get rest of the stock ledgers
+	sl_entries += get_stock_ledger_entries(filters, items)
 	# item_details = get_item_details(items, sl_entries, include_uom)
 	# opening_row = get_item_balance(filters, columns, filters.from_date, "Opening", "Halotel 500")
 	# closing_row = get_item_balance(filters, columns, filters.to_date, "Closing", "Halotel 500")
 	# frappe.msgprint("sle entries are: " + str(sl_entries))
 	# below is to try overcome issue of not getting column names in pivot_table 
-	colnames = [key for key in sl_entries[0].keys()]
-	# frappe.msgprint("colnames are: " + str(colnames))
-	df = pd.DataFrame.from_records(sl_entries, columns=colnames)
-	# frappe.msgprint("dataframe columns are is: " + str(df.columns.tolist()))
-	pvt = pd.pivot_table(
-		df,
-		values='actual_qty',
-		index=['posting_date', 'Particulars'],
-		columns='item_code',
-		fill_value=0
-	)
-	# frappe.msgprint(str(pvt))
 
-	data = pvt.reset_index().values.tolist()
-	# frappe.msgprint("Data is: " + str(data))
+	if sl_entries:
+		colnames = [key for key in sl_entries[0].keys()]
+		# frappe.msgprint("colnames are: " + str(colnames))
+		df = pd.DataFrame.from_records(sl_entries, columns=colnames)
+		# frappe.msgprint("dataframe columns are is: " + str(df.columns.tolist()))
+		pvt = pd.pivot_table(
+			df,
+			values='actual_qty',
+			index=['posting_date', 'Particulars'],
+			columns='item_code',
+			fill_value=0
+		)
+		# frappe.msgprint(str(pvt))
 
-	columns += pvt.columns.values.tolist()
+		data = pvt.reset_index().values.tolist()
+		# frappe.msgprint("Data is: " + str(data))
 
-	# conversion_factors = []
-	# if opening_row:
-	# 	data.append(opening_row)
+		columns += pvt.columns.values.tolist()
 
-	# for sle in sl_entries:
-		# item_detail = item_details[sle.item_code]
+		# conversion_factors = []
+		# if opening_row:
+		# 	data.append(opening_row)
 
-		# sle.update(item_detail)
-		# data.append(sle)
+		# for sle in sl_entries:
+			# item_detail = item_details[sle.item_code]
 
-		# if include_uom:
-			# conversion_factors.append(item_detail.conversion_factor)
+			# sle.update(item_detail)
+			# data.append(sle)
 
-	# update_included_uom_in_report(columns, data, include_uom, conversion_factors)
+			# if include_uom:
+				# conversion_factors.append(item_detail.conversion_factor)
 
-	# if closing_row:
-	# 	data.append(closing_row)
+		# update_included_uom_in_report(columns, data, include_uom, conversion_factors)
+
+		# if closing_row:
+		# 	data.append(closing_row)
 
 	return columns, data
 
@@ -97,6 +104,33 @@ def get_stock_ledger_entries(filters, items):
 									{item_conditions_sql}
 							GROUP BY sle.posting_date, `Particulars`, sle.item_code
 							ORDER BY sle.posting_date asc"""\
+		.format(
+			sle_conditions=get_sle_conditions(filters),
+			item_conditions_sql = item_conditions_sql
+		), filters, as_dict = 1)
+
+def get_opening_balance_entries(filters, items):
+	item_conditions_sql = ''
+	if items:
+		item_conditions_sql = 'and sle.item_code in ({})'\
+			.format(', '.join(['"' + frappe.db.escape(i) + '"' for i in items]))
+
+	return frappe.db.sql("""SELECT	STR_TO_DATE(%(from_date)s, '%%Y-%%m-%%d') as posting_date, 
+									". Opening Balance" as "Particulars",
+									sle.item_code, 
+									sum(if(sle.actual_qty = 0, sle.qty_after_transaction, sle.actual_qty)) as "actual_qty"
+							FROM	`tabStock Ledger Entry` sle 
+								LEFT OUTER JOIN `tabSales Invoice` si 
+												ON sle.voucher_no = si.name
+												AND sle.company = si.company
+								LEFT OUTER JOIN `tabDelivery Note` dn 
+												ON sle.voucher_no = dn.name
+												AND sle.company = dn.company
+							WHERE sle.company = %(company)s
+									AND sle.posting_date < %(from_date)s
+									{sle_conditions}
+									{item_conditions_sql}
+							GROUP BY `Particulars`, sle.item_code"""\
 		.format(
 			sle_conditions=get_sle_conditions(filters),
 			item_conditions_sql = item_conditions_sql
