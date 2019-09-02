@@ -68,7 +68,7 @@ def execute(filters=None):
 def get_columns():
 	columns = [
 		{"label": _("Date"), "fieldname": "date", "fieldtype": "Date", "width": 95},
-		{"label": _("Particulars"), "fieldname": "particulars", "width": 110},
+		{"label": _("Particulars"), "fieldname": "Particulars", "width": 110},
 	]
 
 	return columns
