@@ -22,9 +22,9 @@ frappe.query_reports["Purchase Reports by Tax Category"] = {
 			},
 			{
 				"fieldname": "taxes_and_charges",
-				"label": __("Tax Type"),
+				"label": __("Taxes and Charges"),
 				"fieldtype": "Link",
-				"width": "80",
+				"width": "120",
 				"options": "Purchase Taxes and Charges Template",
 				"default": ""
 			},
