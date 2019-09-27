@@ -26,7 +26,7 @@ frappe.query_reports["Purchase Reports by Tax Category"] = {
 				"fieldtype": "Link",
 				"width": "120",
 				"options": "Purchase Taxes and Charges Template",
-				"default": ""
+				"default": "Tanzania Tax - VPL"
 			},
         ]
 }
