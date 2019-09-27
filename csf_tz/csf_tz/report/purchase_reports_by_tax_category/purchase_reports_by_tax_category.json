@@ -1,0 +1,34 @@
+{
+ "add_total_row": 1, 
+ "creation": "2019-09-27 09:25:21.146387", 
+ "disable_prepared_report": 0, 
+ "disabled": 0, 
+ "docstatus": 0, 
+ "doctype": "Report", 
+ "idx": 0, 
+ "is_standard": "Yes", 
+ "modified": "2019-09-27 09:36:23.930469", 
+ "modified_by": "Administrator", 
+ "module": "CSF TZ", 
+ "name": "Purchase Reports by Tax Category", 
+ "owner": "Administrator", 
+ "prepared_report": 0, 
+ "query": "SELECT  pi.name \"Invoice No::120\",\n\tpi.supplier \"Supplier:Link/Supplier:120\",\n\tpi.net_total \"Amount:Currency:120\", \n\tpi.base_total_taxes_and_charges \"VAT:Currency:120\", \n\tpi.grand_total \"Total:Currency:120\"\nFROM `tabPurchase Invoice` pi\nWHERE docstatus = 1\nAND pi.posting_date BETWEEN %(from_date)s AND %(to_date)s \nAND pi.taxes_and_charges = %(taxes_and_charges)s ", 
+ "ref_doctype": "Purchase Invoice", 
+ "report_name": "Purchase Reports by Tax Category", 
+ "report_type": "Query Report", 
+ "roles": [
+  {
+   "role": "Accounts User"
+  }, 
+  {
+   "role": "Purchase User"
+  }, 
+  {
+   "role": "Accounts Manager"
+  }, 
+  {
+   "role": "Auditor"
+  }
+ ]
+}

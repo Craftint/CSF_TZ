@@ -256,5 +256,56 @@
     "role": "Accounts Manager"
    }
   ]
+ }, 
+ {
+  "add_total_row": 1, 
+  "color": null, 
+  "disable_prepared_report": 0, 
+  "disabled": 0, 
+  "docstatus": 0, 
+  "doctype": "Report", 
+  "icon": null, 
+  "is_standard": "Yes", 
+  "javascript": null, 
+  "json": null, 
+  "letter_head": null, 
+  "modified": "2019-09-27 09:36:23.930469", 
+  "module": "CSF TZ", 
+  "name": "Purchase Reports by Tax Category", 
+  "parent": null, 
+  "parentfield": null, 
+  "parenttype": null, 
+  "prepared_report": 0, 
+  "query": "SELECT  pi.name \"Invoice No::120\",\n\tpi.supplier \"Supplier:Link/Supplier:120\",\n\tpi.net_total \"Amount:Currency:120\", \n\tpi.base_total_taxes_and_charges \"VAT:Currency:120\", \n\tpi.grand_total \"Total:Currency:120\"\nFROM `tabPurchase Invoice` pi\nWHERE docstatus = 1\nAND pi.posting_date BETWEEN %(from_date)s AND %(to_date)s \nAND pi.taxes_and_charges = %(taxes_and_charges)s ", 
+  "ref_doctype": "Purchase Invoice", 
+  "reference_report": null, 
+  "report_name": "Purchase Reports by Tax Category", 
+  "report_type": "Query Report", 
+  "roles": [
+   {
+    "parent": "Purchase Reports by Tax Category", 
+    "parentfield": "roles", 
+    "parenttype": "Report", 
+    "role": "Accounts User"
+   }, 
+   {
+    "parent": "Purchase Reports by Tax Category", 
+    "parentfield": "roles", 
+    "parenttype": "Report", 
+    "role": "Purchase User"
+   }, 
+   {
+    "parent": "Purchase Reports by Tax Category", 
+    "parentfield": "roles", 
+    "parenttype": "Report", 
+    "role": "Accounts Manager"
+   }, 
+   {
+    "parent": "Purchase Reports by Tax Category", 
+    "parentfield": "roles", 
+    "parenttype": "Report", 
+    "role": "Auditor"
+   }
+  ]
  }
 ]
