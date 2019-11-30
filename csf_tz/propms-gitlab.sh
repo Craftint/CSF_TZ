@@ -9,6 +9,10 @@ fi
 
 vi apps/propms/propms/__init__.py
 bench --site dev-propms.aakvatech.com export-fixtures
+# Below is to update payware after propms would have overwirtten the fixtures of payware
+bench --site demo.payware.co.tz export-fixtures
+# Below is to update csf after payware would have overwirtten the fixtures of csftz
+bench --site dev-csf-tz.aakvatech.com export-fixtures
 cd apps/propms
 git add .
 git commit -m "$1"
