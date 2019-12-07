@@ -14,6 +14,8 @@ app_license = "MIT"
 fixtures = [
 	{"doctype":"Print Format", "filters": [{"module":"CSF TZ"}]},
 	{"doctype":"Report", "filters": [{"module":"CSF TZ"}]},
+	{"doctype":"Custom Field", "filters": [["_user_tags", "like", ("%csf-tz%")]]},
+	{"doctype":"Property Setter", "filters": [["_user_tags", "like", ("%csf-tz%")]]},
 ]
 
 # Includes in <head>

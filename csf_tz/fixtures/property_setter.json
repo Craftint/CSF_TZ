@@ -1,0 +1,42 @@
+[
+ {
+  "_assign": null,
+  "_comments": null,
+  "_liked_by": null,
+  "_user_tags": ",csf-tz",
+  "default_value": null,
+  "doc_type": "Supplier",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "naming_series",
+  "modified": "2018-12-24 00:58:39.804278",
+  "name": "Supplier-naming_series-hidden",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "hidden",
+  "property_type": "Check",
+  "value": "1"
+ },
+ {
+  "_assign": null,
+  "_comments": null,
+  "_liked_by": null,
+  "_user_tags": ",csf-tz",
+  "default_value": null,
+  "doc_type": "Supplier",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "tax_id",
+  "modified": "2019-12-06 15:24:20.643394",
+  "name": "Supplier-tax_id-bold",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "bold",
+  "property_type": "Check",
+  "value": "1"
+ }
+]
