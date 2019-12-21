@@ -1,6 +1,6 @@
 frappe.ui.form.on("Payment Entry", {
     payment_type: function(frm) {
-        if (frm.doc.document_status == "Draft") {
+        if (frm.doc.document_status == "Draft" || typeof frm.doc.document_status === "undefined") {
             if (frm.doc.payment_type == "Receive") {
                 frm.set_value("naming_series","RE-.YYYY.-");
                 frm.set_value("party_type", "Customer");
