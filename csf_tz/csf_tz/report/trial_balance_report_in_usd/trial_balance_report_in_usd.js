@@ -3,7 +3,7 @@
 /* eslint-disable */
 
 frappe.require("assets/erpnext/js/financial_statements.js", function() {
-	frappe.query_reports["Trial Balance Eport in USD"] = {
+	frappe.query_reports["Trial Balance Report in USD"] = {
 		"filters": [
 			{
 				"fieldname": "company",
