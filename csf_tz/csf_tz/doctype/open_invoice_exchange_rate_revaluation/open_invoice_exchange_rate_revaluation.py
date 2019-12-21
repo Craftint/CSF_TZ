@@ -87,7 +87,8 @@ def makeJournalEntry(date,je_item):
 		posting_date=date,
 		company=propm_setting.company,
 		accounts=je_item,
-		voucher_type='Exchange Rate Revaluation'
+		voucher_type='Exchange Rate Revaluation',
+		multi_currency=1
 	)).insert()
 	j_entry.submit()
 	return j_entry.name
