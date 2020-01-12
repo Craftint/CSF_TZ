@@ -8,7 +8,7 @@ fi
 
 
 vi apps/dsr/dsr/__init__.py
-bench --site dsr-bm.aakvatech.com export-fixtures
+bench --site transms.aakvatech.com export-fixtures
 cd apps/dsr
 git add .
 git commit -m "$1"
