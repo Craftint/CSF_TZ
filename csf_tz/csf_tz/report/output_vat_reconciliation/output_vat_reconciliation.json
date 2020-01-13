@@ -1,0 +1,28 @@
+{
+ "add_total_row": 0,
+ "creation": "2020-01-07 06:00:13.703158",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "idx": 0,
+ "is_standard": "Yes",
+ "letter_head": "Viva Towers Official",
+ "modified": "2020-01-07 06:00:13.703158",
+ "modified_by": "Administrator",
+ "module": "CSF TZ",
+ "name": "Output VAT Reconciliation",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "EFD Z Report",
+ "report_name": "Output VAT Reconciliation",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Accounts Manager"
+  }
+ ]
+}
