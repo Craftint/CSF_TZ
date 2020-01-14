@@ -48,7 +48,6 @@ class EFDZReport(Document):
 		if not sales_invoices:
 			frappe.throw("No Sales Invoice Fetch")
 
-		print("test")
 		for i in sales_invoices:
 			print(i)
 			self.append("efd_z_report_invoices",{
