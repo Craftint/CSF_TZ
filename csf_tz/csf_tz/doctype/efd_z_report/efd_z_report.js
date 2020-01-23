@@ -21,20 +21,19 @@
 // });
 
 cur_frm.cscript.get_invoices = function (frm) {
+	cur_frm.clear_table("efd_z_report_invoices")
 	frappe.call({
-			method: "csf_tz.csf_tz.doctype.efd_z_report.efd_z_report.get_sales_invoice",
-			args: { "name": cur_frm.docname },
+			method: "get_sales_invoice",
+			doc: cur_frm.doc,
+			args: {
+				"electronic_fiscal_device": cur_frm.doc.electronic_fiscal_device,
+				"date_and_time": cur_frm.doc.z_report_date_time,
+			},
+			freeze: true,
+			freeze_message: "Fetching Invoices...",
 			callback: function(r) {
-				console.log(r.message)
-				for(var x=0; x < r.message.length; x += 1){
-					var row = cur_frm.add_child("efd_z_report_invoices")
-					row.invoice_number = r.message[x].name
-					row.invoice_date = r.message[x].posting_date
-					row.invoice_amount = r.message[x].total
-
-					cur_frm.refresh_field("efd_z_report_invoices")
-				}
-			}
+                cur_frm.refresh_field("efd_z_report_invoices")
+            }
 		});
 }
 cur_frm.cscript.include = function (frm) {
@@ -50,6 +49,7 @@ cur_frm.cscript.include = function (frm) {
 		}
 	}
 	console.log(total)
+
 	cur_frm.doc.efd_z_report_invoices_amountinclude_is_ticked = total
 	cur_frm.refresh_field("efd_z_report_invoices_amountinclude_is_ticked")
 }

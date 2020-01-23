@@ -5,14 +5,58 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
-
+from datetime import *
+from frappe.utils.background_jobs import enqueue
 class EFDZReport(Document):
 	def validate(self):
-		if self.money != self.efd_z_report_invoices_amountinclude_is_ticked:
+		if not self.efd_z_report_invoices:
+			frappe.throw("No Sales Invoie Found in the table")
+		if self.total_turnover != self.efd_z_report_invoices_amountinclude_is_ticked:
 			frappe.throw("Sales Invoice Amount is not equal to Money Entered")
 
-		if len(self.efd_z_report_invoices) != self.receipts_issued:
-			frappe.throw("The count of Sales Invoice in the table is not equal to Receipts Issued")
+		if self.get_number_of_ticked() != self.receipts_issued:
+			frappe.throw("The Number of Sales Invoice (Include is checked) in the table is not equal to Receipts Issued")
+	def get_number_of_ticked(self):
+		total_checked = 0
+		for i in self.efd_z_report_invoices:
+			if i.include:
+				total_checked += 1
+		return total_checked
+	def get_sales_invoice(self):
+
+		date = datetime.strptime(str(self.z_report_date_time), "%Y-%m-%d %H:%M:%S").date()
+		time = datetime.strptime(str(self.z_report_date_time), "%Y-%m-%d %H:%M:%S").time()
+
+		pos_profile = frappe.get_value("Electronic Fiscal Device", self.electronic_fiscal_device, "pos_profile")
+
+		is_pos = "1" if pos_profile else "0"
+
+		condition = "docstatus = 1 and is_pos = " + is_pos + " and efd_z_report is null and status='Paid' and posting_date <= '" + str(
+			date) + "' and IF(IF(posting_date = '" + str(date) + "', IF(posting_time < '" + str(
+			time) + "',1,'PostingTime'),'PostingDate') = 1 or IF(posting_date = '" + str(
+			date) + "',IF(posting_time < '" + str(time) + "',1,'PostingTime'),'PostingDate') = 'PostingDate',1,0)"
+
+		if pos_profile:
+			condition += " and pos_profile = '" + pos_profile + "'"
+
+		query = """ select *
+		 				from `tabSales Invoice`
+		 				where {0}""".format(condition)
+
+		sales_invoices = frappe.db.sql(query, as_dict=True)
+
+		if not sales_invoices:
+			frappe.throw("No Sales Invoice Fetch")
+
+		for i in sales_invoices:
+			print(i)
+			self.append("efd_z_report_invoices",{
+				"invoice_number" : i.name,
+				"invoice_date" : i.posting_date,
+				"invoice_amount" : i.total,
+				"invoice_currency" : i.currency
+			})
+		return True
 	# def get_invoices(self):
 	# 	return []
 	# 	if not (self.bank_account and self.from_date and self.to_date):
@@ -65,13 +109,4 @@ class EFDZReport(Document):
 	# 		d.pop("account_currency")
 	# 		row.update(d)
 	# 		self.total_amount += flt(amount)
-
-
-@frappe.whitelist()
-def get_sales_invoice(name):
-	sales_invoices = frappe.get_list("Sales Invoice", filters={"efd_z_report": name, "docstatus": 1}, fields=["*"])
-	if not sales_invoices:
-		frappe.throw("No Sales Invoice Found for EFD Z Report " + name)
-	return sales_invoices
-
 
