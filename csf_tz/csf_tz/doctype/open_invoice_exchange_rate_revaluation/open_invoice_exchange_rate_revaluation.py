@@ -51,7 +51,6 @@ def getFirstRow(invoice_gain_or_loss,invoice_type):
 			item_json["debit_in_account_currency"] = invoice_gain_or_loss
 		else:
 			item_json["credit_in_account_currency"] = invoice_gain_or_loss
-	frappe.msgprint("First row " + str(item_json))
 	return item_json
 
 
@@ -77,12 +76,12 @@ def getSecondRow(invoice_gain_or_loss,invoice_type,invoice_number):
 			item_json["credit_in_account_currency"] = invoice_gain_or_loss
 		else:
 			item_json["debit_in_account_currency"] = invoice_gain_or_loss
-	frappe.msgprint("Second row " + str(item_json))
 	return item_json
 
 
 @frappe.whitelist()
 def makeJournalEntry(date,je_item):
+	frappe.msgprint(str(je_item))
 	propm_setting=frappe.get_doc("Property Management Settings","Property Management Settings")
 	j_entry=frappe.get_doc(dict(
 		doctype="Journal Entry",
