@@ -9,18 +9,22 @@
   "electronic_fiscal_device",
   "z_no",
   "money",
-  "receipts_issued",
   "column_break_5",
-  "total_turnover",
+  "z_report_date_time",
+  "receipts_issued",
+  "section_break_7",
   "net_amount",
   "total_vat",
   "total_turnover_ex_sr",
-  "section_break_7",
-  "z_report_date_time",
+  "total_turnover",
+  "column_break_13",
+  "total_excluding_vat_ticked",
+  "total_vat_ticked",
+  "total_turnover_exempted__sp_relief_ticked",
+  "total_turnover_ticked",
   "vat_section",
   "get_invoices",
   "efd_z_report_invoices",
-  "efd_z_report_invoices_amountinclude_is_ticked",
   "section_break_10",
   "vat_a_18",
   "a_turnover",
@@ -54,26 +58,31 @@
  ],
  "fields": [
   {
+   "description": "&nbsp;",
    "fieldname": "electronic_fiscal_device",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Electronic Fiscal Device",
    "options": "Electronic Fiscal Device",
-   "reqd": 1
+   "reqd": 1,
+   "set_only_once": 1
   },
   {
+   "depends_on": "eval: doc.electronic_fiscal_device",
    "fieldname": "z_no",
    "fieldtype": "Data",
    "label": "Z No",
-   "reqd": 1
+   "reqd": 1,
+   "set_only_once": 1
   },
   {
    "fieldname": "money",
    "fieldtype": "Currency",
-   "label": "Money",
-   "reqd": 1
+   "hidden": 1,
+   "label": "Money"
   },
   {
+   "depends_on": "eval: doc.electronic_fiscal_device",
    "fieldname": "receipts_issued",
    "fieldtype": "Int",
    "label": "Receipts Issued",
@@ -81,8 +90,7 @@
   },
   {
    "fieldname": "column_break_5",
-   "fieldtype": "Column Break",
-   "label": "From the TOTAL of VAT REPORT section"
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "total_turnover",
@@ -93,7 +101,7 @@
    "fieldname": "net_amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Total Net"
+   "label": "Total Excluding VAT"
   },
   {
    "fieldname": "total_vat",
@@ -103,14 +111,16 @@
   {
    "fieldname": "total_turnover_ex_sr",
    "fieldtype": "Currency",
-   "label": "Total Turnover Ex Sr"
+   "label": "Total Turnover Exempted / Sp. Relief"
   },
   {
+   "depends_on": "eval: doc.z_no",
    "fieldname": "section_break_7",
    "fieldtype": "Section Break"
   },
   {
    "default": "Today",
+   "depends_on": "eval: doc.electronic_fiscal_device",
    "description": "From FM Summary section in the bottom part of the Z Report",
    "fieldname": "z_report_date_time",
    "fieldtype": "Datetime",
@@ -119,6 +129,7 @@
    "reqd": 1
   },
   {
+   "depends_on": "eval: doc.receipts_issued",
    "fieldname": "vat_section",
    "fieldtype": "Section Break"
   },
@@ -286,16 +297,40 @@
    "read_only": 1
   },
   {
-   "default": "0",
-   "fieldname": "efd_z_report_invoices_amountinclude_is_ticked",
+   "fieldname": "column_break_13",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_excluding_vat_ticked",
    "fieldtype": "Currency",
-   "label": "EFD Z Report Invoices Amount(Include is ticked)",
+   "label": "Total Excluding VAT (Ticked)",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_vat_ticked",
+   "fieldtype": "Currency",
+   "label": "Total VAT (Ticked)",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_turnover_exempted__sp_relief_ticked",
+   "fieldtype": "Currency",
+   "label": "Total Turnover Exempted / Sp. Relief (Ticked)",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_turnover_ticked",
+   "fieldtype": "Currency",
+   "label": "Total Turnover (Ticked)",
    "precision": "2",
    "read_only": 1
   }
  ],
  "is_submittable": 1,
- "modified": "2020-01-07 06:32:15.943737",
+ "modified": "2020-03-05 20:32:29.422258",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "EFD Z Report",
