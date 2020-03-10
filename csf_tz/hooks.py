@@ -36,8 +36,6 @@ fixtures = [
 		"POS Profile-electronic_fiscal_device"
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
-		"Sales Invoice-naming_series-options",
-		"Payment Entry-naming_series-options",
 		"Sales Invoice-default_print_format",
 		"Sales Invoice-pos_profile-in_standard_filter",
 		"Sales Invoice-posting_date-in_list_view",
