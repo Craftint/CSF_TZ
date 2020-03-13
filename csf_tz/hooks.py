@@ -30,6 +30,8 @@ fixtures = [
 		"Sales Invoice-tra_control_number",
 		"Sales Invoice-statutory_details",
 		"Sales Order-cost_center",
+		"Sales Order-posting_date",
+		"Purchase Order-posting_date",
 		"Sales Invoice-electronic_fiscal_device",
 		"Sales Invoice-efd_z_report",
 		"POS Profile-column_break_1",
