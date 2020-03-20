@@ -12,10 +12,51 @@ app_email = "info@aakvatech.com"
 app_license = "MIT"
 
 fixtures = [
-	{"doctype":"Print Format", "filters": [{"module":"CSF TZ"}]},
-	{"doctype":"Report", "filters": [{"module":"CSF TZ"}]},
-	{"doctype":"Custom Field", "filters": [["_user_tags", "like", ("%csf-tz%")]]},
-	{"doctype":"Property Setter", "filters": [["_user_tags", "like", ("%csf-tz%")]]},
+	{"doctype":"Custom Field", "filters": [["name", "in", (
+		"Supplier-vrn",
+		"Customer-vrn",
+		"Company-vrn",
+		"Company-tin",
+		"Company-company_bank_details",
+		"Company-section_break_12",
+		"Journal Entry-to_date",
+		"Journal Entry-from_date",
+		"Payment Entry Reference-section_break_9",
+		"Payment Entry Reference-posting_date",
+		"Payment Entry Reference-end_date",
+		"Sales Invoice-witholding_tax_certificate_number",
+		"Payment Entry Reference-start_date",
+		"Sales Invoice-column_break_29",
+		"Sales Invoice-tra_control_number",
+		"Sales Invoice-statutory_details",
+		"Sales Order-cost_center",
+		"Sales Order-posting_date",
+		"Purchase Order-posting_date",
+		"Sales Invoice-electronic_fiscal_device",
+		"Sales Invoice-efd_z_report",
+		"POS Profile-column_break_1",
+		"POS Profile-electronic_fiscal_device"
+	)]]},
+	{"doctype":"Property Setter", "filters": [["name", "in", (
+		"Sales Invoice-default_print_format",
+		"Sales Invoice-pos_profile-in_standard_filter",
+		"Sales Invoice-posting_date-in_list_view",
+		"Sales Invoice-is_pos-in_standard_filter",
+		"Payment Reconciliation Payment-posting_date-in_list_view",
+		"Payment Reconciliation Payment-posting_date-columns",
+		"Payment Entry Reference-reference_doctype-in_list_view",
+		"Payment Entry Reference-reference_name-columns",
+		"Payment Entry Reference-reference_doctype-columns",
+		"Payment Entry Reference-due_date-columns",
+		"Payment Entry Reference-due_date-width",
+		"Customer-tax_id-label",
+		"Bank Reconciliation Detail-posting_date-in_list_view",
+		"Bank Reconciliation Detail-posting_date-columns",
+		"Bank Reconciliation Detail-payment_entry-columns",
+		"Purchase Invoice-default_print_format",
+		"Payment Entry-section_break_12-collapsible",
+		"Payment Entry-payment_accounts_section-collapsible"
+	)]]},
 ]
 
 # Includes in <head>

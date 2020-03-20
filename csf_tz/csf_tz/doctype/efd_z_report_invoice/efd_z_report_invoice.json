@@ -6,20 +6,25 @@
  "field_order": [
   "invoice_number",
   "invoice_date",
-  "invoice_currency",
+  "amt_excl_vat",
+  "vat",
+  "amt_ex__sr",
   "invoice_amount",
   "include"
  ],
  "fields": [
   {
+   "columns": 1,
    "fieldname": "invoice_number",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Invoice Number",
+   "label": "Invoice No.",
    "options": "Sales Invoice",
+   "read_only": 1,
    "reqd": 1
   },
   {
+   "columns": 1,
    "fetch_from": "invoice_number.posting_date",
    "fieldname": "invoice_date",
    "fieldtype": "Date",
@@ -29,34 +34,57 @@
    "reqd": 1
   },
   {
-   "fetch_from": "invoice_number.currency",
-   "fieldname": "invoice_currency",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Invoice Currency",
-   "options": "Currency",
-   "read_only": 1,
-   "reqd": 1
-  },
-  {
+   "columns": 2,
    "fieldname": "invoice_amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Invoice Amount",
+   "label": "Invoice Amt.",
    "options": "invoice_currency",
    "read_only": 1,
-   "reqd": 1
+   "reqd": 1,
+   "width": "200"
   },
   {
+   "columns": 1,
    "default": "0",
    "fieldname": "include",
    "fieldtype": "Check",
    "in_list_view": 1,
    "label": "Include"
+  },
+  {
+   "columns": 2,
+   "fieldname": "amt_excl_vat",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amt. Excl. VAT",
+   "read_only": 1,
+   "reqd": 1,
+   "width": "200"
+  },
+  {
+   "columns": 1,
+   "fieldname": "vat",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "VAT",
+   "read_only": 1,
+   "reqd": 1,
+   "width": "200"
+  },
+  {
+   "columns": 2,
+   "fieldname": "amt_ex__sr",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amt. EX / SR",
+   "read_only": 1,
+   "reqd": 1,
+   "width": "200"
   }
  ],
  "istable": 1,
- "modified": "2020-01-07 06:44:52.567528",
+ "modified": "2020-03-05 20:43:33.193085",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "EFD Z Report Invoice",

@@ -13,5 +13,5 @@ cp *sh apps/csf_tz/csf_tz
 cd apps/csf_tz
 git add .
 git commit -m "$1"
-git push upstream master
+git push upstream HEAD
 
