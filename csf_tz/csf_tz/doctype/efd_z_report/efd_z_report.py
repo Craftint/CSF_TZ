@@ -12,11 +12,17 @@ from frappe.utils import flt
 class EFDZReport(Document):
 	def validate(self):
 		if not self.efd_z_report_invoices:
-			frappe.throw("No Sales Invoie Found in the table")
+			frappe.throw(_("No Sales Invoie Found in the table"))
 		if flt(self.total_turnover,2) != flt(self.total_turnover_ticked,2):
-			frappe.throw("Sales Invoice Amount is not equal to Money Entered")
+			frappe.throw(_("Sales Invoice Amount is not equal to Money Entered"))
+		if flt(self.net_amount,2) != flt(self.total_excluding_vat_ticked,2):
+			frappe.throw(_("Total Excluding VAT is not equal to Total Excluding VAT (Ticked)"))
+		if flt(self.total_vat,2) != flt(self.total_vat_ticked,2):
+			frappe.throw(_("Total VAT is not equal to Total VAT (Ticked)"))
+		if flt(self.total_turnover_ex_sr,2) != flt(self.total_turnover_exempted__sp_relief_ticked,2):
+			frappe.throw(_("Total Turnover Exempted / Sp. Relief is not equal to Total Turnover Exempted / Sp. Relief (Ticked)"))
 		if self.get_number_of_ticked() != self.receipts_issued:
-			frappe.throw("The Number of Sales Invoice (Include is checked) in the table is not equal to Receipts Issued")
+			frappe.throw(_("The Number of Sales Invoice (Include is checked) in the table is not equal to Receipts Issued"))
 	
 
 	def get_number_of_ticked(self):
