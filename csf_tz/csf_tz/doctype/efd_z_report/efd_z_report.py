@@ -4,24 +4,29 @@
 
 from __future__ import unicode_literals
 import frappe
+from frappe import _
 from frappe.model.document import Document
 from datetime import *
 from frappe.utils.background_jobs import enqueue
+from frappe.utils import flt
 class EFDZReport(Document):
 	def validate(self):
 		if not self.efd_z_report_invoices:
 			frappe.throw("No Sales Invoie Found in the table")
-		if self.total_turnover != self.efd_z_report_invoices_amountinclude_is_ticked:
+		if flt(self.total_turnover,2) != flt(self.total_turnover_ticked,2):
 			frappe.throw("Sales Invoice Amount is not equal to Money Entered")
-
 		if self.get_number_of_ticked() != self.receipts_issued:
 			frappe.throw("The Number of Sales Invoice (Include is checked) in the table is not equal to Receipts Issued")
+	
+
 	def get_number_of_ticked(self):
 		total_checked = 0
 		for i in self.efd_z_report_invoices:
 			if i.include:
 				total_checked += 1
 		return total_checked
+	
+	
 	def get_sales_invoice(self):
 
 		date = datetime.strptime(str(self.z_report_date_time), "%Y-%m-%d %H:%M:%S").date()
@@ -49,14 +54,55 @@ class EFDZReport(Document):
 			frappe.throw("No Sales Invoice Fetch")
 
 		for i in sales_invoices:
-			print(i)
 			self.append("efd_z_report_invoices",{
 				"invoice_number" : i.name,
 				"invoice_date" : i.posting_date,
-				"invoice_amount" : i.total,
+				"amt_excl_vat" : flt(i.base_net_total,2),
+				"vat" : flt(i.base_total_taxes_and_charges,2),
+				"amt_ex__sr" : 0,
+				"invoice_amount" : flt(i.base_total,2),
 				"invoice_currency" : i.currency
 			})
 		return True
+
+
+	def on_submit(self):
+		to_remove= []
+		for invoice in self.efd_z_report_invoices:
+			if not invoice.include:
+				to_remove.append(invoice)
+			else:
+				invoice_doc = frappe.get_doc("Sales Invoice",invoice.invoice_number)
+				if  invoice_doc.efd_z_report:
+					frappe.throw(_("The Sales Invoice {0} is linked to EFD Z Report {1}".format(invoice.invoice_number,invoice_doc.efd_z_report)))
+					pass
+				else:
+					invoice_doc.efd_z_report = self.name
+					invoice_doc.flags.ignore_permissions=True
+					invoice_doc.save()
+		[self.remove(invoice) for invoice in to_remove]
+		
+
+	def on_cancel(self):
+		for invoice in self.efd_z_report_invoices:
+			if invoice.include:
+				invoice_doc = frappe.get_doc("Sales Invoice",invoice.invoice_number)
+				if  invoice_doc.efd_z_report:
+					invoice_doc.efd_z_report = ""
+					invoice_doc.flags.ignore_permissions=True
+					invoice_doc.save()
+
+
+
+
+
+
+
+
+
+
+
+
 	# def get_invoices(self):
 	# 	return []
 	# 	if not (self.bank_account and self.from_date and self.to_date):
