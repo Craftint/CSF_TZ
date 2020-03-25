@@ -42,7 +42,7 @@ class EFDZReport(Document):
 
 		is_pos = "1" if pos_profile else "0"
 
-		condition = "docstatus = 1 and is_pos = " + is_pos + " and efd_z_report is null and status='Paid' and posting_date <= '" + str(
+		condition = "docstatus = 1 and is_pos = " + is_pos + " and efd_z_report = '' and status='Paid' and posting_date <= '" + str(
 			date) + "' and IF(IF(posting_date = '" + str(date) + "', IF(posting_time < '" + str(
 			time) + "',1,'PostingTime'),'PostingDate') = 1 or IF(posting_date = '" + str(
 			date) + "',IF(posting_time < '" + str(time) + "',1,'PostingTime'),'PostingDate') = 'PostingDate',1,0)"
@@ -60,13 +60,22 @@ class EFDZReport(Document):
 			frappe.throw("No Sales Invoice Fetch")
 
 		for i in sales_invoices:
+			if i.base_total_taxes_and_charges == 0:
+				amt_ex__sr = i.base_total
+			else:
+				if i.base_net_total != i.base_total:
+					amt_ex__sr = i.base_grand_total - (i.base_net_total + i.base_total_taxes_and_charges)
+				else:
+					amt_ex__sr = i.base_grand_total - ((i.base_total_taxes_and_charges / 0.18) + i.base_total_taxes_and_charges)
+			if amt_ex__sr <0:
+				amt_ex__sr =0
 			self.append("efd_z_report_invoices",{
 				"invoice_number" : i.name,
 				"invoice_date" : i.posting_date,
 				"amt_excl_vat" : flt(i.base_net_total,2),
 				"vat" : flt(i.base_total_taxes_and_charges,2),
-				"amt_ex__sr" : 0,
-				"invoice_amount" : flt(i.base_total,2),
+				"amt_ex__sr" : amt_ex__sr,
+				"invoice_amount" : flt(i.base_rounded_total,2),
 				"invoice_currency" : i.currency
 			})
 		return True
