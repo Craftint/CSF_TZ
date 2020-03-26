@@ -42,7 +42,7 @@ class EFDZReport(Document):
 
 		is_pos = "1" if pos_profile else "0"
 
-		condition = "docstatus = 1 and is_pos = " + is_pos + " and (efd_z_report = '' OR efd_z_report is null) and status='Paid' and posting_date <= '" + str(
+		condition = "docstatus = 1 and is_pos = " + is_pos + " and (efd_z_report = '' OR efd_z_report is null) and status !='Return' and posting_date <= '" + str(
 			date) + "' and IF(IF(posting_date = '" + str(date) + "', IF(posting_time < '" + str(
 			time) + "',1,'PostingTime'),'PostingDate') = 1 or IF(posting_date = '" + str(
 			date) + "',IF(posting_time < '" + str(time) + "',1,'PostingTime'),'PostingDate') = 'PostingDate',1,0)"
