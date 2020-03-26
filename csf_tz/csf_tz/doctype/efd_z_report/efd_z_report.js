@@ -1,25 +1,3 @@
-// Copyright (c) 2019, Aakvatech and contributors
-// For license information, please see license.txt
-
-// frappe.ui.form.on('EFD Z Report', {
-// 	get_invoices: function(frm) {
-// 		return frappe.call({
-// 			method: "get_invoices",
-// 			doc: frm.doc,
-// 			callback: function(r, rt) {
-// 				frm.refresh_field("efd_z_report_invoices");
-// 				frm.refresh_fields();
-//
-// 				$(frm.fields_dict.efd_z_report_invoices.wrapper).find("[data-fieldname=invoice_amount]").each(function(i,v){
-// 					if (i !=0){
-// 						$(v).addClass("text-right")
-// 					}
-// 				})
-// 			}
-// 		});
-// 	}
-// });
-
 cur_frm.cscript.get_invoices = function (frm) {
 	cur_frm.clear_table("efd_z_report_invoices")
 	frappe.call({
@@ -58,3 +36,21 @@ frappe.ui.form.on('EFD Z Report Invoice', {
 		
 	}
 })
+
+
+frappe.ui.form.on('EFD Z Report', {
+	net_amount: (frm) => {
+		calculate_total_turnover(frm);
+	},
+	total_vat: (frm) => {
+		calculate_total_turnover(frm);
+	},
+	total_turnover_ex_sr: (frm) => {
+		calculate_total_turnover(frm);
+	},
+})
+
+const calculate_total_turnover = (frm) => {
+	frm.doc.total_turnover = frm.doc.net_amount + frm.doc.total_vat +frm.doc.total_turnover_ex_sr;
+	refresh_field("total_turnover");
+}
