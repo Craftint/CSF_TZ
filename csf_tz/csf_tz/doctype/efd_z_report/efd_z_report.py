@@ -90,7 +90,6 @@ class EFDZReport(Document):
 				invoice_doc = frappe.get_doc("Sales Invoice",invoice.invoice_number)
 				if  invoice_doc.efd_z_report:
 					frappe.throw(_("The Sales Invoice {0} is linked to EFD Z Report {1}".format(invoice.invoice_number,invoice_doc.efd_z_report)))
-					pass
 				else:
 					invoice_doc.efd_z_report = self.name
 					invoice_doc.flags.ignore_permissions=True
