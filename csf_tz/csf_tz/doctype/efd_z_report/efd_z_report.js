@@ -36,23 +36,6 @@ cur_frm.cscript.get_invoices = function (frm) {
             }
 		});
 }
-// cur_frm.cscript.include = function (frm) {
-// 	var total = 0
-// 	console.log("BEEE")
-// 	console.log(cur_frm.doc.efd_z_report_invoices.length)
-// 	for(var x=0;x<cur_frm.doc.efd_z_report_invoices.length;x+=1){
-// 		console.log(cur_frm.doc.efd_z_report_invoices[x].include)
-
-// 		if(cur_frm.doc.efd_z_report_invoices[x].include){
-// 			console.log(cur_frm.doc.efd_z_report_invoices[x].invoice_amount)
-// 			total += cur_frm.doc.efd_z_report_invoices[x].invoice_amount
-// 		}
-// 	}
-// 	console.log(total)
-
-// 	cur_frm.doc.efd_z_report_invoices_amountinclude_is_ticked = total
-// 	cur_frm.refresh_field("efd_z_report_invoices_amountinclude_is_ticked")
-// }
 
 frappe.ui.form.on('EFD Z Report Invoice', {
 	include: (frm) => {
@@ -68,7 +51,7 @@ frappe.ui.form.on('EFD Z Report Invoice', {
 			sum_turnover_ticked += d.invoice_amount;
 			}
 		});
-		frm.set_value("total_excluding_vat_ticked", sum_excluding_vat_ticked);
+		frm.set_value("total_excluding_vat_ticked", sum_excluding_vat_ticked - sum_turnover_exempted_sp_relief_ticked);
 		frm.set_value("total_vat_ticked", sum_vat_ticked);
 		frm.set_value("total_turnover_exempted__sp_relief_ticked", sum_turnover_exempted_sp_relief_ticked);
 		frm.set_value("total_turnover_ticked", sum_turnover_ticked);
