@@ -95,7 +95,8 @@
   {
    "fieldname": "total_turnover",
    "fieldtype": "Currency",
-   "label": "Total Turnover"
+   "label": "Total Turnover",
+   "read_only": 1
   },
   {
    "fieldname": "net_amount",
