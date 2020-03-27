@@ -14,6 +14,7 @@ frappe.ui.form.on("Sales Invoice", {
             }
             else if (frm.doc.is_return == "1") {
                 frm.set_value("naming_series","ACC-CN-.YYYY.-");
+				frm.set_value("select_print_heading","CREDIT NOTE");
             }
         }
         frm.trigger("update_stock");
