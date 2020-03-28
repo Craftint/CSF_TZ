@@ -4,7 +4,7 @@
 from __future__ import unicode_literals
 import frappe, erpnext
 from erpnext import get_company_currency, get_default_company
-from erpnext.accounts.report.utils import get_currency, convert_to_presentation_currency
+from erpnext.accounts.report.utils import get_currency, convert_to_presentation_currency,convert,is_p_or_l_account
 from frappe.utils import getdate, cstr, flt, fmt_money
 from frappe import _, _dict
 from erpnext.accounts.utils import get_account_currency
@@ -144,10 +144,71 @@ def get_gl_entries(filters):
 		),
 		filters, as_dict=1)
 
+	converted_gl_list = []
+
+	company_currency = currency_map['company_currency']
+
+	for entry in gl_entries:
+		docktype = entry['voucher_type']
+		docname = entry['voucher_no']
+		entry_curremcy = entry['account_currency']
+		doc_currency = company_currency
+		
+		if docktype == "Payment Entry":
+			doc = frappe.get_doc(docktype,docname)
+			if doc.payment_type == "Receive":
+				doc_currency = doc.paid_to_account_currency
+				doc_amount = doc.received_amount
+			elif doc.payment_type == "Pay":
+				doc_currency = doc.paid_from_account_currency
+				doc_amount = doc.paid_amount
+			elif doc.payment_type == "Internal Transfer":
+				if entry.get('credit'):
+					doc_currency = doc.paid_from_account_currency
+					doc_amount = doc.paid_amount
+				else:
+					doc_currency = doc.paid_to_account_currency
+					doc_amount = doc.received_amount
+		
+		elif docktype == "Sales Invoice":
+			if entry["party"]:
+				doc = frappe.get_doc(docktype,docname)
+				doc_currency = doc.currency
+				doc_amount = doc.rounded_total
+			
+		
+		elif docktype == "Purchase Invoice":
+			if entry["party"]:
+				doc = frappe.get_doc(docktype,docname)
+				doc_currency = doc.currency
+				doc_amount = doc.rounded_total
+		
+		elif docktype == "Journal Entry":
+			doc_currency = entry_curremcy
+			if entry.get('credit'):
+				doc_amount = entry['credit_in_account_currency']
+			else:
+				doc_amount = entry['debit_in_account_currency']
+
+		if company_currency != doc_currency:
+
+			if entry.get('debit'):
+				entry['debit_foreign'] = doc_amount
+				entry['exchange_rate'] = entry.get('debit') / doc_amount 
+
+			if entry.get('credit'):
+				entry['credit_foreign'] = doc_amount
+				entry['exchange_rate'] = entry.get('credit') / doc_amount 
+			
+			entry['foreign_currency'] = doc_currency
+
+		converted_gl_list.append(entry)
+	
+
 	if filters.get('presentation_currency'):
-		return convert_to_presentation_currency(gl_entries, currency_map)
+		return convert_to_presentation_currency(converted_gl_list, currency_map)
 	else:
-		return gl_entries
+		return converted_gl_list
 
 
 def get_conditions(filters):
@@ -381,6 +442,30 @@ def get_columns(filters):
 		{
 			"label": _("Credit ({0})".format(currency)),
 			"fieldname": "credit",
+			"fieldtype": "Float",
+			"width": 100
+		},
+		{
+			"label": _("Debit Foreign"),
+			"fieldname": "debit_foreign",
+			"fieldtype": "Float",
+			"width": 100
+		},
+		{
+			"label": _("Credit Foreign"),
+			"fieldname": "credit_foreign",
+			"fieldtype": "Float",
+			"width": 100
+		},
+		{
+			"label": _("Foreign Currency"),
+			"fieldname": "foreign_currency",
+			# "fieldtype": "Float",
+			"width": 100
+		},
+		{
+			"label": _("Exchange Rate"),
+			"fieldname": "exchange_rate",
 			"fieldtype": "Float",
 			"width": 100
 		},
