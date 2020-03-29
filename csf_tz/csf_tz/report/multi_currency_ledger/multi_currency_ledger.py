@@ -4,8 +4,8 @@
 from __future__ import unicode_literals
 import frappe, erpnext
 from erpnext import get_company_currency, get_default_company
-from erpnext.accounts.report.utils import get_currency, convert_to_presentation_currency,convert,is_p_or_l_account
-from frappe.utils import getdate, cstr, flt, fmt_money
+from erpnext.accounts.report.utils import get_currency, convert_to_presentation_currency
+from frappe.utils import getdate, cstr, flt
 from frappe import _, _dict
 from erpnext.accounts.utils import get_account_currency
 from erpnext.accounts.report.financial_statements import get_cost_centers_with_children
@@ -153,9 +153,9 @@ def get_gl_entries(filters):
 		docname = entry['voucher_no']
 		entry_curremcy = entry['account_currency']
 		doc_currency = company_currency
-		
+
 		if docktype == "Payment Entry":
-			doc = frappe.get_doc(docktype,docname)
+			doc = frappe.get_doc(docktype, docname)
 			if doc.payment_type == "Receive":
 				doc_currency = doc.paid_to_account_currency
 				doc_amount = doc.received_amount
@@ -169,20 +169,20 @@ def get_gl_entries(filters):
 				else:
 					doc_currency = doc.paid_to_account_currency
 					doc_amount = doc.received_amount
-		
+
 		elif docktype == "Sales Invoice":
 			if entry["party"]:
-				doc = frappe.get_doc(docktype,docname)
+				doc = frappe.get_doc(docktype, docname)
 				doc_currency = doc.currency
 				doc_amount = doc.rounded_total
 			
-		
+
 		elif docktype == "Purchase Invoice":
 			if entry["party"]:
-				doc = frappe.get_doc(docktype,docname)
+				doc = frappe.get_doc(docktype, docname)
 				doc_currency = doc.currency
 				doc_amount = doc.rounded_total
-		
+
 		elif docktype == "Journal Entry":
 			doc_currency = entry_curremcy
 			if entry.get('credit'):
@@ -199,11 +199,11 @@ def get_gl_entries(filters):
 			if entry.get('credit'):
 				entry['credit_foreign'] = doc_amount
 				entry['exchange_rate'] = entry.get('credit') / doc_amount 
-			
+
 			entry['foreign_currency'] = doc_currency
 
 		converted_gl_list.append(entry)
-	
+
 
 	if filters.get('presentation_currency'):
 		return convert_to_presentation_currency(converted_gl_list, currency_map)
@@ -401,12 +401,10 @@ def get_supplier_invoice_details():
 	for d in frappe.db.sql(""" select name, bill_no from `tabPurchase Invoice`
 		where docstatus = 1 and bill_no is not null and bill_no != '' """, as_dict=1):
 		inv_details[d.name] = d.bill_no
-
 	return inv_details
 
 def get_balance(row, balance, debit_field, credit_field):
-	balance += (row.get(debit_field, 0) -  row.get(credit_field, 0))
-
+	balance += (row.get(debit_field, 0) - row.get(credit_field, 0))
 	return balance
 
 def get_columns(filters):
