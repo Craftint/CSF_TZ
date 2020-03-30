@@ -177,7 +177,12 @@ def get_gl_entries(filters):
 				doc_currency = doc.currency
 				doc_amount = doc.rounded_total
 				for item in doc.items:
-					items_list += "{0}, ".format(item.item_name) 
+					items_list += "({0}".format(item.item_name) 
+					if item.service_start_date:
+						items_list += " , {0} ".format(item.service_start_date)
+					if item.service_end_date:
+						items_list += ", {0}".format(item.service_end_date)
+					items_list += ") "
 			
 		elif docktype == "Purchase Invoice":
 			if entry["party"]:
@@ -185,7 +190,12 @@ def get_gl_entries(filters):
 				doc_currency = doc.currency
 				doc_amount = doc.rounded_total
 				for item in doc.items:
-					items_list += "{0}, ".format(item.item_name) 
+					items_list += "({0}".format(item.item_name) 
+					if item.service_start_date:
+						items_list += " , {0} ".format(item.service_start_date)
+					if item.service_end_date:
+						items_list += ", {0}".format(item.service_end_date)
+					items_list += ") "
 
 		elif docktype == "Journal Entry":
 			doc_currency = entry_curremcy
