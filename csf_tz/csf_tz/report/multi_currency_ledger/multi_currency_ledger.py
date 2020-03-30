@@ -153,6 +153,7 @@ def get_gl_entries(filters):
 		docname = entry['voucher_no']
 		entry_curremcy = entry['account_currency']
 		doc_currency = company_currency
+		items_list = ""
 
 		if docktype == "Payment Entry":
 			doc = frappe.get_doc(docktype, docname)
@@ -175,13 +176,16 @@ def get_gl_entries(filters):
 				doc = frappe.get_doc(docktype, docname)
 				doc_currency = doc.currency
 				doc_amount = doc.rounded_total
+				for item in doc.items:
+					items_list += "{0}, ".format(item.item_name) 
 			
-
 		elif docktype == "Purchase Invoice":
 			if entry["party"]:
 				doc = frappe.get_doc(docktype, docname)
 				doc_currency = doc.currency
 				doc_amount = doc.rounded_total
+				for item in doc.items:
+					items_list += "{0}, ".format(item.item_name) 
 
 		elif docktype == "Journal Entry":
 			doc_currency = entry_curremcy
@@ -201,7 +205,9 @@ def get_gl_entries(filters):
 				entry['exchange_rate'] = entry.get('credit') / doc_amount 
 
 			entry['foreign_currency'] = doc_currency
-
+		
+		
+		entry['items'] = str(items_list) if items_list else  ""
 		converted_gl_list.append(entry)
 
 
@@ -536,6 +542,11 @@ def get_columns(filters):
 		{
 			"label": _("Remarks"),
 			"fieldname": "remarks",
+			"width": 400
+		},
+		{
+			"label": _("Items"),
+			"fieldname": "items",
 			"width": 400
 		}
 	])
