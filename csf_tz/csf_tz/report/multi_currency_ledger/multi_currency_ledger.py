@@ -108,7 +108,7 @@ def set_account_currency(filters):
 def get_result(filters, account_details):
 	gl_entries = get_gl_entries(filters)
 
-	data = get_data_with_opening_closing(filters, account_details, gl_entries)
+	data = get_data_with_opening_closing(filters, gl_entries)
 
 	result = get_result_as_list(data, filters)
 
@@ -281,7 +281,7 @@ def get_conditions(filters):
 	return "and {}".format(" and ".join(conditions)) if conditions else ""
 
 
-def get_data_with_opening_closing(filters, account_details, gl_entries):
+def get_data_with_opening_closing(filters, gl_entries):
 	data = []
 
 	gle_map = initialize_gle_map(gl_entries, filters)
