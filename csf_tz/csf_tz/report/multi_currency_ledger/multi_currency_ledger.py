@@ -397,12 +397,12 @@ def get_accountwise_gle(filters, gl_entries, gle_map):
 	return totals, entries
 
 def get_result_as_list(data, filters):
-	balance, balance_in_account_currency = 0, 0
+	balance = 0
 	inv_details = get_supplier_invoice_details()
 
 	for d in data:
 		if not d.get('posting_date'):
-			balance, balance_in_account_currency = 0, 0
+			balance = 0
 
 		balance = get_balance(d, balance, 'debit', 'credit')
 		d['balance'] = balance
