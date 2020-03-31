@@ -37,7 +37,7 @@ def get_columns(stock_ledger_entry):
 	for warehouse in frappe.db.sql("""select distinct sle.warehouse
 		from `tabStock Ledger Entry` sle
 		where sle.actual_qty != 0 and sle.item_code in (%s)""" %
-		(', '.join(['%s']*len(stock_ledger_entry))), tuple(d.item_code for d in stock_ledger_entry), as_dict=1):
+		(', '.join(['%s']*len(stock_ledger_entry))), tuple([d.item_code for d in stock_ledger_entry]), as_dict=1):
 		warehouses[_("Warehouse")].append(warehouse.warehouse)
 
 	columns = columns + [(e + ":Float:120") for e in warehouses[_("Warehouse")]] + \
@@ -76,7 +76,7 @@ def get_sle_warehouse_map(stock_ledger_entry):
 		inner join `tabItem` i on sle.item_code = i.item_code
 		where item_code in (%s)
 		group by i.item_name, i.brand, i.item_group, sle.warehouse""" %
-		(', '.join(['%s']*len(stock_ledger_entry))), tuple(d.item_code for d in stock_ledger_entry), as_dict=1)
+		(', '.join(['%s']*len(stock_ledger_entry))), tuple([d.item_code for d in stock_ledger_entry]), as_dict=1)
 
 	sle_warehouse_map = {}
 	for d in sle_warehouses:
