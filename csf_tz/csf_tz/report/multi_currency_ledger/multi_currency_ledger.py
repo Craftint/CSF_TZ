@@ -37,7 +37,7 @@ def execute(filters=None):
 
 	columns = get_columns(filters)
 
-	res = get_result(filters, account_details)
+	res = get_result(filters)
 
 	return columns, res
 
@@ -105,7 +105,7 @@ def set_account_currency(filters):
 
 	return filters
 
-def get_result(filters, account_details):
+def get_result(filters):
 	gl_entries = get_gl_entries(filters)
 
 	data = get_data_with_opening_closing(filters, gl_entries)
