@@ -121,11 +121,11 @@ doctype_js = {
 # Permissions evaluated in scripted ways
 
 # permission_query_conditions = {
-# 	"Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
+#	"Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
 # }
 #
 # has_permission = {
-# 	"Event": "frappe.desk.doctype.event.event.has_permission",
+#	"Event": "frappe.desk.doctype.event.event.has_permission",
 # }
 
 # Document Events
@@ -133,30 +133,30 @@ doctype_js = {
 # Hook on document methods and events
 
 doc_events = {
- 	"Open Invoice Exchange Rate Revaluation": {
- 		"validate": "csf_tz.custom_api.getInvoiceExchangeRate"
+	"Open Invoice Exchange Rate Revaluation": {
+		"validate": "csf_tz.custom_api.getInvoiceExchangeRate"
 	}
- }
+}
 
 # Scheduled Tasks
 # ---------------
 
 # scheduler_events = {
-# 	"all": [
-# 		"csf_tz.tasks.all"
-# 	],
-# 	"daily": [
-# 		"csf_tz.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"csf_tz.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"csf_tz.tasks.weekly"
-# 	]
-# 	"monthly": [
-# 		"csf_tz.tasks.monthly"
-# 	]
+#	"all": [
+#		"csf_tz.tasks.all"
+#	],
+#	"daily": [
+#		"csf_tz.tasks.daily"
+#	],
+#	"hourly": [
+#		"csf_tz.tasks.hourly"
+#	],
+#	"weekly": [
+#		"csf_tz.tasks.weekly"
+#	]
+#	"monthly": [
+#		"csf_tz.tasks.monthly"
+#	]
 # }
 
 # Testing
@@ -168,6 +168,6 @@ doc_events = {
 # ------------------------------
 #
 # override_whitelisted_methods = {
-# 	"frappe.desk.doctype.event.event.get_events": "csf_tz.event.get_events"
+#	"frappe.desk.doctype.event.event.get_events": "csf_tz.event.get_events"
 # }
 
