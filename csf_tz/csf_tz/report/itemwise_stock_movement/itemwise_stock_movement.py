@@ -191,7 +191,7 @@ def get_sle_conditions(filters):
 
 	return "and {}".format(" and ".join(conditions)) if conditions else ""
 
-def get_opening_balance(filters, columns, date, balance_type, item_code):
+def get_opening_balance(filters, _columns, date, balance_type, item_code):
 	if not (item_code and filters.warehouse and date):
 		return
 

@@ -75,7 +75,7 @@ def execute(filters=None):
 	# frappe.msgprint(str(columns) + " " + str(data))
 	return columns, data
 
-def get_columns(filters):
+def get_columns(_filters):
 	"""return columns"""
 
 	columns = [

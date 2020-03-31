@@ -22,7 +22,7 @@ class OpenInvoiceExchangeRateRevaluation(Document):
 
 
 
-def getLastDocument(self):
+def getLastDocument(_self):
 	doc=frappe.get_all('Open Invoice Exchange Rate Revaluation', filters={}, fields=['name'], limit_page_length = 1)
 	return doc[0].name
 
