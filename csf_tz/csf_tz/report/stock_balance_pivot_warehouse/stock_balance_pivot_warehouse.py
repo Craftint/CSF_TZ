@@ -22,7 +22,7 @@ def execute(filters=None):
 		qty = 0
 		for e in warehouses:
 			row.append(sle_warehouse_map.get(sle.item_code, {}).get(e))
-		row += [total_qty]
+		#row += [total_qty]
 
 		data.append(row)
 
