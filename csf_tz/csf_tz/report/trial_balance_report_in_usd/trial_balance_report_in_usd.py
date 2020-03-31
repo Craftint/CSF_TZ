@@ -146,7 +146,7 @@ def get_rootwise_opening_balances(filters, report_type):
 
 	return opening
 
-def calculate_values(accounts, gl_entries_by_account, opening_balances, filters, company_currency):
+def calculate_values(accounts, gl_entries_by_account, opening_balances, _filters, company_currency):
 	init = {
 		"opening_debit": 0.0,
 		"opening_credit": 0.0,
