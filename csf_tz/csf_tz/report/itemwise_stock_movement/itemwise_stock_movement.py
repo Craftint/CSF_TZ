@@ -88,7 +88,7 @@ def get_opening_balance_entries(filters, items):
 	item_conditions_sql = ''
 	if items:
 		item_conditions_sql = 'and sle.item_code in ({})'\
-			.format(', '.join(['"' + frappe.db.escape(i) + '"' for i in items)])
+			.format(', '.join(['"' + frappe.db.escape(i) + '"' for i in items]))
 
 	return frappe.db.sql("""SELECT	STR_TO_DATE(%(from_date)s, '%%Y-%%m-%%d') as posting_date, 
 									". Opening Balance" as "Particulars",
