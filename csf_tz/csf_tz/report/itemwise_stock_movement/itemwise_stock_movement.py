@@ -4,8 +4,6 @@
 from __future__ import unicode_literals
 import frappe
 from frappe import _
-from erpnext.stock.utils import update_included_uom_in_report
-import numpy as np
 import pandas as pd
 
 def execute(filters=None):
