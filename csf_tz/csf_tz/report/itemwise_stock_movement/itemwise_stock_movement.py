@@ -124,7 +124,7 @@ def get_items(filters):
 	items = []
 	if conditions:
 		items = frappe.db.sql_list("""select name from `tabItem` item where {}"""
-			.format(" and ".join(conditions)), filters)
+			.format(" and ".join([conditions])), filters)
 	return items
 
 def get_sle_conditions(filters):
@@ -134,7 +134,7 @@ def get_sle_conditions(filters):
 		if warehouse_condition:
 			conditions.append(warehouse_condition)
 
-	return "and {}".format(" and ".join(conditions)) if conditions else ""
+	return "and {}".format(" and ".join([conditions])) if conditions else ""
 
 def get_opening_balance(filters, _columns, date, balance_type, item_code):
 	if not (item_code and filters.warehouse and date):
