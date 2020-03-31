@@ -75,7 +75,7 @@ def get_stock_ledger_entries(filters, items):
 	item_conditions_sql = ''
 	if items:
 		item_conditions_sql = 'and sle.item_code in ({})'\
-			.format(', '.join(['"' + frappe.db.escape(i) + '"' for i in items]))
+			.format(', '.join('"' + frappe.db.escape(i) + '"' for i in items))
 
 	return frappe.db.sql("""SELECT	sle.posting_date, 
 									CASE sle.voucher_type 
@@ -111,7 +111,7 @@ def get_opening_balance_entries(filters, items):
 	item_conditions_sql = ''
 	if items:
 		item_conditions_sql = 'and sle.item_code in ({})'\
-			.format(', '.join(['"' + frappe.db.escape(i) + '"' for i in items]))
+			.format(', '.join('"' + frappe.db.escape(i) + '"' for i in items))
 
 	return frappe.db.sql("""SELECT	STR_TO_DATE(%(from_date)s, '%%Y-%%m-%%d') as posting_date, 
 									". Opening Balance" as "Particulars",
@@ -164,7 +164,7 @@ def get_item_details(items, sl_entries, include_uom):
 		cf_join = "left join `tabUOM Conversion Detail` ucd on ucd.parent=item.name and ucd.uom='%s'" \
 			% frappe.db.escape(include_uom)
 
-	item_codes = ', '.join(['"' + frappe.db.escape(i, percent=False) + '"' for i in items])
+	item_codes = ', '.join('"' + frappe.db.escape(i, percent=False) + '"' for i in items)
 	res = frappe.db.sql("""
 		select
 			item.name, item.item_name, item.description, item.item_group, item.brand, item.stock_uom {cf_field}
