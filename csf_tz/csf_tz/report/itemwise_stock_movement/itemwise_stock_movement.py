@@ -8,7 +8,6 @@ import pandas as pd
 
 def execute(filters=None):
 	# frappe.msgprint(str(filters))
-	include_uom = filters.get("include_uom")
 	columns = get_columns()
 	data = []
 	items = get_items(filters)
@@ -18,12 +17,8 @@ def execute(filters=None):
 	# frappe.msgprint("sle entries are: " + str(sl_entries))
 	# Get rest of the stock ledgers
 	sl_entries += get_stock_ledger_entries(filters, items)
-	# item_details = get_item_details(items, sl_entries, include_uom)
-	# opening_row = get_item_balance(filters, columns, filters.from_date, "Opening", "Halotel 500")
-	# closing_row = get_item_balance(filters, columns, filters.to_date, "Closing", "Halotel 500")
-	# frappe.msgprint("sle entries are: " + str(sl_entries))
-	# below is to try overcome issue of not getting column names in pivot_table 
 
+	# below is to try overcome issue of not getting column names in pivot_table 
 	if sl_entries:
 		colnames = [key for key in sl_entries[0].keys()]
 		# frappe.msgprint("colnames are: " + str(colnames))
@@ -42,24 +37,6 @@ def execute(filters=None):
 		# frappe.msgprint("Data is: " + str(data))
 
 		columns += pvt.columns.values.tolist()
-
-		# conversion_factors = []
-		# if opening_row:
-		# 	data.append(opening_row)
-
-		# for sle in sl_entries:
-			# item_detail = item_details[sle.item_code]
-
-			# sle.update(item_detail)
-			# data.append(sle)
-
-			# if include_uom:
-				# conversion_factors.append(item_detail.conversion_factor)
-
-		# update_included_uom_in_report(columns, data, include_uom, conversion_factors)
-
-		# if closing_row:
-		# 	data.append(closing_row)
 
 	return columns, data
 
@@ -149,36 +126,6 @@ def get_items(filters):
 		items = frappe.db.sql_list("""select name from `tabItem` item where {}"""
 			.format(" and ".join(conditions)), filters)
 	return items
-
-def get_item_details(items, sl_entries, include_uom):
-	item_details = {}
-	if not items:
-		items = list(set([d.item_code for d in sl_entries]))
-
-	if not items:
-		return item_details
-
-	cf_field = cf_join = ""
-	if include_uom:
-		cf_field = ", ucd.conversion_factor"
-		cf_join = "left join `tabUOM Conversion Detail` ucd on ucd.parent=item.name and ucd.uom='%s'" \
-			% frappe.db.escape(include_uom)
-
-	item_codes = ', '.join('"' + frappe.db.escape(i, percent=False) + '"' for i in items)
-	res = frappe.db.sql("""
-		select
-			item.name, item.item_name, item.description, item.item_group, item.brand, item.stock_uom {cf_field}
-		from
-			`tabItem` item
-			{cf_join}
-		where
-			item.name in ({item_codes})
-	""".format(cf_field=cf_field, cf_join=cf_join, item_codes=item_codes), as_dict=1)
-
-	for item in res:
-		item_details.setdefault(item.name, item)
-
-	return item_details
 
 def get_sle_conditions(filters):
 	conditions = []
