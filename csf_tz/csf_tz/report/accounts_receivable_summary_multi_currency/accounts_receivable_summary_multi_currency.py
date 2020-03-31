@@ -227,7 +227,8 @@ class AccountsReceivableSummary(ReceivablePayableReport):
 
 		return self.make_data_dict(cols, voucherwise_data)
 
-	def make_data_dict(self, cols, data):
+	@staticmethod
+	def make_data_dict(cols, data):
 		data_dict = []
 		for d in data:
 			data_dict.append(frappe._dict(zip(cols, d)))
