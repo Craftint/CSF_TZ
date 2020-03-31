@@ -102,10 +102,10 @@ def makeReverseJE(date,name):
 		je_json["account"] = entry.account
 		je_json["credit_in_account_currency"] = entry.debit_in_account_currency
 		je_json["debit_in_account_currency"] = entry.credit_in_account_currency
-		je_json["party_type"] = entry.party_type if not entry.party_type == None else ''
-		je_json["party"] = entry.party if not entry.party == None else ''
-		je_json["reference_type"] = entry.reference_type if not entry.reference_type == None else ''
-		je_json["reference_name"] = entry.reference_name if not entry.reference_name == None else ''
+		je_json["party_type"] = entry.party_type if not entry.party_type is None else ''
+		je_json["party"] = entry.party if not entry.party is None else ''
+		je_json["reference_type"] = entry.reference_type if not entry.reference_type is None else ''
+		je_json["reference_name"] = entry.reference_name if not entry.reference_name is None else ''
 		je_dict.append(je_json)
 	return makeJournalEntry(date,je_dict)
 
