@@ -19,7 +19,6 @@ def execute(filters=None):
 	for sle in stock_ledger_entry:
 		row = [sle.item_code, sle.item_name, sle.brand, sle.item_group]
 
-		qty = 0
 		for e in warehouses:
 			row.append(sle_warehouse_map.get(sle.item_code, {}).get(e))
 		#row += [total_qty]
