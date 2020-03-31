@@ -2,7 +2,7 @@
 # License: GNU General Public License v3. See license.txt
 
 from __future__ import unicode_literals
-import frappe, erpnext
+import frappe
 from frappe import _
 from frappe.utils import flt, getdate, formatdate, cstr
 from erpnext.accounts.report.financial_statements \

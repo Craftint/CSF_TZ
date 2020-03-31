@@ -6,7 +6,6 @@ from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
 from frappe.utils import flt
-from erpnext.setup.utils import get_exchange_rate
 
 class OpenInvoiceExchangeRateRevaluation(Document):
 	def on_submit(self):

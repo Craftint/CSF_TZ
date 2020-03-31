@@ -7,7 +7,6 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from datetime import *
-from frappe.utils.background_jobs import enqueue
 from frappe.utils import flt
 class EFDZReport(Document):
 	def validate(self):
