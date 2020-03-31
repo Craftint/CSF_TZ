@@ -275,7 +275,8 @@ class ReceivablePayableReport(object):
 		return row
 
 
-	def allocate_based_on_fifo(self, total_amount, row_amount):
+	@staticmethod
+	def allocate_based_on_fifo(total_amount, row_amount):
 		allocated_amount = 0
 		if row_amount <= total_amount:
 			allocated_amount = row_amount
@@ -386,7 +387,8 @@ class ReceivablePayableReport(object):
 		# returns a generator
 		return self.get_gl_entries(party_type, report_date)
 
-	def is_receivable_or_payable(self, gle, dr_or_cr, future_vouchers, return_entries):
+	@staticmethod
+	def is_receivable_or_payable(gle, dr_or_cr, future_vouchers, return_entries):
 		return (
 			# advance
 			(not gle.against_voucher) or
@@ -404,7 +406,8 @@ class ReceivablePayableReport(object):
 			((gle.against_voucher_type, gle.against_voucher) in future_vouchers)
 		)
 
-	def get_return_entries(self, party_type):
+	@staticmethod
+	def get_return_entries(party_type):
 		doctype = "Sales Invoice" if party_type=="Customer" else "Purchase Invoice"
 		return_entries = frappe._dict(frappe.get_all(doctype,
 			filters={"is_return": 1, "docstatus": 1}, fields=["name", "return_against"], as_list=1))
