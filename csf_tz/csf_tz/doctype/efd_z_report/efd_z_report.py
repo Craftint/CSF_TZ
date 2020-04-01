@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from datetime import strptime
+from datetime import datetime
 from frappe.utils import flt
 class EFDZReport(Document):
 	def validate(self):
@@ -34,8 +34,8 @@ class EFDZReport(Document):
 	
 	def get_sales_invoice(self):
 
-		date = strptime(str(self.z_report_date_time), "%Y-%m-%d %H:%M:%S").date()
-		time = strptime(str(self.z_report_date_time), "%Y-%m-%d %H:%M:%S").time()
+		date = datetime.strptime(str(self.z_report_date_time), "%Y-%m-%d %H:%M:%S").date()
+		time = datetime.strptime(str(self.z_report_date_time), "%Y-%m-%d %H:%M:%S").time()
 
 		pos_profile = frappe.get_value("Electronic Fiscal Device", self.electronic_fiscal_device, "pos_profile")
 
