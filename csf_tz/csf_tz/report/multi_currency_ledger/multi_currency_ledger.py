@@ -183,14 +183,14 @@ def get_gl_entries(filters):
 				doc = frappe.db.sql(
 				"""
 				select
-					name, currency, rounded_total
+					name, currency, grand_total ,rounded_total
 				from `tabSales Invoice`
 				where name=%(docname)s
 				limit 1
 				""",{'docname':entry['voucher_no']},as_dict=1)
 
 				doc_currency = doc[0].currency
-				doc_amount = doc[0].rounded_total
+				doc_amount = doc[0].rounded_total or doc[0].grand_total
 				
 				items = frappe.db.sql(
 				"""
@@ -213,14 +213,14 @@ def get_gl_entries(filters):
 				doc = frappe.db.sql(
 				"""
 				select
-					name, currency, rounded_total
+					name, currency, grand_total, rounded_total
 				from `tabPurchase Invoice`
 				where name=%(docname)s
 				limit 1
 				""",{'docname':entry['voucher_no']},as_dict=1)
 
 				doc_currency = doc[0].currency
-				doc_amount = doc[0].rounded_total
+				doc_amount = doc[0].rounded_total or doc[0].grand_total
 				
 				items = frappe.db.sql(
 				"""
@@ -249,11 +249,11 @@ def get_gl_entries(filters):
 
 			if entry.get('debit'):
 				entry['debit_foreign'] = doc_amount
-				entry['exchange_rate'] = entry.get('debit') / doc_amount 
+				entry['exchange_rate'] = entry.get('debit') / doc_amount
 
 			if entry.get('credit'):
 				entry['credit_foreign'] = doc_amount
-				entry['exchange_rate'] = entry.get('credit') / doc_amount 
+				entry['exchange_rate'] = entry.get('credit') / doc_amount
 
 			entry['foreign_currency'] = doc_currency
 		
