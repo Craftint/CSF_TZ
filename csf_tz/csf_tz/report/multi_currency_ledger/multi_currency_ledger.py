@@ -156,27 +156,51 @@ def get_gl_entries(filters):
 		items_list = ""
 
 		if docktype == "Payment Entry":
-			doc = frappe.get_doc(docktype, docname)
-			if doc.payment_type == "Receive":
-				doc_currency = doc.paid_to_account_currency
-				doc_amount = doc.received_amount
-			elif doc.payment_type == "Pay":
-				doc_currency = doc.paid_from_account_currency
-				doc_amount = doc.paid_amount
-			elif doc.payment_type == "Internal Transfer":
+			doc = frappe.db.sql(
+				"""
+				select
+					payment_type, paid_to_account_currency, paid_from_account_currency, received_amount, paid_amount 
+				from `tabPayment Entry`
+				where name=%(docname)s
+				limit 1
+				""",{'docname':docname},as_dict=1)
+			if doc[0].payment_type == "Receive":
+				doc_currency = doc[0].paid_to_account_currency
+				doc_amount = doc[0].received_amount
+			elif doc[0].payment_type == "Pay":
+				doc_currency = doc[0].paid_from_account_currency
+				doc_amount = doc[0].paid_amount
+			elif doc[0].payment_type == "Internal Transfer":
 				if entry.get('credit'):
-					doc_currency = doc.paid_from_account_currency
-					doc_amount = doc.paid_amount
+					doc_currency = doc[0].paid_from_account_currency
+					doc_amount = doc[0].paid_amount
 				else:
-					doc_currency = doc.paid_to_account_currency
-					doc_amount = doc.received_amount
+					doc_currency = doc[0].paid_to_account_currency
+					doc_amount = doc[0].received_amount
 
 		elif docktype == "Sales Invoice":
 			if entry["party"]:
-				doc = frappe.get_doc(docktype, docname)
-				doc_currency = doc.currency
-				doc_amount = doc.rounded_total
-				for item in doc.items:
+				doc = frappe.db.sql(
+				"""
+				select
+					name, currency, rounded_total
+				from `tabSales Invoice`
+				where name=%(docname)s
+				limit 1
+				""",{'docname':entry['voucher_no']},as_dict=1)
+
+				doc_currency = doc[0].currency
+				doc_amount = doc[0].rounded_total
+				
+				items = frappe.db.sql(
+				"""
+				select
+					item_name, service_start_date, service_end_date
+				from `tabSales Invoice Item`
+				where parent=%(docname)s
+				""",{'docname':entry['voucher_no']},as_dict=1)
+		
+				for item in items:
 					items_list += "({0}".format(item.item_name) 
 					if item.service_start_date:
 						items_list += " , {0} ".format(item.service_start_date)
@@ -186,10 +210,27 @@ def get_gl_entries(filters):
 			
 		elif docktype == "Purchase Invoice":
 			if entry["party"]:
-				doc = frappe.get_doc(docktype, docname)
-				doc_currency = doc.currency
-				doc_amount = doc.rounded_total
-				for item in doc.items:
+				doc = frappe.db.sql(
+				"""
+				select
+					name, currency, rounded_total
+				from `tabPurchase Invoice`
+				where name=%(docname)s
+				limit 1
+				""",{'docname':entry['voucher_no']},as_dict=1)
+
+				doc_currency = doc[0].currency
+				doc_amount = doc[0].rounded_total
+				
+				items = frappe.db.sql(
+				"""
+				select
+					item_name, service_start_date, service_end_date
+				from `tabPurchase Invoice Item`
+				where parent=%(docname)s
+				""",{'docname':entry['voucher_no']},as_dict=1)
+		
+				for item in items:
 					items_list += "({0}".format(item.item_name) 
 					if item.service_start_date:
 						items_list += " , {0} ".format(item.service_start_date)
