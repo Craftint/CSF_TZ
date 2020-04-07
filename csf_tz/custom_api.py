@@ -68,5 +68,43 @@ def addChildItem(name,inv_no,invoice_type,invoice_exchange_rate,invoice_currency
 	)).insert()
 
 
+@frappe.whitelist()
+def print_out(msg, alert= False, add_traceback=False, to_error_log=False ):
+	
+	def out(message):
+		if message:
+			frappe.errprint(str(message))
+			if to_error_log:
+				frappe.log_error(str(message))
+			if add_traceback:
+				if len(frappe.utils.get_traceback()) > 20:
+					frappe.errprint(frappe.utils.get_traceback())
+			if alert:
+				frappe.msgprint(str(message))
 
+	if not msg:
+		out("[]")
+		return
+	
+	frappe.errprint(str(type(msg)))
 
+	if isinstance(msg, list):
+		for item in msg:
+			if isinstance(item, object):
+				item = str(item.__dict__)
+				out(item)
+			else:
+				item = str(item)
+				out(item)
+		msg = None
+	
+	elif isinstance(msg, str):
+		msg = str(msg)
+
+	elif isinstance(msg, object):
+		msg = str(msg.__dict__)
+	
+	else:
+		msg = str(msg)
+	
+	out(msg)
