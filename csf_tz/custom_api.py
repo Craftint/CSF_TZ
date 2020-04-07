@@ -90,8 +90,12 @@ def print_out(msg, alert= False, add_traceback=False, to_error_log=False ):
 
 	if isinstance(msg, list):
 		for item in msg:
-			if isinstance(item, object):
-				item = str(item.__dict__)
+			if isinstance(item, list):
+				out(item)
+			elif isinstance(item, str):
+				out(item)
+			elif isinstance(item, object):
+				item = frappe._dict(item)
 				out(item)
 			else:
 				item = str(item)
@@ -102,7 +106,7 @@ def print_out(msg, alert= False, add_traceback=False, to_error_log=False ):
 		msg = str(msg)
 
 	elif isinstance(msg, object):
-		msg = str(msg.__dict__)
+		msg = frappe._dict(msg)
 	
 	else:
 		msg = str(msg)
