@@ -106,7 +106,7 @@ def print_out(msg, alert= False, add_traceback=False, to_error_log=False ):
 		msg = str(msg)
 
 	elif isinstance(msg, object):
-		msg = frappe._dict(msg)
+		msg = str(msg.__dict__)
 	
 	else:
 		msg = str(msg)
