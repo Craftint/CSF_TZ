@@ -69,53 +69,45 @@ def addChildItem(name,inv_no,invoice_type,invoice_exchange_rate,invoice_currency
 
 
 @frappe.whitelist()
-def print_out(msg, alert= False, add_traceback=False, to_error_log=False ):
+def print_out(message, alert= False, add_traceback=False, to_error_log=False ):
+	if not message:
+		return	
 	
-	def out(message):
+	def out(mssg):
 		if message:
-			frappe.errprint(str(message))
+			frappe.errprint(str(mssg))
 			if to_error_log:
-				frappe.log_error(str(message))
+				frappe.log_error(str(mssg))
 			if add_traceback:
 				if len(frappe.utils.get_traceback()) > 20:
 					frappe.errprint(frappe.utils.get_traceback())
 			if alert:
-				frappe.msgprint(str(message))
+				frappe.msgprint(str(mssg))
 
-	if not msg:
-		out("[]")
-		return
-	
-	frappe.errprint(str(type(msg)))
+	def check_msg(msg):
+		if isinstance(msg, str):
+			msg = str(msg)
 
-	if isinstance(msg, list):
-		for item in msg:
-			if isinstance(item, list):
-				out(item)
-			elif isinstance(item, str):
-				out(item)
-			elif isinstance(item, dict):
-				frappe.errprint(str(type(item)))
-				item = frappe._dict(item)
-				out(item)
-			elif isinstance(item, object):
-				item = str(item.__dict__)
-				out(item)
-			else:
-				item = str(item)
-				out(item)
-		msg = None
-	
-	elif isinstance(msg, str):
-		msg = str(msg)
+		elif isinstance(msg, int):
+			msg = str(msg)
 
-	elif isinstance(msg, dict):
-		msg = frappe._dict(msg)
+		elif isinstance(msg, float):
+			msg = str(msg)
 
-	elif isinstance(msg, object):
-		msg = str(msg.__dict__)
-	
-	else:
-		msg = str(msg)
-	
-	out(msg)
+		elif isinstance(msg, dict):
+			msg = frappe._dict(msg)
+			
+		elif isinstance(msg, list):
+			for item in msg:
+				check_msg(item)
+			msg = ""
+
+		elif isinstance(msg, object):
+			msg = str(msg.__dict__)
+		
+		else:
+			msg = str(msg)
+		out(msg)
+
+
+	check_msg(message)
