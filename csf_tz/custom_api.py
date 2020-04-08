@@ -94,8 +94,12 @@ def print_out(msg, alert= False, add_traceback=False, to_error_log=False ):
 				out(item)
 			elif isinstance(item, str):
 				out(item)
-			elif isinstance(item, object):
+			elif isinstance(item, dict):
+				frappe.errprint(str(type(item)))
 				item = frappe._dict(item)
+				out(item)
+			elif isinstance(item, object):
+				item = str(item.__dict__)
 				out(item)
 			else:
 				item = str(item)
@@ -104,6 +108,9 @@ def print_out(msg, alert= False, add_traceback=False, to_error_log=False ):
 	
 	elif isinstance(msg, str):
 		msg = str(msg)
+
+	elif isinstance(msg, dict):
+		msg = frappe._dict(msg)
 
 	elif isinstance(msg, object):
 		msg = str(msg.__dict__)
