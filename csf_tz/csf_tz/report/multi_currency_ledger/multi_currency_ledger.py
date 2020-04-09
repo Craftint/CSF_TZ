@@ -10,7 +10,7 @@ from frappe import _, _dict
 from erpnext.accounts.utils import get_account_currency
 from erpnext.accounts.report.financial_statements import get_cost_centers_with_children
 from six import iteritems
-from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions
+from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions, get_dimension_with_children
 from collections import OrderedDict
 
 def execute(filters=None):
@@ -156,27 +156,51 @@ def get_gl_entries(filters):
 		items_list = ""
 
 		if docktype == "Payment Entry":
-			doc = frappe.get_doc(docktype, docname)
-			if doc.payment_type == "Receive":
-				doc_currency = doc.paid_to_account_currency
-				doc_amount = doc.received_amount
-			elif doc.payment_type == "Pay":
-				doc_currency = doc.paid_from_account_currency
-				doc_amount = doc.paid_amount
-			elif doc.payment_type == "Internal Transfer":
+			doc = frappe.db.sql(
+				"""
+				select
+					payment_type, paid_to_account_currency, paid_from_account_currency, received_amount, paid_amount 
+				from `tabPayment Entry`
+				where name=%(docname)s
+				limit 1
+				""",{'docname':docname},as_dict=1)
+			if doc[0].payment_type == "Receive":
+				doc_currency = doc[0].paid_to_account_currency
+				doc_amount = doc[0].received_amount
+			elif doc[0].payment_type == "Pay":
+				doc_currency = doc[0].paid_from_account_currency
+				doc_amount = doc[0].paid_amount
+			elif doc[0].payment_type == "Internal Transfer":
 				if entry.get('credit'):
-					doc_currency = doc.paid_from_account_currency
-					doc_amount = doc.paid_amount
+					doc_currency = doc[0].paid_from_account_currency
+					doc_amount = doc[0].paid_amount
 				else:
-					doc_currency = doc.paid_to_account_currency
-					doc_amount = doc.received_amount
+					doc_currency = doc[0].paid_to_account_currency
+					doc_amount = doc[0].received_amount
 
 		elif docktype == "Sales Invoice":
 			if entry["party"]:
-				doc = frappe.get_doc(docktype, docname)
-				doc_currency = doc.currency
-				doc_amount = doc.rounded_total
-				for item in doc.items:
+				doc = frappe.db.sql(
+				"""
+				select
+					name, currency, grand_total ,rounded_total
+				from `tabSales Invoice`
+				where name=%(docname)s
+				limit 1
+				""",{'docname':entry['voucher_no']},as_dict=1)
+
+				doc_currency = doc[0].currency
+				doc_amount = doc[0].rounded_total or doc[0].grand_total
+				
+				items = frappe.db.sql(
+				"""
+				select
+					item_name, service_start_date, service_end_date
+				from `tabSales Invoice Item`
+				where parent=%(docname)s
+				""",{'docname':entry['voucher_no']},as_dict=1)
+		
+				for item in items:
 					items_list += "({0}".format(item.item_name) 
 					if item.service_start_date:
 						items_list += " , {0} ".format(item.service_start_date)
@@ -186,10 +210,27 @@ def get_gl_entries(filters):
 			
 		elif docktype == "Purchase Invoice":
 			if entry["party"]:
-				doc = frappe.get_doc(docktype, docname)
-				doc_currency = doc.currency
-				doc_amount = doc.rounded_total
-				for item in doc.items:
+				doc = frappe.db.sql(
+				"""
+				select
+					name, currency, grand_total, rounded_total
+				from `tabPurchase Invoice`
+				where name=%(docname)s
+				limit 1
+				""",{'docname':entry['voucher_no']},as_dict=1)
+
+				doc_currency = doc[0].currency
+				doc_amount = doc[0].rounded_total or doc[0].grand_total
+				
+				items = frappe.db.sql(
+				"""
+				select
+					item_name, service_start_date, service_end_date
+				from `tabPurchase Invoice Item`
+				where parent=%(docname)s
+				""",{'docname':entry['voucher_no']},as_dict=1)
+		
+				for item in items:
 					items_list += "({0}".format(item.item_name) 
 					if item.service_start_date:
 						items_list += " , {0} ".format(item.service_start_date)
@@ -208,11 +249,11 @@ def get_gl_entries(filters):
 
 			if entry.get('debit'):
 				entry['debit_foreign'] = doc_amount
-				entry['exchange_rate'] = entry.get('debit') / doc_amount 
+				entry['exchange_rate'] = entry.get('debit') / doc_amount
 
 			if entry.get('credit'):
 				entry['credit_foreign'] = doc_amount
-				entry['exchange_rate'] = entry.get('credit') / doc_amount 
+				entry['exchange_rate'] = entry.get('credit') / doc_amount
 
 			entry['foreign_currency'] = doc_currency
 		
@@ -271,12 +312,15 @@ def get_conditions(filters):
 	if match_conditions:
 		conditions.append(match_conditions)
 
-	accounting_dimensions = get_accounting_dimensions()
+	accounting_dimensions = get_accounting_dimensions(as_list=False)
 
 	if accounting_dimensions:
 		for dimension in accounting_dimensions:
-			if filters.get(dimension):
-				conditions.append("{0} in (%({0})s)".format(dimension))
+			if filters.get(dimension.fieldname):
+				if frappe.get_cached_value('DocType', dimension.document_type, 'is_tree'):
+					filters[dimension.fieldname] = get_dimension_with_children(dimension.document_type,
+						filters.get(dimension.fieldname))
+				conditions.append("{0} in %({0})s".format(dimension.fieldname))
 
 	return "and {}".format(" and ".join(conditions)) if conditions else ""
 
