@@ -12,6 +12,7 @@ from erpnext.accounts.report.financial_statements import get_cost_centers_with_c
 from six import iteritems
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions, get_dimension_with_children
 from collections import OrderedDict
+from csf_tz.custom_api import print_out
 
 def execute(filters=None):
 	if not filters:
@@ -261,6 +262,7 @@ def get_gl_entries(filters):
 		entry['items'] = str(items_list) if items_list else  ""
 		converted_gl_list.append(entry)
 
+	print_out(converted_gl_list)
 
 	if filters.get('presentation_currency'):
 		return convert_to_presentation_currency(converted_gl_list, currency_map)
