@@ -703,7 +703,7 @@
   "doctype": "Custom Field",
   "dt": "Sales Invoice",
   "fetch_from": "pos_profile.electronic_fiscal_device",
-  "fetch_if_empty": 0,
+  "fetch_if_empty": 1,
   "fieldname": "electronic_fiscal_device",
   "fieldtype": "Link",
   "hidden": 0,
