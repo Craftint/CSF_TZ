@@ -1,9 +1,5 @@
 [
  {
-  "_assign": null,
-  "_comments": null,
-  "_liked_by": null,
-  "_user_tags": null,
   "default_value": null,
   "doc_type": "Payment Entry",
   "docstatus": 0,
@@ -20,10 +16,6 @@
   "value": "0"
  },
  {
-  "_assign": null,
-  "_comments": null,
-  "_liked_by": null,
-  "_user_tags": null,
   "default_value": null,
   "doc_type": "Payment Entry",
   "docstatus": 0,
@@ -40,10 +32,6 @@
   "value": "0"
  },
  {
-  "_assign": null,
-  "_comments": null,
-  "_liked_by": null,
-  "_user_tags": null,
   "default_value": null,
   "doc_type": "Purchase Invoice",
   "docstatus": 0,
@@ -60,10 +48,6 @@
   "value": "AV Purchase Invoice"
  },
  {
-  "_assign": null,
-  "_comments": null,
-  "_liked_by": null,
-  "_user_tags": null,
   "default_value": null,
   "doc_type": "Sales Invoice",
   "docstatus": 0,
@@ -80,10 +64,6 @@
   "value": "1"
  },
  {
-  "_assign": null,
-  "_comments": null,
-  "_liked_by": null,
-  "_user_tags": null,
   "default_value": null,
   "doc_type": "Sales Invoice",
   "docstatus": 0,
@@ -100,10 +80,6 @@
   "value": "1"
  },
  {
-  "_assign": null,
-  "_comments": null,
-  "_liked_by": null,
-  "_user_tags": null,
   "default_value": null,
   "doc_type": "Sales Invoice",
   "docstatus": 0,
@@ -120,10 +96,6 @@
   "value": "1"
  },
  {
-  "_assign": null,
-  "_comments": null,
-  "_liked_by": null,
-  "_user_tags": null,
   "default_value": null,
   "doc_type": "Customer",
   "docstatus": 0,
@@ -140,10 +112,6 @@
   "value": "TIN"
  },
  {
-  "_assign": null,
-  "_comments": null,
-  "_liked_by": null,
-  "_user_tags": null,
   "default_value": null,
   "doc_type": "Sales Invoice",
   "docstatus": 0,
@@ -160,10 +128,6 @@
   "value": "AV Tax Invoice"
  },
  {
-  "_assign": null,
-  "_comments": null,
-  "_liked_by": null,
-  "_user_tags": null,
   "default_value": null,
   "doc_type": "Bank Reconciliation Detail",
   "docstatus": 0,
@@ -180,10 +144,6 @@
   "value": "1"
  },
  {
-  "_assign": null,
-  "_comments": null,
-  "_liked_by": null,
-  "_user_tags": null,
   "default_value": null,
   "doc_type": "Bank Reconciliation Detail",
   "docstatus": 0,
@@ -200,10 +160,6 @@
   "value": "1"
  },
  {
-  "_assign": null,
-  "_comments": null,
-  "_liked_by": null,
-  "_user_tags": null,
   "default_value": null,
   "doc_type": "Bank Reconciliation Detail",
   "docstatus": 0,
@@ -220,10 +176,6 @@
   "value": "1"
  },
  {
-  "_assign": null,
-  "_comments": null,
-  "_liked_by": null,
-  "_user_tags": null,
   "default_value": null,
   "doc_type": "Payment Entry Reference",
   "docstatus": 0,
@@ -240,10 +192,6 @@
   "value": "0"
  },
  {
-  "_assign": null,
-  "_comments": null,
-  "_liked_by": null,
-  "_user_tags": null,
   "default_value": null,
   "doc_type": "Payment Entry Reference",
   "docstatus": 0,
@@ -260,10 +208,6 @@
   "value": "0"
  },
  {
-  "_assign": null,
-  "_comments": null,
-  "_liked_by": null,
-  "_user_tags": null,
   "default_value": null,
   "doc_type": "Payment Entry Reference",
   "docstatus": 0,
@@ -280,10 +224,6 @@
   "value": "1"
  },
  {
-  "_assign": null,
-  "_comments": null,
-  "_liked_by": null,
-  "_user_tags": null,
   "default_value": null,
   "doc_type": "Payment Entry Reference",
   "docstatus": 0,
@@ -300,10 +240,6 @@
   "value": "23"
  },
  {
-  "_assign": null,
-  "_comments": null,
-  "_liked_by": null,
-  "_user_tags": null,
   "default_value": null,
   "doc_type": "Payment Reconciliation Payment",
   "docstatus": 0,
@@ -320,10 +256,6 @@
   "value": "1"
  },
  {
-  "_assign": null,
-  "_comments": null,
-  "_liked_by": null,
-  "_user_tags": null,
   "default_value": null,
   "doc_type": "Payment Entry Reference",
   "docstatus": 0,
@@ -340,10 +272,6 @@
   "value": "3"
  },
  {
-  "_assign": null,
-  "_comments": null,
-  "_liked_by": null,
-  "_user_tags": null,
   "default_value": null,
   "doc_type": "Payment Reconciliation Payment",
   "docstatus": 0,
