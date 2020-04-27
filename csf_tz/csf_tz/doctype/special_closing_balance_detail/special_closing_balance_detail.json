@@ -7,7 +7,8 @@
  "field_order": [
   "item",
   "uom",
-  "quantity"
+  "quantity",
+  "item_balance"
  ],
  "fields": [
   {
@@ -15,7 +16,8 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Item",
-   "options": "Item"
+   "options": "Item",
+   "reqd": 1
   },
   {
    "fetch_from": "item.stock_uom",
@@ -24,17 +26,25 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "UOM",
-   "options": "UOM"
+   "options": "UOM",
+   "reqd": 1
   },
   {
    "fieldname": "quantity",
    "fieldtype": "Float",
    "in_list_view": 1,
-   "label": "Quantity"
+   "label": "Quantity",
+   "reqd": 1
+  },
+  {
+   "fieldname": "item_balance",
+   "fieldtype": "Float",
+   "label": "Item Balance",
+   "read_only": 1
   }
  ],
  "istable": 1,
- "modified": "2020-04-27 00:13:18.074459",
+ "modified": "2020-04-27 00:55:55.637592",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Special Closing Balance Detail",

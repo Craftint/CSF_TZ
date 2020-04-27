@@ -12,6 +12,7 @@
   "warehouse",
   "column_break_2",
   "shift",
+  "stock_entry",
   "section_break_4",
   "closing_balance_details",
   "amended_from"
@@ -34,13 +35,15 @@
   {
    "fieldname": "posting_date",
    "fieldtype": "Date",
-   "label": "Posting Date"
+   "label": "Posting Date",
+   "reqd": 1
   },
   {
    "fieldname": "warehouse",
    "fieldtype": "Link",
    "label": "Warehouse",
-   "options": "Warehouse"
+   "options": "Warehouse",
+   "reqd": 1
   },
   {
    "fieldname": "column_break_2",
@@ -60,7 +63,8 @@
    "fieldname": "closing_balance_details",
    "fieldtype": "Table",
    "label": "Closing Balance Details",
-   "options": "Special Closing Balance Detail"
+   "options": "Special Closing Balance Detail",
+   "reqd": 1
   },
   {
    "fieldname": "amended_from",
@@ -70,16 +74,24 @@
    "options": "Special Closing Balance",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "stock_entry",
+   "fieldtype": "Link",
+   "label": "Stock Entry",
+   "options": "Stock Entry",
+   "read_only": 1
   }
  ],
  "is_submittable": 1,
- "modified": "2020-04-27 00:11:49.063414",
+ "modified": "2020-04-27 00:53:09.577611",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Special Closing Balance",
  "owner": "Administrator",
  "permissions": [
   {
+   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -89,6 +101,33 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Stock User",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Stock Manager",
+   "share": 1,
+   "submit": 1,
    "write": 1
   }
  ],
