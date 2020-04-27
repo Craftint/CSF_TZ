@@ -6,6 +6,7 @@ def get_data():
 	return [
 		{
 			"module_name": "CSF TZ",
+			"category": "Modules",
 			"color": "green",
 			"icon": "octicon octicon-bookmark",
 			"type": "module",
