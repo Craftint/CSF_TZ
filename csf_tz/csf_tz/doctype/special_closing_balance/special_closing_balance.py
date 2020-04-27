@@ -9,6 +9,7 @@ from frappe.utils import today
 from frappe.model.document import Document
 from erpnext.stock.utils import get_latest_stock_qty
 
+
 class SpecialClosingBalance(Document):
 	def on_submit(self):
 		items = []
