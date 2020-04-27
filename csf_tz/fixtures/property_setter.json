@@ -286,5 +286,37 @@
   "property": "columns",
   "property_type": "Int",
   "value": "1"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Special Closing Balance",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "naming_series",
+  "modified": "2020-04-26 00:39:40.163763",
+  "name": "Special Closing Balance-naming_series-default",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "default",
+  "property_type": "Text",
+  "value": "SCB-.YYYY.-.####"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Special Closing Balance",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "naming_series",
+  "modified": "2020-04-26 00:39:40.217976",
+  "name": "Special Closing Balance-naming_series-options",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "options",
+  "property_type": "Text",
+  "value": "SCB-.YYYY.-.####"
  }
 ]

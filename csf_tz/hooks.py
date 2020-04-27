@@ -55,7 +55,9 @@ fixtures = [
 		"Bank Reconciliation Detail-payment_entry-columns",
 		"Purchase Invoice-default_print_format",
 		"Payment Entry-section_break_12-collapsible",
-		"Payment Entry-payment_accounts_section-collapsible"
+		"Payment Entry-payment_accounts_section-collapsible",
+		"Special Closing Balance-naming_series-options",
+		"Special Closing Balance-naming_series-default"
 	)]]},
 ]
 
