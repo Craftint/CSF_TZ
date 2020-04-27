@@ -33,7 +33,7 @@ class SpecialClosingBalance(Document):
 				stock_entry_type='Material Receipt',
 				purpose='Material Receipt',
 				to_warehouse=self.warehouse,
-				company=self.company, 
+				company=self.company,
 				remarks=user_remarks,
 				special_closing_balance=self.name
 				)).insert(ignore_permissions=True)
