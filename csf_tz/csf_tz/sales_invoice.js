@@ -45,23 +45,39 @@ frappe.ui.keys.add_shortcut({
     shortcut: 'ctrl+q',
     action: () => { 
             let current_doc = $('.data-row.editable-row').parent().attr("data-name");
-            let d = locals["Sales Invoice Item"][current_doc];
+            let item_row = locals["Sales Invoice Item"][current_doc];
             frappe.call({
                 method: 'erpnext.stock.dashboard.item_dashboard.get_data',
                 args: {
-                    item_code: d.item_code,
+                    item_code: item_row.item_code,
                 },
                 callback: function(r) {
                     if (r.message.length > 0){
-                        console.log(r.message);
-                        r.message.forEach(element => {
-                            frappe.msgprint("In " + element.warehouse + " there is " + element.actual_qty + " " + d.stock_uom);
+                        var d = new frappe.ui.Dialog({
+                            title: __('Item Balance'),
+                            width: 200
                         });
+                        r.message.forEach(element => {
+                            let div_checkbox = $('<div class="checkbox"><p> <input type="checkbox" class="check-warehouse" data-id="' + element.warehouse  + '"'+ '> '+ element.warehouse + " there is " + element.actual_qty +  " " + item_row.stock_uom +'</p></div>').appendTo(d.body);
+                            div_checkbox.find('.check-warehouse').on('change', function() {
+                                $('input.check-warehouse').not(this).prop('checked', false);  
+                            });
+                        });
+                        d.set_primary_action("Select", function() {
+                            $(d.body).find('input:checked').each(function(i, input) {
+                                item_row.warehouse = $(input).attr('data-id');
+                            });
+                            cur_frm.rec_dialog.hide();
+                            cur_frm.refresh_fields();
+                        });
+                        cur_frm.rec_dialog = d;
+                        d.show();  
                     }
                 }
-            });
+            });     
     },
     page: this.page,
     description: __('Get Item INFO'),
     ignore_inputs: true,
+    
 });
