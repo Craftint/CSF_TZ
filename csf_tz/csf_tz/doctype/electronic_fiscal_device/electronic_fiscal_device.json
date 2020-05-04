@@ -1,5 +1,5 @@
 {
- "autoname": "format:{location}",
+ "autoname": "format:{location}-{make}-{model}",
  "creation": "2019-08-14 11:09:46.080727",
  "doctype": "DocType",
  "document_type": "Setup",
@@ -34,8 +34,7 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Location",
-   "reqd": 1,
-   "unique": 1
+   "reqd": 1
   },
   {
    "fieldname": "supplier",
@@ -54,7 +53,7 @@
    "label": "Model"
   }
  ],
- "modified": "2020-03-05 19:34:53.212076",
+ "modified": "2020-05-04 19:38:43.580918",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Electronic Fiscal Device",
