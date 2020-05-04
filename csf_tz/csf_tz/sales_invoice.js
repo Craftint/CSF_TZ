@@ -57,9 +57,33 @@ frappe.ui.keys.add_shortcut({
                             title: __('Item Balance'),
                             width: 200
                         });
+                        $(`<div class="container">
+                            <h2>${item_row.item_code}</h2>
+                            <p>Choose Warehouse and click Select :</p>
+                            <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                <th>Check</th>
+                                <th>Warehouse</th>
+                                <th>Qty</th>
+                                <th>UMO</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                            </table>
+                        </div>`).appendTo(d.body);
                         r.message.forEach(element => {
-                            let div_checkbox = $('<div class="checkbox"><p> <input type="checkbox" class="check-warehouse" data-id="' + element.warehouse  + '"'+ '> '+ element.warehouse + " there is " + element.actual_qty +  " " + item_row.stock_uom +'</p></div>').appendTo(d.body);
-                            div_checkbox.find('.check-warehouse').on('change', function() {
+                            let tbody = $(d.body).find('tbody');
+                            let tr = $(`
+                            <tr>
+                                <td><input type="checkbox" class="check-warehouse" data-id="${element.warehouse}"></td>
+                                <td>${element.warehouse}</td>
+                                <td>${element.actual_qty}</td>
+                                <td>${item_row.stock_uom }</td>
+                            </tr>
+                            `).appendTo(tbody)
+                            tbody.find('.check-warehouse').on('change', function() {
                                 $('input.check-warehouse').not(this).prop('checked', false);  
                             });
                         });
