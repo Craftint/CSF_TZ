@@ -7,9 +7,10 @@ def get_data():
 		{
 			"module_name": "CSF TZ",
 			"category": "Modules",
+			"label": _("Country Specific"),
 			"color": "green",
 			"icon": "octicon octicon-bookmark",
 			"type": "module",
-			"label": _("CSF TZ")
-		}
+			"description": "Country specific customizations for compliance, taxation and statutory reports.",
+		},
 	]
