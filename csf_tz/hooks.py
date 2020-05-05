@@ -79,6 +79,8 @@ fixtures = [
 doctype_js = {
 	"Payment Entry" : "csf_tz/payment_entry.js",
 	"Sales Invoice" : "csf_tz/sales_invoice.js",
+	"Sales Order" : "csf_tz/sales_order.js",
+	"Delivery Note" : "csf_tz/delivery_note.js",
 	"Customer" : "csf_tz/customer.js",
 	"Supplier" : "csf_tz/supplier.js",
 }
