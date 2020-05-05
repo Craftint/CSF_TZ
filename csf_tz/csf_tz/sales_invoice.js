@@ -67,6 +67,7 @@ frappe.ui.keys.add_shortcut({
                         </div>`).appendTo(d.body);
                         let thead = $(d.body).find('thead');
                         if (r.message[0].batch_no){
+                            r.message.sort((a,b) => a.expiry_status-b.expiry_status);
                             $(`<tr>
                             <th>Check</th>
                             <th>Warehouse</th>
