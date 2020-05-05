@@ -111,3 +111,58 @@ def print_out(message, alert= False, add_traceback=False, to_error_log=False ):
 
 
 	check_msg(message)
+
+
+
+def get_stock_ledger_entries(item_code):
+	conditions = " and item_code = '%s'" % item_code
+	return frappe.db.sql("""
+		select item_code, batch_no, warehouse, sum(actual_qty) as actual_qty
+		from `tabStock Ledger Entry`
+		where docstatus < 2  %s
+		group by voucher_no, batch_no, item_code, warehouse
+		order by item_code, warehouse""" %
+		conditions, as_dict=1)
+
+
+@frappe.whitelist()
+def get_item_info(item_code):
+
+	sle = get_stock_ledger_entries(item_code)
+	iwb_map = {}
+	float_precision = cint(frappe.db.get_default("float_precision")) or 3
+
+	for d in sle:
+		iwb_map.setdefault(d.item_code, {}).setdefault(d.warehouse, {})\
+			.setdefault(d.batch_no, frappe._dict({
+				 "bal_qty": 0.0
+			}))
+		qty_dict = iwb_map[d.item_code][d.warehouse][d.batch_no]
+
+		expiry_date_unicode = frappe.db.get_value('Batch', d.batch_no, 'expiry_date')
+		
+		if expiry_date_unicode:	
+			qty_dict.expires_on = expiry_date_unicode
+			exp_date = frappe.utils.data.getdate(expiry_date_unicode)
+			qty_dict.expires_on = exp_date
+			expires_in_days = (exp_date - frappe.utils.datetime.date.today()).days
+			if expires_in_days > 0:
+				qty_dict.expiry_status = expires_in_days
+			else:
+				qty_dict.expiry_status = 0
+
+		qty_dict.actual_qty = flt(qty_dict.actual_qty, float_precision) + flt(d.actual_qty, float_precision)
+
+	iwd_list = []
+	for key1,value1 in iwb_map.items():
+		for key2,value2 in value1.items():
+			for key3,value3 in value2.items():
+				lin_dict = {
+					"item_code"	: key1,
+					"warehouse"	: key2,
+					"batch_no"	: key3
+				}
+				lin_dict.update(value3)
+				iwd_list.append(lin_dict)
+
+	return iwd_list
