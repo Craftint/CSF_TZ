@@ -130,3 +130,81 @@ frappe.ui.keys.add_shortcut({
     ignore_inputs: true,
     
 });
+
+
+frappe.ui.keys.add_shortcut({
+    shortcut: 'ctrl+i',
+    action: () => { 
+            let current_doc = $('.data-row.editable-row').parent().attr("data-name");
+            let item_row = locals["Sales Invoice Item"][current_doc];
+            frappe.call({
+                method: 'csf_tz.custom_api.get_item_prices',
+                args: {
+                    item_code: item_row.item_code,
+                    customer: cur_frm.doc.customer,
+                    currency: cur_frm.doc.currency,
+                },
+                callback: function(r) {
+                    if (r.message.length > 0){
+                        console.log(r.message);
+                        var c = new frappe.ui.Dialog({
+                            title: __('Item Prices'),
+                            width: 600
+                        });
+                        $(`<div class="modal-body ui-front">
+                            <h2>${item_row.item_code}</h2>
+                            <p>Choose Price and click Select :</p>
+                            <table class="table table-bordered">
+                            <thead>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                            </table>
+                        </div>`).appendTo(c.body);
+                        let thead = $(c.body).find('thead');
+                        // if (r.message[0].rate){
+                            // r.message.sort((a,b) => a.expiry_status-b.expiry_status);
+                            $(`<tr>
+                            <th>Check</th>
+                            <th>Rate</th>
+                            <th>Qty</th>
+                            <th>Date</th>
+                            <th>Invoice</th>
+                            <th>Customer</th>
+                            </tr>`).appendTo(thead);
+                        // }
+                        r.message.forEach(element => {
+                            let tbody = $(c.body).find('tbody');
+                            let tr = $(`
+                            <tr>
+                                <td><input type="checkbox" class="check-rate" data-rate="${element.price}"></td>
+                                <td>${element.price}</td>
+                                <td>${element.qty}</td>
+                                <td>${element.date }</td>
+                                <td>${element.invoice }</td>
+                                <td>${element.customer }</td>
+                            </tr>
+                            `).appendTo(tbody);
+                         
+                            tbody.find('.check-rate').on('change', function() {
+                                $('input.check-rate').not(this).prop('checked', false);  
+                            });
+                        });
+                        c.set_primary_action("Select", function() {
+                            $(c.body).find('input:checked').each(function(i, input) {
+                                item_row.rate = $(input).attr('data-rate');
+                            });
+                            cur_frm.rec_dialog.hide();
+                            cur_frm.refresh_fields();
+                        });
+                        cur_frm.rec_dialog = c;
+                        c.show();  
+                    }
+                }
+            });     
+    },
+    page: this.page,
+    description: __('Get Item Prices'),
+    ignore_inputs: true,
+    
+});

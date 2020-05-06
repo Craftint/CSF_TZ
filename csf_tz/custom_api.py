@@ -167,3 +167,60 @@ def get_item_info(item_code):
 				iwd_list.append(lin_dict)
 
 	return iwd_list
+
+
+@frappe.whitelist()
+def get_item_prices(item_code,currency,customer=None):
+	item_code = "'{0}'".format(item_code)
+	currency = "'{0}'".format(currency)
+	prices_list= []
+	unik_price_list = []
+	if customer:
+		conditions = " and SI.customer = '%s'" % customer
+	else:
+		conditions = ""
+
+	query = """ SELECT SI.name, SI.posting_date, SI.customer
+                FROM `tabSales Invoice` AS SI WHERE EXISTS (SELECT * FROM `tabSales Invoice Item` AS SIT 
+                WHERE 
+                     SIT.item_code = {0} 
+                     AND SIT.parent = SI.name ) 
+                     AND SI.docstatus=%s 
+					 AND SI.currency = {2}
+					 AND SI.is_return != 1
+					 {1}
+                ORDER by SI.customer,SI.from_date DESC""".format(item_code,conditions,currency) % (1)
+
+	sales_invoices = frappe.db.sql(query,as_dict=True)
+
+	for invoice in sales_invoices:
+		invoice_id = "'{0}'".format(invoice.name)
+
+		query_items = """ 
+            SELECT
+                item_code, 
+                qty, 
+                rate
+            FROM
+                `tabSales Invoice Item`
+            WHERE
+                parent = {invoice_id}
+				AND item_code = {item_code}
+            """.format(invoice_id=invoice_id,item_code=item_code)
+
+		items = frappe.db.sql(query_items,as_dict=True)
+		for item in items:
+			if item.rate not in unik_price_list and len(prices_list) < 21:
+				unik_price_list.append(item.rate)
+				item_dict = {
+						"item_code" : item.item_code,
+						"price" : item.rate,
+						"date" : invoice.posting_date,
+						"invoice" : invoice.name,
+						"customer": invoice.customer,
+						"qty" : item.qty,
+					}
+				prices_list.append(item_dict)
+				
+
+	return prices_list
