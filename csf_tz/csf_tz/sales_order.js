@@ -29,7 +29,7 @@ frappe.ui.keys.add_shortcut({
                             <th>Check</th>
                             <th>Warehouse</th>
                             <th>Qty</th>
-                            <th>UMO</th>
+                            <th>UOM</th>
                             <th>Batch No</th>
                             <th>Expires On</th>
                             <th>Expires in Days</th>
@@ -39,7 +39,7 @@ frappe.ui.keys.add_shortcut({
                             <th>Check</th>
                             <th>Warehouse</th>
                             <th>Qty</th>
-                            <th>UMO</th>
+                            <th>UOM</th>
                             </tr>`).appendTo(thead);
                         }
                         r.message.forEach(element => {
@@ -58,8 +58,6 @@ frappe.ui.keys.add_shortcut({
                                     <td>${element.expires_on}</td>
                                     <td>${element.expiry_status }</td>
                                 `).appendTo(tr);
-                                // tr.find('.check-warehouse').attr('datat-batch',element.batch_no);
-                                // tr.find('.check-warehouse').attr('datat-batchQty',element.actual_qty);
                             }
                             tbody.find('.check-warehouse').on('change', function() {
                                 $('input.check-warehouse').not(this).prop('checked', false);  
@@ -67,11 +65,7 @@ frappe.ui.keys.add_shortcut({
                         });
                         d.set_primary_action("Select", function() {
                             $(d.body).find('input:checked').each(function(i, input) {
-                                item_row.warehouse = $(input).attr('data-warehouse');
-                                if ($(input).attr('datat-batch')) {
-                                    // item_row.batch_no = $(input).attr('datat-batch');
-                                    // item_row.actual_batch_qty = $(input).attr('datat-batchQty');
-                                }
+                                frappe.model.set_value(item_row.doctype, item_row.name, 'warehouse', $(input).attr('data-warehouse'));
                             });
                             cur_frm.rec_dialog.hide();
                             cur_frm.refresh_fields();
