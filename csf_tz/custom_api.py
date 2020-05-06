@@ -189,7 +189,7 @@ def get_item_prices(item_code,currency,customer=None):
 					 AND SI.currency = {2}
 					 AND SI.is_return != 1
 					 {1}
-                ORDER by SI.customer,SI.from_date DESC""".format(item_code,conditions,currency) % (1)
+                ORDER by SI.posting_date DESC""".format(item_code,conditions,currency) % (1)
 
 	sales_invoices = frappe.db.sql(query,as_dict=True)
 
