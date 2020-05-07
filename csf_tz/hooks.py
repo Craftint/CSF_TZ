@@ -39,7 +39,8 @@ fixtures = [
 		"Sales Invoice-efd_z_report",
 		"POS Profile-column_break_1",
 		"POS Profile-electronic_fiscal_device",
-		"Item-witholding_tax_rate_on_purchase"
+		"Item-witholding_tax_rate_on_purchase",
+		"Company-max_records_in_dialog",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-default_print_format",
@@ -61,7 +62,7 @@ fixtures = [
 		"Payment Entry-section_break_12-collapsible",
 		"Payment Entry-payment_accounts_section-collapsible",
 		"Special Closing Balance-naming_series-options",
-		"Special Closing Balance-naming_series-default"
+		"Special Closing Balance-naming_series-default",
 	)]]},
 ]
 
@@ -83,6 +84,8 @@ fixtures = [
 doctype_js = {
 	"Payment Entry" : "csf_tz/payment_entry.js",
 	"Sales Invoice" : "csf_tz/sales_invoice.js",
+	"Sales Order" : "csf_tz/sales_order.js",
+	"Delivery Note" : "csf_tz/delivery_note.js",
 	"Customer" : "csf_tz/customer.js",
 	"Supplier" : "csf_tz/supplier.js",
 }
