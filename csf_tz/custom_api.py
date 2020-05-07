@@ -173,6 +173,7 @@ def get_item_prices(item_code,currency,customer=None,company=None):
 	currency = "'{0}'".format(currency)
 	prices_list= []
 	unik_price_list = []
+	max_records = frappe.db.get_value('Company', company, 'max_records_in_dialog') or 20
 	if customer:
 		conditions = " and SI.customer = '%s'" % customer
 	else:
@@ -193,7 +194,7 @@ def get_item_prices(item_code,currency,customer=None,company=None):
 
 	items = frappe.db.sql(query,as_dict=True)
 	for item in items:
-		if item.rate not in unik_price_list and len(prices_list) < 21:
+		if item.rate not in unik_price_list and len(prices_list) <= max_records:
 			unik_price_list.append(item.rate)
 			item_dict = {
 					"item_code" : item.item_code,
