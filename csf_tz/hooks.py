@@ -9,14 +9,16 @@ app_description = "Country Specific Functionality Tanzania"
 app_icon = "octicon octicon-bookmark"
 app_color = "green"
 app_email = "info@aakvatech.com"
-app_license = "MIT"
+app_license = "GNU General Public License (v3)"
 
 fixtures = [
 	{"doctype":"Custom Field", "filters": [["name", "in", (
 		"Supplier-vrn",
 		"Customer-vrn",
 		"Company-vrn",
-		"Company-tin",
+		"Company-street",
+		"Company-block_number",
+		"Company-plot_number",
 		"Company-company_bank_details",
 		"Company-section_break_12",
 		"Journal Entry-to_date",
@@ -25,6 +27,7 @@ fixtures = [
 		"Payment Entry Reference-posting_date",
 		"Payment Entry Reference-end_date",
 		"Sales Invoice-witholding_tax_certificate_number",
+		"Purchase Invoice Item-withholding_tax_rate",
 		"Payment Entry Reference-start_date",
 		"Sales Invoice-column_break_29",
 		"Sales Invoice-tra_control_number",
@@ -35,7 +38,8 @@ fixtures = [
 		"Sales Invoice-electronic_fiscal_device",
 		"Sales Invoice-efd_z_report",
 		"POS Profile-column_break_1",
-		"POS Profile-electronic_fiscal_device"
+		"POS Profile-electronic_fiscal_device",
+		"Item-witholding_tax_rate_on_purchase"
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-default_print_format",
