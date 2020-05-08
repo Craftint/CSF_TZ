@@ -17,7 +17,7 @@ fixtures = [
 		"Customer-vrn",
 		"Company-vrn",
 		"Company-p_o_box",
-		"Company-city"
+		"Company-city",
 		"Company-street",
 		"Company-block_number",
 		"Company-plot_number",
