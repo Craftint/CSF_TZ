@@ -1,0 +1,458 @@
+<style>
+    .print-format {
+            padding-left: 10mm;
+            padding-right: 5mm;
+            padding-top: 0mm;
+            font-size: 14pt;	
+    }
+    
+    table, th, td {
+            border: none;
+            }
+            .table1,.th1,.td1{
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+            .tb{
+                width: 100%;
+            }
+            .ninetyfive{
+                width: 95%;
+            }
+            .ninety{
+                width: 90%;
+            }
+            .eighty{
+                width: 80%;
+            }
+            .seventy{
+                width: 70%;
+            }
+            .sixty {
+               width: 60% ;
+            }
+            .fifty{
+                width: 50%;
+            }
+            .fourty{
+                width: 40%;
+            }
+            .fourtyfive{
+                width: 40%;
+            }
+            .thirty{
+                width: 30%;
+            }
+            .twenty{
+                width: 20%;
+            }
+            .ten{
+                width: 10;
+            }
+            .five{
+                width: 5;
+            }
+            .a {
+            line-height: 1.6;
+            }
+            .border {
+                border: black solid 1px;
+            }
+
+            textarea {
+            width: calc(100% - 12px);
+            padding: 5px;
+            border: none;
+            }
+
+            .testbox {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: inherit;
+            padding: 1.5px;
+            }
+
+            .print-format td, .print-format th, .print-format tr {
+            vertical-align: top !important;
+            padding: 2px !important;
+            }
+
+            label{
+            font-size: 14pt;
+            font-family: "Arial";
+            font-weight: bold;
+            }
+            
+            .label1{
+                font-size: 12pt;
+                font-family: "Arial"; 
+                font-weight: bold; 
+            }
+
+            .label2{
+                font-size: 11pt;
+                font-family: "Arial"; 
+                font-weight: bold;
+            }
+
+            .label3{
+                font-size: 9pt;
+                font-family: "Arial"; 
+            } 
+            
+
+            input.largcheckbox{
+                height: 25px;
+                width: 25px;
+            }
+
+    @media screen {
+        .print-format {
+            width: 8.5in;
+            height: 11in;
+            }
+        }
+
+        table, th, td {
+            border: none;
+            }
+            .table1,.th1,.td1{
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+            .tb{
+                width: 100%;
+            }
+            .ninetyfive{
+                width: 95%;
+            }
+            .ninety{
+                width: 90%;
+            }
+            .eighty{
+                width: 80%;
+            }
+            .seventy{
+                width: 70%;
+            }
+            .sixty {
+               width: 60% ;
+            }
+            .fifty{
+                width: 50%;
+            }
+            .fourty{
+                width: 40%;
+            }
+            .fourtyfive{
+                width: 40%;
+            }
+            .thirty{
+                width: 30%;
+            }
+            .twenty{
+                width: 20%;
+            }
+            .ten{
+                width: 10;
+            }
+            .five{
+                width: 5;
+            }
+            .a {
+            line-height: 1.6;
+            }
+            .border {
+                border: black solid 1px;
+            }
+
+            textarea {
+            width: calc(100% - 12px);
+            padding: 5px;
+            border: none;
+            }
+
+            .testbox {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: inherit;
+            padding: 1.5px;
+            }
+
+            .print-format td, .print-format th, .print-format tr {
+            vertical-align: top !important;
+            padding: 2px !important;
+            }
+
+            label{
+            font-size: 14pt;
+            font-family: "Arial";
+            font-weight: bold;
+            }
+            
+            .label1{
+                font-size: 12pt;
+                font-family: "Arial"; 
+                font-weight: bold; 
+            }
+
+            .label2{
+                font-size: 11pt;
+                font-family: "Arial"; 
+                font-weight: bold;
+            }
+
+            .label3{
+                font-size: 9pt;
+                font-family: "Arial"; 
+            } 
+            
+
+            input.largcheckbox{
+                height: 25px;
+                width: 25px;
+            }
+</style>
+
+{% var start_date = filters.from_date  %}
+{% var end_date = filters.to_date  %}
+{% var tin = data[0][ __("TIN")]  %}
+
+{% if ( end_date[5]+ end_date[6] == "06") { %}
+{% var tick1 = "X" %}
+{% } %}
+
+{% if ( end_date[5]+ end_date[6] == "12") { %}
+{% var tick2 = "X" %}
+{% } %}
+
+        <table class="td">
+            <tr>
+                <td class="five">
+                    <label><b>Period:</b></label>
+                </td>
+                <td class="ninetyfive">
+                    <p style="font-size: 10; font-family: Arial;"><b>(Please tick the appropriate box)</b></p>
+                </td>
+            </tr>
+        </table>
+        <table class="td">
+            <tr>
+                <td class="five">
+                    <td style="border: 1px solid black; text-align: center;">{%= tick1 %}</td>
+                </td>
+                <td class="ninetyfive">
+                    <label label1> From 1 January to 30 June </label>
+                </td>
+            </tr>
+            <tr>
+                <td class="five">
+                    <td style="border: 1px solid black; text-align: center;">{%= tick2 %}</td>
+                </td>
+                <td class="ninetyfive" >
+                    <label label1> From 1 July to 31 December  </label>
+                </td>
+            </tr>
+        </table>
+
+        <table class="td">
+            <tr>
+                <td class="fourty">
+                    <label label1 > WITHHOLDING TAX ON </label>
+                </td>
+                <td class="sixty">
+                    <input type="text" size="50" style="border: 1px solid black; height: 25px;" readonly/>
+                </td>
+            </tr>
+        </table>
+        <table class="td">
+            <tr>
+                <td>
+                    <label class="label2"> Name of Withholder: </label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" size="87" style="border: 1px solid black; height: 25px;" readonly/>
+                </td>
+            </tr>
+        </table>
+        <br>
+        <table class="td">
+            <tr>
+                <td>
+                    <label class="label2"><b>Postal Address:</b> </label>
+                </td>
+            </tr>
+        </table>
+        <table class="td">
+            <tr>
+                <td class="thirty">
+                    <label class="label3">P. O. Box</label>
+                </td>
+                <td class="twenty">
+                    <input type="text" size="30" style="border: 1px solid black; height: 25px;" readonly value="{%= data[0][ __("P O Box")] %}"></input>
+                </td>
+                <td class="thirty">
+                    <label class="label3">Postal City </label>  
+                </td>
+                <td class="twenty">
+                    <input type="text" size="30" style="border: 1px solid black; height: 25px;" readonly value="{%= data[0][ __("city")] %}"/></input>
+                </td>
+            </tr>
+        </table>
+        <br>
+        <table class="td">
+            <tr>
+                <td>
+                    <label class="label2"><b>Contact Numbers:</b> </label>
+                </td>
+            </tr>
+        </table>
+        <table class="td">
+            <tr>
+                <td class="fourty">
+                    <label class="label3">Phone number</label>
+                </td>
+                <td class="ten">
+                    <input type="text" size="20" style="border: 1px solid black; height: 25px;" readonly value="{%= data[0][ __("Phone")] %}"></input>
+                </td>
+                <td class="fourty">
+                    <label class="label3">Second Phone </label>  
+                </td>
+                <td class="ten">
+                    <input type="text" size="20" style="border: 1px solid black; height: 25px;" readonly/>
+                </td>
+            </tr>
+        </table>
+        <table class="td">
+            <tr>
+                <td class="fourty">
+                    <label class="label3">Third Phone</label>
+                </td>
+                <td class="ten">
+                    <input type="text" size="20" style="border: 1px solid black; height: 25px;" readonly/>
+                </td>
+                <td class="fourty">
+                    <label class="label3">Fax number</label>  
+                </td>
+                <td class="ten">
+                    <input type="text" size="20" style="border: 1px solid black; height: 25px;" readonly value="{%= data[0][ __("Fax Number")] %}"></input>
+                </td>
+            </tr>
+        </table>
+        <table class="td">
+            <td class="thirty">
+                <label class="label2">E-mail address: </label>
+            </td>
+            <td class="seventy">
+                <input type="text" size="70" style="border: 1px solid black; height: 25px;" readonly value="{%= data[0][ __("Email")] %}"></input>
+            </td>
+        </table>
+        <br>
+        <table class="td">
+            <tr>
+                <td>
+                    <label class="label2"><b>Physical Address:</b> </label>
+                </td>
+            </tr>
+        </table>
+        <table class="td">
+            <tr>
+                <td class="fourty">
+                    <label class="label3">Plot Number</label>
+                </td>
+                <td class="ten">
+                    <input type="text" size="20" style="border: 1px solid black; height: 25px;"  readonly value="{%= data[0][ __("Plot Number")] %}"></input>
+                </td>
+                <td class="fourty">
+                    <label class="label3">Block Number</label>  
+                </td>
+                <td class="ten">
+                    <input type="text" size="20" style="border: 1px solid black; height: 25px;" readonly value="{%= data[0][ __("Block Number")] %}"></input>
+                </td>
+            </tr>
+        </table>
+        <table class="td">
+            <td class="thirty">
+                <label class="label3">Street/Location </label>
+            </td>
+            <td class="seventy">
+                <input type="text" size="70" style="border: 1px solid black; height: 25px;" readonly value="{%= data[0][ __("Street")] %}"></input>
+            </td>
+        </table>
+        <table class="td">
+            <td class="thirty">
+                <label class="label3">Name of Branch </label>
+            </td>
+            <td class="seventy">
+                <input type="text" size="70" style="border: 1px solid black; height: 25px;" readonly/>
+            </td>
+        </table>
+        <div class="page-break"></div>
+        <div><label class="label1" style="text-align: center;" >WITHHOLDING TAX - DETAILS OF PAYMENT OF TAX WITHHELD</label></div>
+        <table>
+            <tr>
+				<td Class="fifty">
+                    <table>
+                        <tr>
+                            <td>
+                                <label class="label2"><b>Name of Withholder:<b></b></label>
+                            </td>
+                            <td>
+                                ..........................................
+                            </td>
+                        </tr>
+                    </table>
+				</td>
+				<td Class="fifty">
+					<table style="border: 0px solid black; border-collapse: collapse; spacing: 0px;" style="padding: 2px;">
+						<tr>
+							<td>
+								<label class="label2"><b>TIN:<b></b></label>
+							</td>
+							<td>
+								<td style="border: 1px solid black; width: 30px; height: 20px; text-align: center;">{%= tin[0] %}</td>
+								<td style="border: 1px solid black; width: 30px; height: 20px; text-align: center;">{%= tin[1] %}</td>
+								<td style="border: 1px solid black; width: 30px; height: 20px; text-align: center;">{%= tin[2] %}</td>
+								<td style="border: 1px solid black; width: 30px; height: 20px; text-align: center; background-color: #000;">&nbsp;</td>
+								<td style="border: 1px solid black; width: 30px; height: 20px; text-align: center;">{%= tin[4] %}</td>
+								<td style="border: 1px solid black; width: 30px; height: 20px; text-align: center;">{%= tin[5] %}</td>
+								<td style="border: 1px solid black; width: 30px; height: 20px; text-align: center;">{%= tin[6] %}</td>
+								<td style="border: 1px solid black; width: 30px; height: 20px; text-align: center; background-color: #000;">&nbsp;</td>
+								<td style="border: 1px solid black; width: 30px; height: 20px; text-align: center;">{%= tin[8] %}</td>
+								<td style="border: 1px solid black; width: 30px; height: 20px; text-align: center;">{%= tin[9] %}</td>
+								<td style="border: 1px solid black; width: 30px; height: 20px; text-align: center;">{%= tin[10] %}</td>	
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+        </table>
+        <br>
+        <BR>
+            <table class=".table1" style="width:100%">
+            
+                <tr>
+                    <TH class="th1" style="text-align:center">S/NO</TD>
+                    <TH class="th1" style="text-align:center">TIN  </TD>
+                    <TH class="th1" style="text-align:center">NAME OF WITHHOLDEE</TD>
+                    <TH class="th1" style="text-align:center">CITY</TD>
+                    <TH class="th1" style="text-align:center">PLOT NO</TD>
+                    <TH class="th1" style="text-align:center">BLOCK NO</TD>
+                    <TH class="th1" style="text-align:center">STREET</TD>
+                    <TH class="th1" style="text-align:center">GROSS PAYMENT TZS</TD>
+                    <TH class="th1" style="text-align:center">TAX WITHHELD TZS</TD>
+                </tr>
+
+                    <tr style="height: 20px;">
+                        <TH class="th1" style="text-align:center border 1px solid black; "></TD>
+                        <TH class="th1" style="text-align:center border 1px solid black;">  </TD>
+                        <TH class="th1" style="text-align:center border 1px solid black;"></TD>
+                        <td Class="td1" colspan="2">Total</td>
+                        <td Class="td1"></td>
+                        <td Class="td1"></td> 
+                    </tr>
+              </table>

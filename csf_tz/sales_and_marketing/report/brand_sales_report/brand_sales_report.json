@@ -1,0 +1,25 @@
+{
+ "add_total_row": 0, 
+ "creation": "2020-01-08 12:02:24.608234", 
+ "disabled": 0, 
+ "docstatus": 0, 
+ "doctype": "Report", 
+ "idx": 0, 
+ "is_standard": "Yes", 
+ "modified": "2020-01-08 12:15:11.626546", 
+ "modified_by": "Administrator", 
+ "module": "Sales And Marketing", 
+ "name": "Brand Sales Report", 
+ "owner": "Administrator", 
+ "ref_doctype": "Sales Invoice", 
+ "report_name": "Brand Sales Report", 
+ "report_type": "Script Report", 
+ "roles": [
+  {
+   "role": "Accounts Manager"
+  }, 
+  {
+   "role": "Accounts User"
+  }
+ ]
+}

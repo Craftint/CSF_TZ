@@ -1,0 +1,28 @@
+{
+ "add_total_row": 0, 
+ "creation": "2019-08-28 14:32:30.480565", 
+ "disabled": 0, 
+ "docstatus": 0, 
+ "doctype": "Report", 
+ "idx": 0, 
+ "is_standard": "Yes", 
+ "modified": "2019-08-28 14:38:51.131357", 
+ "modified_by": "Administrator", 
+ "module": "Purchase And Stock Management", 
+ "name": "Bin System", 
+ "owner": "Administrator", 
+ "ref_doctype": "Bin", 
+ "report_name": "Bin System", 
+ "report_type": "Report Builder", 
+ "roles": [
+  {
+   "role": "Sales User"
+  }, 
+  {
+   "role": "Purchase User"
+  }, 
+  {
+   "role": "Stock User"
+  }
+ ]
+}
