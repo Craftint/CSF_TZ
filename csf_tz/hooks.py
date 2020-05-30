@@ -43,6 +43,9 @@ fixtures = [
 		"POS Profile-electronic_fiscal_device",
 		"Item-witholding_tax_rate_on_purchase",
 		"Company-max_records_in_dialog",
+		"Stock Entry-repack_template",
+		"Stock Entry-qty",
+		"Stock Entry-item_uom",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-default_print_format",
