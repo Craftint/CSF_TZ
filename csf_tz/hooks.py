@@ -150,6 +150,9 @@ doctype_js = {
 doc_events = {
 	"Open Invoice Exchange Rate Revaluation": {
 		"validate": "csf_tz.custom_api.getInvoiceExchangeRate"
+	},
+	"Sales Invoice": {
+		"on_submit":"csf_tz.custom_api.create_delivery_note"
 	}
 }
 
