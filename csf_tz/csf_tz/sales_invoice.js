@@ -56,7 +56,7 @@ frappe.ui.keys.add_shortcut({
                             width: 600
                         });
                         $(`<div class="modal-body ui-front">
-                            <h2>${item_row.item_code}</h2>
+                            <h2>${item_row.item_code} : ${item_row.qty}</h2>
                             <p>Choose Warehouse and click Select :</p>
                             <table class="table table-bordered">
                             <thead>
@@ -125,9 +125,8 @@ frappe.ui.keys.add_shortcut({
             });     
     },
     page: this.page,
-    description: __('Get Item INFO'),
+    description: __('Select Item Warehouse'),
     ignore_inputs: true,
-    
 });
 
 
@@ -151,7 +150,7 @@ frappe.ui.keys.add_shortcut({
                             width: 600
                         });
                         $(`<div class="modal-body ui-front">
-                            <h2>${item_row.item_code}</h2>
+                        <h2>${item_row.item_code} : ${item_row.qty}</h2>
                             <p>Choose Price and click Select :</p>
                             <table class="table table-bordered">
                             <thead>
@@ -203,9 +202,8 @@ frappe.ui.keys.add_shortcut({
             });     
     },
     page: this.page,
-    description: __('Get Item Prices'),
+    description: __('Select Customer Item Price'),
     ignore_inputs: true,
-    
 });
 
 frappe.ui.keys.add_shortcut({
@@ -227,7 +225,7 @@ frappe.ui.keys.add_shortcut({
                             width: 600
                         });
                         $(`<div class="modal-body ui-front">
-                            <h2>${item_row.item_code}</h2>
+                            <h2>${item_row.item_code} : ${item_row.qty}</h2>
                             <p>Choose Price and click Select :</p>
                             <table class="table table-bordered">
                             <thead>
@@ -276,7 +274,6 @@ frappe.ui.keys.add_shortcut({
             });     
     },
     page: this.page,
-    description: __('Get Item Prices'),
+    description: __('Select Item Price'),
     ignore_inputs: true,
-    
 });
