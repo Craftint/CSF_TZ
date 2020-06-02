@@ -1,0 +1,21 @@
+{
+ "add_total_row": 1,
+ "creation": "2020-06-02 12:10:46.230266",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "idx": 0,
+ "is_standard": "Yes",
+ "modified": "2020-06-02 21:56:01.456712",
+ "modified_by": "Administrator",
+ "module": "CSF TZ",
+ "name": "Withholding Tax Summary on Sales",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "query": "SELECT si.posting_date as \"Date:Date:\",\n       sii.item_name as \"Perticulars:Data:\", \n       si.name \"Voucher No:Link/Sales Invoice:\", \n       sii.base_net_amount as \"Amount:Currency:\", \n       sii.base_net_amount * (sii.withholding_tax_rate/100) as \"Withholding Tax:Currency:\",\n       si.tra_control_number as \"Contol Number:Data:\",\n       si.witholding_tax_certificate_number as \"Contol Number:Data:\",\n       si.tax_id as \"TIN Number:Data:\"\nFROM `tabSales Invoice` si LEFT JOIN `tabSales Invoice Item` sii ON si.name = sii.parent \nWHERE si.docstatus = 1\nAND   si.is_return = '0' \nAND   sii.withholding_tax_rate > 0\nAND   si.posting_date >= %(from_date)s \nAND   si.posting_date <= %(to_date)s",
+ "ref_doctype": "Sales Invoice",
+ "report_name": "Withholding Tax Summary on Sales",
+ "report_type": "Query Report",
+ "roles": []
+}
