@@ -93,6 +93,7 @@ doctype_js = {
 	"Delivery Note" : "csf_tz/delivery_note.js",
 	"Customer" : "csf_tz/customer.js",
 	"Supplier" : "csf_tz/supplier.js",
+	"Stock Entry" : "csf_tz/stock_entry.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}

@@ -208,3 +208,25 @@ def get_item_prices(item_code,currency,customer=None,company=None):
 				
 
 	return prices_list
+
+
+
+@frappe.whitelist()
+def get_repack_template(template_name,qty):
+	template_doc = frappe.get_doc("Repack Template",template_name)
+	rows = []
+	rows.append({
+		"item_code" : template_doc.item_code,
+		"item_uom": template_doc.item_uom,
+		"qty": cint(qty),
+		"item_template" : 1 ,
+
+	})
+	for i in template_doc.repack_template_details:
+		rows.append({
+			"item_code" : i.item_code,
+			"item_uom": i.item_uom,
+			"qty": cint(float(i.qty / template_doc.qty) * float(qty)),
+			"item_template" : 0 ,
+		})
+	return rows
