@@ -2,10 +2,13 @@ from __future__ import unicode_literals
 from frappe.utils import flt
 from erpnext.setup.utils import get_exchange_rate
 import frappe
+from frappe import _
 import frappe.permissions
 import frappe.share
 import traceback
 from frappe.utils import flt, cint, getdate
+from frappe.model.mapper import get_mapped_doc
+# # from erpnext.accounts.doctype.sales_invoice.sales_invoice import make_delivery_note
 
 @frappe.whitelist()
 def app_error_log(title,error):
@@ -208,3 +211,103 @@ def get_item_prices(item_code,currency,customer=None,company=None):
 				
 
 	return prices_list
+
+
+@frappe.whitelist()
+def get_repack_template(template_name,qty):
+	template_doc = frappe.get_doc("Repack Template",template_name)
+	rows = []
+	rows.append({
+		"item_code" : template_doc.item_code,
+		"item_uom": template_doc.item_uom,
+		"qty": cint(qty),
+		"item_template" : 1 ,
+
+	})
+	for i in template_doc.repack_template_details:
+		rows.append({
+			"item_code" : i.item_code,
+			"item_uom": i.item_uom,
+			"qty": cint(float(i.qty / template_doc.qty) * float(qty)),
+			"item_template" : 0 ,
+		})
+	return rows
+
+def create_delivery_note(doc,method):
+	if doc.update_stock:
+		return
+	from_delivery_note = False
+	for item in doc.items:
+		if item.delivery_note or item.delivered_by_supplier:
+			from_delivery_note = True
+			break
+	if from_delivery_note:
+		return
+	delivery_doc = frappe.get_doc(make_delivery_note(doc.name))
+	delivery_doc.flags.ignore_permissions = True
+	delivery_doc.flags.ignore_account_permission = True
+	delivery_doc.save()
+	# delivery_doc.submit()
+	url = frappe.utils.get_url_to_form(delivery_doc.doctype, delivery_doc.name)
+	msgprint = "Delivery Note Created as Draft at <a href='{0}'>{1}</a>".format(url,delivery_doc.name)
+	frappe.msgprint(_(msgprint))
+
+
+
+def check_item_is_maintain(item_name):
+		is_stock_item = frappe.get_value("Item",item_name,"is_stock_item")
+		if is_stock_item != 1:
+			return False
+		else:
+			return True
+	
+
+
+def make_delivery_note(source_name, target_doc=None):
+	def set_missing_values(source, target):
+		target.ignore_pricing_rule = 1
+		target.run_method("set_missing_values")
+		target.run_method("calculate_taxes_and_totals")
+
+	def update_item(source_doc, target_doc, source_parent):
+		target_doc.qty = flt(source_doc.qty) - flt(source_doc.delivered_qty)
+		target_doc.stock_qty = target_doc.qty * flt(source_doc.conversion_factor)
+
+		target_doc.base_amount = target_doc.qty * flt(source_doc.base_rate)
+		target_doc.amount = target_doc.qty * flt(source_doc.rate)
+
+	doclist = get_mapped_doc("Sales Invoice", source_name, 	{
+		"Sales Invoice": {
+			"doctype": "Delivery Note",
+			"validation": {
+				"docstatus": ["=", 1]
+			}
+		},
+		"Sales Invoice Item": {
+			"doctype": "Delivery Note Item",
+			"field_map": {
+				"name": "si_detail",
+				"parent": "against_sales_invoice",
+				"serial_no": "serial_no",
+				"sales_order": "against_sales_order",
+				"so_detail": "so_detail",
+				"cost_center": "cost_center"
+			},
+			"postprocess": update_item,
+			"condition": lambda doc: check_item_is_maintain(doc.item_code),
+			# "condition": lambda doc: doc.delivered_by_supplier!=1,
+		},
+		"Sales Taxes and Charges": {
+			"doctype": "Sales Taxes and Charges",
+			"add_if_empty": True
+		},
+		"Sales Team": {
+			"doctype": "Sales Team",
+			"field_map": {
+				"incentives": "incentives"
+			},
+			"add_if_empty": True
+		}
+	}, target_doc, set_missing_values)
+
+	return doclist

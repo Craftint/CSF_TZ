@@ -93,6 +93,7 @@ doctype_js = {
 	"Delivery Note" : "csf_tz/delivery_note.js",
 	"Customer" : "csf_tz/customer.js",
 	"Supplier" : "csf_tz/supplier.js",
+	"Stock Entry" : "csf_tz/stock_entry.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -149,6 +150,9 @@ doctype_js = {
 doc_events = {
 	"Open Invoice Exchange Rate Revaluation": {
 		"validate": "csf_tz.custom_api.getInvoiceExchangeRate"
+	},
+	"Sales Invoice": {
+		"on_submit":"csf_tz.custom_api.create_delivery_note"
 	}
 }
 
