@@ -237,11 +237,14 @@ def create_delivery_note(doc,method):
 	if doc.update_stock:
 		return
 	from_delivery_note = False
+	i = 0
 	for item in doc.items:
 		if item.delivery_note or item.delivered_by_supplier:
 			from_delivery_note = True
-			break
-	if from_delivery_note:
+		if check_item_is_maintain(item.item_code):
+			i += 1
+
+	if from_delivery_note or i == 0:
 		return
 	delivery_doc = frappe.get_doc(make_delivery_note(doc.name))
 	delivery_doc.flags.ignore_permissions = True
