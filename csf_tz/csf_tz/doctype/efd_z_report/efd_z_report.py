@@ -37,17 +37,13 @@ class EFDZReport(Document):
 		date = datetime.strptime(str(self.z_report_date_time), "%Y-%m-%d %H:%M:%S").date()
 		time = datetime.strptime(str(self.z_report_date_time), "%Y-%m-%d %H:%M:%S").time()
 
-		pos_profile = frappe.get_value("Electronic Fiscal Device", self.electronic_fiscal_device, "pos_profile")
 
-		is_pos = "1" if pos_profile else "0"
-
-		condition = "docstatus = 1 and is_pos = " + is_pos + " and (efd_z_report = '' OR efd_z_report is null) and status !='Return' and posting_date <= '" + str(
+		condition = "docstatus = 1  and (efd_z_report = '' OR efd_z_report is null) and status !='Return' and posting_date <= '" + str(
 			date) + "' and IF(IF(posting_date = '" + str(date) + "', IF(posting_time < '" + str(
 			time) + "',1,'PostingTime'),'PostingDate') = 1 or IF(posting_date = '" + str(
 			date) + "',IF(posting_time < '" + str(time) + "',1,'PostingTime'),'PostingDate') = 'PostingDate',1,0)"
 
-		if pos_profile:
-			condition += " and pos_profile = '" + pos_profile + "'"
+		condition += " and electronic_fiscal_device = '" + self.electronic_fiscal_device + "'" "or electronic_fiscal_device is null or electronic_fiscal_device = ''" 
 
 		query = """ select *
 						from `tabSales Invoice`
