@@ -76,7 +76,7 @@ class EFDZReport(Document):
 		return True
 
 
-	def on_submit(self):
+	def before_submit(self):
 		to_remove= []
 		for invoice in self.efd_z_report_invoices:
 			if not invoice.include:
