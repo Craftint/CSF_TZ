@@ -43,7 +43,7 @@ class EFDZReport(Document):
 			time) + "',1,'PostingTime'),'PostingDate') = 1 or IF(posting_date = '" + str(
 			date) + "',IF(posting_time < '" + str(time) + "',1,'PostingTime'),'PostingDate') = 'PostingDate',1,0)"
 
-		condition += " and electronic_fiscal_device = '" + self.electronic_fiscal_device + "'" "or electronic_fiscal_device is null or electronic_fiscal_device = ''" 
+		condition += " and ( electronic_fiscal_device = '" + self.electronic_fiscal_device + "'" "or electronic_fiscal_device is null or electronic_fiscal_device = '')" 
 
 		query = """ select *
 						from `tabSales Invoice`
