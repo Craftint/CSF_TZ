@@ -200,6 +200,7 @@ def get_item_prices(item_code,currency,customer=None,company=None):
 		if item.rate not in unik_price_list and len(prices_list) <= max_records:
 			unik_price_list.append(item.rate)
 			item_dict = {
+					"name": item.item_code,
 					"item_code" : item.item_code,
 					"price" : item.rate,
 					"date" : item.posting_date,
