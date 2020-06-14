@@ -240,6 +240,9 @@ frappe.ui.form.SelectDialog = Class.extend({
 						results[0].checked = 1;
 					}
 				}
+				else {
+					frappe.show_alert({message:__('There is No Records'), indicator:'red'}, 5);
+				}
 				me.render_result_list(results, more);
 			}
         });
