@@ -226,17 +226,19 @@ def get_item_prices_custom(*args):
 	else:
 		customer = ""
 	company = filters["company"]
-
 	item_code = "'{0}'".format(filters["item_code"])
 	currency = "'{0}'".format(filters["currency"])
 	prices_list= []
 	unique_price_list = []
-	# max_records = frappe.db.get_value('Company', company, 'max_records_in_dialog') or 20
 	max_records =  int(start) + int(limit)
+	conditions = ""
+	if "posting_date" in filters:
+		posting_date = filters["posting_date"]
+		from_date="'{from_date}'".format(from_date=posting_date[1][0])
+		to_date = "'{to_date}'".format(to_date=posting_date[1][1])
+		conditions += "AND DATE(SI.posting_date) BETWEEN {start} AND {end}".format(start=from_date,end=to_date)
 	if customer:
-		conditions = " and SI.customer = '%s'" % customer
-	else:
-		conditions = ""
+		conditions += " AND SI.customer = '%s'" % customer
 
 	query = """ SELECT SI.name, SI.posting_date, SI.customer, SIT.item_code, SIT.qty,  SIT.rate
             FROM `tabSales Invoice` AS SI 
@@ -267,7 +269,6 @@ def get_item_prices_custom(*args):
 				}
 			prices_list.append(item_dict)
 				
-	# print_out(len(prices_list))
 	return prices_list
 
 
