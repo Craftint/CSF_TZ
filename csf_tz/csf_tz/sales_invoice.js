@@ -9,7 +9,6 @@ frappe.ui.form.SelectDialog = Class.extend({
 
 		this.page_length = 20;
 		this.start = 0;
-
 		let fields = [];
 		let count = 0;
 		if(!this.date_field) {
@@ -19,15 +18,12 @@ frappe.ui.form.SelectDialog = Class.extend({
 
         if($.isArray(this.query_fields)) {
 			for (let df of this.query_fields) {
-				fields.push(df, {fieldtype: "Column Break"});
+                // fields.push(df, {fieldtype: "Column Break"});
+                if (df.filter) {
+                    console.log(df)
+                    fields.push(df, {fieldtype: "Column Break"});
+                }
 			}
-		} else {
-			this.query_fields.forEach(function(setter) {
-				fields.push(setter);
-				if (count++ < Object.keys(me.query_fields).length) {
-					fields.push({fieldtype: "Column Break"});
-				}
-			});
         }
         
 		fields = fields.concat([
@@ -103,8 +99,6 @@ frappe.ui.form.SelectDialog = Class.extend({
         var me = this;
 		return this.$results.find('.list-item-container').map(function() {
 			if ($(this).find('.list-row-check:checkbox:checked').length > 0 ) {
-                console.log(this);
-                console.log(`[data-item-${me.return_field}]`);
 				return $(this).find(`[data-item-${me.return_field}]`).attr(`data-item-${me.return_field}`);
 			}
 		}).get();
@@ -187,9 +181,12 @@ frappe.ui.form.SelectDialog = Class.extend({
 		let filter_fields = [me.date_field];
 		if($.isArray(this.query_fields)) {
 			for (let df of this.query_fields) {
-				filters[df.fieldname] = me.dialog.fields_dict[df.fieldname].get_value() || undefined;
-				me.args[df.fieldname] = filters[df.fieldname];
-				filter_fields.push(df.fieldname);
+                if (df.filter) {
+                    filters[df.fieldname] = me.dialog.fields_dict[df.fieldname].get_value() || undefined;
+                    me.args[df.fieldname] = filters[df.fieldname];
+                    filter_fields.push(df.fieldname);
+                }
+				
 			}
         } 
 
@@ -400,24 +397,28 @@ frappe.ui.keys.add_shortcut({
                         label: "Rate",
                         options: "currency",
                         precision: "2",
+                        filter: 0
                     },
                     {
                         fieldname: "qty",
                         fieldtype: "Float",
                         label: "Qty",
+                        filter: 0
                     },
                     {
                         fieldname: "invoice",
                         fieldtype: "Link",
                         label: "Invoice",
-                        options: "Sales Invoice"
+                        options: "Sales Invoice",
+                        filter: 0
                     },
                     {
                         default: cur_frm.doc.customer,
                         fieldname: "customer",
                         fieldtype: "Link",
                         label: "Customer",
-                        options: "Customer"
+                        options: "Customer",
+                        filter: 1
                     },
                 
                 ],
