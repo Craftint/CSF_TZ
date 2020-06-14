@@ -10,16 +10,7 @@ frappe.ui.form.SelectDialog = Class.extend({
 		this.page_length = 20;
 		this.start = 0;
 
-		let fields = [
-			{
-				fieldtype: "Data",
-				label: __("Search Term"),
-				fieldname: "search_term"
-			},
-			{
-				fieldtype: "Column Break"
-			}
-		];
+		let fields = [];
 		let count = 0;
 		if(!this.date_field) {
 			this.date_field = "transaction_date";
@@ -107,15 +98,15 @@ frappe.ui.form.SelectDialog = Class.extend({
 			this.get_results();
 		});
 
-		this.$parent.find('[data-fieldname="search_term"]').on('input', (e) => {
-			var $this = $(this);
-			clearTimeout($this.data('timeout'));
-			$this.data('timeout', setTimeout(function() {
-				frappe.flags.auto_scroll = false;
-				me.empty_list();
-				me.get_results();
-			}, 300));
-        });
+		// this.$parent.find('[data-fieldname="search_term"]').on('input', (e) => {
+		// 	var $this = $(this);
+		// 	clearTimeout($this.data('timeout'));
+		// 	$this.data('timeout', setTimeout(function() {
+		// 		frappe.flags.auto_scroll = false;
+		// 		me.empty_list();
+		// 		me.get_results();
+		// 	}, 300));
+        // });
         
 	},
 
@@ -137,7 +128,7 @@ frappe.ui.form.SelectDialog = Class.extend({
 		let head = Object.keys(result).length === 0;
 
 		let contents = ``;
-		let columns = ["name"];
+		let columns = [];
 
 		if($.isArray(this.query_fields)) {
 			for (let df of this.query_fields) {
@@ -151,9 +142,7 @@ frappe.ui.form.SelectDialog = Class.extend({
 				${
 					head ? `<span class="ellipsis">${__(frappe.model.unscrub(column))}</span>`
 
-					: (column !== "name" ? `<span class="ellipsis" data-item-${column}="${result[column]}">${__(result[column])}</span>`
-						: `<a href="${"#Form/"+ me.main_doctype + "/" + result[column]}" class="list-id ellipsis">
-							${__(result[column])}</a>`)
+					: `<span class="ellipsis" data-item-${column}="${result[column]}">${__(result[column])}</span>`
 				}
 			</div>`;
         })
@@ -222,8 +211,8 @@ frappe.ui.form.SelectDialog = Class.extend({
 		}
 
 		let args = {
-			doctype: me.main_doctype,
-			txt: me.dialog.fields_dict["search_term"].get_value(),
+            doctype:"",
+            txt: "",
 			filters: filters,
 			filter_fields: filter_fields,
 			start: this.start,
@@ -287,7 +276,6 @@ frappe.ui.form.on("Sales Invoice", {
     },
     refresh: function(frm) {
         frm.trigger("update_stock");
-        frm.trigger("test_new_dialog");
     },
     onload: function(frm) {
         if (frm.doc.document_status == "Draft") {
@@ -495,25 +483,38 @@ frappe.ui.keys.add_shortcut({
             const current_doc = $('.data-row.editable-row').parent().attr("data-name");
             const item_row = locals["Sales Invoice Item"][current_doc];
             new frappe.ui.form.SelectDialog({
-                main_doctype: "Item",
+                // main_doctype: "Item",
                 target: cur_frm,
                 title: "Get Item",
                 multi_select: 1,
                 date_field: "posting_date",
                 query_fields:[
                     {
-                        default: "Mit",
-                        fieldname: "customer",
-                        fieldtype: "Link",
-                        label: "Customer",
-                        options: "Customer"},
-                    {
                         fieldname: "rate",
                         fieldtype: "Currency",
-                        label: "Total (USD)",
+                        label: "Rate",
                         options: "currency",
                         precision: "2",
                     },
+                    {
+                        fieldname: "qty",
+                        fieldtype: "Float",
+                        label: "Qty",
+                    },
+                    {
+                        fieldname: "invoice",
+                        fieldtype: "Link",
+                        label: "Invoice",
+                        options: "Sales Invoice"
+                    },
+                    {
+                        default: cur_frm.doc.customer,
+                        fieldname: "customer",
+                        fieldtype: "Link",
+                        label: "Customer",
+                        options: "Customer"
+                    },
+                
                 ],
                 get_query() {
                     return {
