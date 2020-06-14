@@ -158,7 +158,9 @@ frappe.ui.form.SelectDialog = Class.extend({
 		more_btn.hide();
 
 		if (results.length === 0) return;
-		if (more) more_btn.show();
+		if (more && me.page_length + me.start < results.length) {
+            more_btn.show();
+        } else {more_btn.hide();}
         $(".results").find(".list-item-container").remove()
 		results.forEach((result) => {
 			me.$results.append(me.make_list_row(result));
