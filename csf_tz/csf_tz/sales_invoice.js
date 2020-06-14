@@ -47,8 +47,6 @@ frappe.ui.form.SelectDialog = Class.extend({
 			}
 		]);
 
-		// let doctype_plural = !this.doctype.endsWith('y') ? this.doctype + 's'
-		// 	: this.doctype.slice(0, -1) + 'ies';
 		this.dialog = new frappe.ui.Dialog({
 			title: __(this.title),
 			fields: fields,
@@ -98,15 +96,6 @@ frappe.ui.form.SelectDialog = Class.extend({
 			this.get_results();
 		});
 
-		// this.$parent.find('[data-fieldname="search_term"]').on('input', (e) => {
-		// 	var $this = $(this);
-		// 	clearTimeout($this.data('timeout'));
-		// 	$this.data('timeout', setTimeout(function() {
-		// 		frappe.flags.auto_scroll = false;
-		// 		me.empty_list();
-		// 		me.get_results();
-		// 	}, 300));
-        // });
         
 	},
 
@@ -122,7 +111,6 @@ frappe.ui.form.SelectDialog = Class.extend({
 	},
 
 	make_list_row: function(result={}) {
-        // console.log(result);
 		var me = this;
 		// Make a head row by default (if result not passed)
 		let head = Object.keys(result).length === 0;
@@ -220,16 +208,12 @@ frappe.ui.form.SelectDialog = Class.extend({
 			query: this.get_query ? this.get_query().query : '',
 			as_dict: 1
         }
-        // if (this.new_args){$.extend(args, this.new_args);}
 		frappe.call({
 			type: "GET",
-            // method:this.method,
             method:'frappe.desk.search.search_widget',
 			no_spinner: true,
-            // args: this.new_args,
             args: args,
 			callback: function(r) {
-                // console.log(r)
                 if (r.message) {r.values = r.message}
 				let results = [], more = 0;
 				if (r.values.length) {
@@ -238,7 +222,6 @@ frappe.ui.form.SelectDialog = Class.extend({
 						more = 1;
 					}
 					r.values.forEach(function(result) {
-                        // console.log(result);
 						if(me.date_field in result) {
 							result["Date"] = result[me.date_field]
 						}
@@ -400,90 +383,12 @@ frappe.ui.keys.add_shortcut({
 });
 
 
-// frappe.ui.keys.add_shortcut({
-//     shortcut: 'ctrl+i',
-//     action: () => { 
-//             const current_doc = $('.data-row.editable-row').parent().attr("data-name");
-//             const item_row = locals["Sales Invoice Item"][current_doc];
-//             frappe.call({
-//                 method: 'csf_tz.custom_api.get_item_prices',
-//                 args: {
-//                     item_code: item_row.item_code,
-//                     customer: cur_frm.doc.customer,
-//                     currency: cur_frm.doc.currency,
-//                     company: cur_frm.doc.company
-//                 },
-//                 callback: function(r) {
-//                     if (r.message.length > 0){
-//                         const c = new frappe.ui.Dialog({
-//                             title: __('Item Prices'),
-//                             width: 600
-//                         });
-//                         $(`<div class="modal-body ui-front">
-//                         <h2>${item_row.item_code} : ${item_row.qty}</h2>
-//                             <p>Choose Price and click Select :</p>
-//                             <table class="table table-bordered">
-//                             <thead>
-//                             </thead>
-//                             <tbody>
-//                             </tbody>
-//                             </table>
-//                         </div>`).appendTo(c.body);
-//                         const thead = $(c.body).find('thead');
-//                         // if (r.message[0].rate){
-//                             // r.message.sort((a,b) => a.expiry_status-b.expiry_status);
-//                             $(`<tr>
-//                             <th>Check</th>
-//                             <th>Rate</th>
-//                             <th>Qty</th>
-//                             <th>Date</th>
-//                             <th>Invoice</th>
-//                             <th>Customer</th>
-//                             </tr>`).appendTo(thead);
-//                         // }
-//                         r.message.forEach(element => {
-//                             const tbody = $(c.body).find('tbody');
-//                             const tr = $(`
-//                             <tr>
-//                                 <td><input type="checkbox" class="check-rate" data-rate="${element.price}"></td>
-//                                 <td>${element.price}</td>
-//                                 <td>${element.qty}</td>
-//                                 <td>${element.date }</td>
-//                                 <td>${element.invoice }</td>
-//                                 <td>${element.customer }</td>
-//                             </tr>
-//                             `).appendTo(tbody);
-                         
-//                             tbody.find('.check-rate').on('change', function() {
-//                                 $('input.check-rate').not(this).prop('checked', false);  
-//                             });
-//                         });
-//                         c.set_primary_action("Select", function() {
-//                             $(c.body).find('input:checked').each(function(i, input) {
-//                                 frappe.model.set_value(item_row.doctype, item_row.name, 'rate', $(input).attr('data-rate'));
-//                             });
-//                             cur_frm.rec_dialog.hide();
-//                             cur_frm.refresh_fields();
-//                         });
-//                         cur_frm.rec_dialog = c;
-//                         c.show();  
-//                     }
-//                 }
-//             });     
-//     },
-//     page: this.page,
-//     description: __('Select Customer Item Price'),
-//     ignore_inputs: true,
-// });
-
-
 frappe.ui.keys.add_shortcut({
     shortcut: 'ctrl+i',
     action: () => { 
             const current_doc = $('.data-row.editable-row').parent().attr("data-name");
             const item_row = locals["Sales Invoice Item"][current_doc];
             new frappe.ui.form.SelectDialog({
-                // main_doctype: "Item",
                 target: cur_frm,
                 title: "Get Item",
                 multi_select: 1,
