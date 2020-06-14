@@ -214,6 +214,63 @@ def get_item_prices(item_code,currency,customer=None,company=None):
 	return prices_list
 
 
+
+@frappe.whitelist()
+def get_item_prices_custom(*args):
+	# print_out(str(args))
+	filters = args[5]
+	start = args[3]
+	limit = args[4]
+	if "customer" in filters:
+		customer = filters["customer"]
+	else:
+		customer = ""
+	company = filters["company"]
+
+	item_code = "'{0}'".format(filters["item_code"])
+	currency = "'{0}'".format(filters["currency"])
+	prices_list= []
+	unique_price_list = []
+	# max_records = frappe.db.get_value('Company', company, 'max_records_in_dialog') or 20
+	max_records =  int(start) + int(limit)
+	if customer:
+		conditions = " and SI.customer = '%s'" % customer
+	else:
+		conditions = ""
+
+	query = """ SELECT SI.name, SI.posting_date, SI.customer, SIT.item_code, SIT.qty,  SIT.rate
+            FROM `tabSales Invoice` AS SI 
+            INNER JOIN `tabSales Invoice Item` AS SIT ON SIT.parent = SI.name
+            WHERE 
+                SIT.item_code = {0} 
+                AND SIT.parent = SI.name
+                AND SI.docstatus= 1
+                AND SI.currency = {2}
+                AND SI.is_return != 1
+                AND SI.company = '{3}'
+                {1}
+            ORDER by SI.posting_date DESC""".format(item_code,conditions,currency,company) 
+
+	items = frappe.db.sql(query,as_dict=True)
+	for item in items:
+		# if item.rate not in unique_price_list and len(prices_list) <= max_records: 
+		if item.rate and len(prices_list) <= max_records: 
+			unique_price_list.append(item.rate)
+			item_dict = {
+					"name": item.item_code,
+					"item_code" : item.item_code,
+					"rate" : item.rate,
+					"posting_date" : item.posting_date,
+					"invoice" : item.name,
+					"customer": item.customer,
+					"qty" : item.qty,
+				}
+			prices_list.append(item_dict)
+				
+	# print_out(len(prices_list))
+	return prices_list
+
+
 @frappe.whitelist()
 def get_repack_template(template_name,qty):
 	template_doc = frappe.get_doc("Repack Template",template_name)
