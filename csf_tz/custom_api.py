@@ -174,8 +174,9 @@ def get_item_info(item_code):
 def get_item_prices(item_code,currency,customer=None,company=None):
 	item_code = "'{0}'".format(item_code)
 	currency = "'{0}'".format(currency)
+	unique_records = int(frappe.db.get_value('CSF TZ Settings', None, 'unique_records'))
 	prices_list= []
-	unik_price_list = []
+	unique_price_list = []
 	max_records = frappe.db.get_value('Company', company, 'max_records_in_dialog') or 20
 	if customer:
 		conditions = " and SI.customer = '%s'" % customer
@@ -197,9 +198,7 @@ def get_item_prices(item_code,currency,customer=None,company=None):
 
 	items = frappe.db.sql(query,as_dict=True)
 	for item in items:
-		if item.rate not in unik_price_list and len(prices_list) <= max_records:
-			unik_price_list.append(item.rate)
-			item_dict = {
+		item_dict = {
 					"name": item.item_code,
 					"item_code" : item.item_code,
 					"price" : item.rate,
@@ -208,9 +207,11 @@ def get_item_prices(item_code,currency,customer=None,company=None):
 					"customer": item.customer,
 					"qty" : item.qty,
 				}
+		if unique_records == 1 and item.rate not in unique_price_list and len(prices_list) <= max_records: 
+			unique_price_list.append(item.rate)
 			prices_list.append(item_dict)
-				
-
+		elif unique_records != 1 and  item.rate and len(prices_list) <= max_records:
+			prices_list.append(item_dict)
 	return prices_list
 
 
@@ -221,6 +222,7 @@ def get_item_prices_custom(*args):
 	filters = args[5]
 	start = args[3]
 	limit = args[4]
+	unique_records = int(frappe.db.get_value('CSF TZ Settings', None, 'unique_records'))
 	if "customer" in filters:
 		customer = filters["customer"]
 	else:
@@ -255,10 +257,7 @@ def get_item_prices_custom(*args):
 
 	items = frappe.db.sql(query,as_dict=True)
 	for item in items:
-		# if item.rate not in unique_price_list and len(prices_list) <= max_records: 
-		if item.rate and len(prices_list) <= max_records: 
-			unique_price_list.append(item.rate)
-			item_dict = {
+		item_dict = {
 					"name": item.item_code,
 					"item_code" : item.item_code,
 					"rate" : item.rate,
@@ -267,8 +266,11 @@ def get_item_prices_custom(*args):
 					"customer": item.customer,
 					"qty" : item.qty,
 				}
+		if unique_records == 1 and item.rate not in unique_price_list and len(prices_list) <= max_records: 
+			unique_price_list.append(item.rate)
 			prices_list.append(item_dict)
-				
+		elif unique_records != 1 and  item.rate and len(prices_list) <= max_records:
+			prices_list.append(item_dict)			
 	return prices_list
 
 
