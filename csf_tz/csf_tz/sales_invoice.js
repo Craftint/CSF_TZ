@@ -18,9 +18,7 @@ frappe.ui.form.SelectDialog = Class.extend({
 
         if($.isArray(this.query_fields)) {
 			for (let df of this.query_fields) {
-                // fields.push(df, {fieldtype: "Column Break"});
                 if (df.filter) {
-                    console.log(df)
                     fields.push(df, {fieldtype: "Column Break"});
                 }
 			}
@@ -38,7 +36,7 @@ frappe.ui.form.SelectDialog = Class.extend({
 				click: function(){
 					me.start += 20;
 					frappe.flags.auto_scroll = true;
-					me.get_results();
+                    me.get_results();
 				}
 			}
 		]);
@@ -48,7 +46,8 @@ frappe.ui.form.SelectDialog = Class.extend({
 			fields: fields,
 			primary_action_label: __("Get Items"),
 			primary_action: function() {
-				me.action(me.get_checked_values(), me.args);
+                me.action(me.get_checked_values(), me.args);
+                cur_dialog.hide();
 			},
 		});
 
@@ -101,7 +100,7 @@ frappe.ui.form.SelectDialog = Class.extend({
 			if ($(this).find('.list-row-check:checkbox:checked').length > 0 ) {
 				return $(this).find(`[data-item-${me.return_field}]`).attr(`data-item-${me.return_field}`);
 			}
-		}).get();
+        }).get();
 	},
 
 	make_list_row: function(result={}) {
@@ -242,10 +241,7 @@ frappe.ui.form.SelectDialog = Class.extend({
 				me.render_result_list(results, more);
 			}
         });
-        
     },
-    
-
 });
 
 
@@ -388,7 +384,7 @@ frappe.ui.keys.add_shortcut({
             new frappe.ui.form.SelectDialog({
                 target: cur_frm,
                 title: "Get Item",
-                multi_select: 1,
+                multi_select: 0,
                 date_field: "posting_date",
                 query_fields:[
                     {
@@ -436,6 +432,9 @@ frappe.ui.keys.add_shortcut({
                 return_field: "rate",
                 action(selections) {
                     console.log(selections);
+                    frappe.model.set_value(item_row.doctype, item_row.name, 'rate', selections[0]);
+                    cur_frm.refresh_fields();
+                    
                 }
             });   
     },
