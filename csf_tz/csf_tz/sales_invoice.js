@@ -44,7 +44,7 @@ frappe.ui.form.SelectDialog = Class.extend({
 		this.dialog = new frappe.ui.Dialog({
 			title: __(this.title),
 			fields: fields,
-			primary_action_label: __("Get Items"),
+			primary_action_label: __("Select"),
 			primary_action: function() {
                 me.action(me.get_checked_values(), me.args);
                 cur_dialog.hide();
@@ -383,7 +383,7 @@ frappe.ui.keys.add_shortcut({
             const item_row = locals["Sales Invoice Item"][current_doc];
             new frappe.ui.form.SelectDialog({
                 target: cur_frm,
-                title: "Get Item",
+                title: "Select The Rate",
                 multi_select: 0,
                 date_field: "posting_date",
                 query_fields:[
