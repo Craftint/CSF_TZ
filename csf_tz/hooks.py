@@ -77,6 +77,7 @@ fixtures = [
 # include js, css files in header of desk.html
 # app_include_css = "/assets/csf_tz/css/csf_tz.css"
 # app_include_js = "/assets/csf_tz/js/csf_tz.js"
+app_include_js = "/assets/js/select_dialog.min.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/csf_tz/css/csf_tz.css"
