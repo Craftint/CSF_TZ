@@ -222,6 +222,7 @@ def get_repack_template(template_name,qty):
 		"item_uom": template_doc.item_uom,
 		"qty": cint(qty),
 		"item_template" : 1 ,
+		"s_warehouse":template_doc.default_warehouse,
 
 	})
 	for i in template_doc.repack_template_details:
@@ -230,6 +231,7 @@ def get_repack_template(template_name,qty):
 			"item_uom": i.item_uom,
 			"qty": cint(float(i.qty / template_doc.qty) * float(qty)),
 			"item_template" : 0 ,
+			"t_warehouse":template_doc.default_warehouse,
 		})
 	return rows
 
