@@ -238,7 +238,10 @@ def create_delivery_note(doc,method):
 		return
 	from_delivery_note = False
 	i = 0
+	warehouses_list =[]
 	for item in doc.items:
+		if item.warehouse not in warehouses_list:
+			warehouses_list.append(item.warehouse)
 		if item.delivery_note or item.delivered_by_supplier:
 			from_delivery_note = True
 		if check_item_is_maintain(item.item_code):
@@ -246,14 +249,16 @@ def create_delivery_note(doc,method):
 
 	if from_delivery_note or i == 0:
 		return
-	delivery_doc = frappe.get_doc(make_delivery_note(doc.name))
-	delivery_doc.flags.ignore_permissions = True
-	delivery_doc.flags.ignore_account_permission = True
-	delivery_doc.save()
-	# delivery_doc.submit()
-	url = frappe.utils.get_url_to_form(delivery_doc.doctype, delivery_doc.name)
-	msgprint = "Delivery Note Created as Draft at <a href='{0}'>{1}</a>".format(url,delivery_doc.name)
-	frappe.msgprint(_(msgprint))
+		
+	for warehouse in warehouses_list:
+		delivery_doc = frappe.get_doc(make_delivery_note(doc.name,warehouse))
+		delivery_doc.flags.ignore_permissions = True
+		delivery_doc.flags.ignore_account_permission = True
+		delivery_doc.save()
+		# delivery_doc.submit()
+		url = frappe.utils.get_url_to_form(delivery_doc.doctype, delivery_doc.name)
+		msgprint = "Delivery Note Created as Draft at <a href='{0}'>{1}</a>".format(url,delivery_doc.name)
+		frappe.msgprint(_(msgprint))
 
 
 
@@ -266,7 +271,7 @@ def check_item_is_maintain(item_name):
 	
 
 
-def make_delivery_note(source_name, target_doc=None):
+def make_delivery_note(source_name, warehouse, target_doc=None):
 	def set_missing_values(source, target):
 		target.ignore_pricing_rule = 1
 		target.run_method("set_missing_values")
@@ -278,6 +283,7 @@ def make_delivery_note(source_name, target_doc=None):
 
 		target_doc.base_amount = target_doc.qty * flt(source_doc.base_rate)
 		target_doc.amount = target_doc.qty * flt(source_doc.rate)
+
 
 	doclist = get_mapped_doc("Sales Invoice", source_name, 	{
 		"Sales Invoice": {
@@ -294,11 +300,14 @@ def make_delivery_note(source_name, target_doc=None):
 				"serial_no": "serial_no",
 				"sales_order": "against_sales_order",
 				"so_detail": "so_detail",
-				"cost_center": "cost_center"
+				"cost_center": "cost_center",
+				"Warehouse":"warehouse",
 			},
 			"postprocess": update_item,
 			"condition": lambda doc: check_item_is_maintain(doc.item_code),
+			"condition": lambda doc: doc.warehouse == warehouse,
 			# "condition": lambda doc: doc.delivered_by_supplier!=1,
+			
 		},
 		"Sales Taxes and Charges": {
 			"doctype": "Sales Taxes and Charges",
