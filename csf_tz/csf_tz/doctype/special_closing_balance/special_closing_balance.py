@@ -17,15 +17,15 @@ class SpecialClosingBalance(Document):
 		for item_row in self.closing_balance_details:
 			if item_row.item and item_row.quantity:
 				item_balance = get_latest_stock_qty(item_row.item, self.warehouse)
-				item_dict = dict(
-					item_code=item_row.item,
-					qty=item_row.quantity - item_balance,
-					uom=item_row.uom,
-					s_warehouse=self.warehouse
-				)
-				item_row.item_balance = item_balance
-				items.append(item_dict)
-
+				if item_row.quantity != item_balance:
+					item_dict = dict(
+						item_code=item_row.item,
+						qty=item_row.quantity - item_balance,
+						uom=item_row.uom,
+						s_warehouse=self.warehouse
+					)
+					item_row.item_balance = item_balance
+					items.append(item_dict)
 		stock_entry_doc = frappe.get_doc(dict(
 				doctype="Stock Entry",
 				posting_date=today(),
