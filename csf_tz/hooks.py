@@ -158,7 +158,8 @@ doc_events = {
 		"on_submit":"csf_tz.custom_api.create_delivery_note"
 	},
 	"Account": {
-		"validate":"csf_tz.custom_api.create_indirect_expense_item"
+		"validate":"csf_tz.custom_api.create_indirect_expense_item",
+		"after_insert":"csf_tz.custom_api.create_indirect_expense_item",
 	},
 }
 
