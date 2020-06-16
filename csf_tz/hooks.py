@@ -30,6 +30,7 @@ fixtures = [
 		"Payment Entry Reference-end_date",
 		"Sales Invoice-witholding_tax_certificate_number",
 		"Purchase Invoice Item-withholding_tax_rate",
+		"Sales Invoice Item-withholding_tax_rate",
 		"Payment Entry Reference-start_date",
 		"Sales Invoice-column_break_29",
 		"Sales Invoice-tra_control_number",
