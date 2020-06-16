@@ -78,6 +78,9 @@ frappe.ui.keys.add_shortcut({
                         cur_frm.rec_dialog = d;
                         d.show();  
                     }
+                    else {
+                        frappe.show_alert({message:__('There is No Records'), indicator:'red'}, 5);
+                    }
                 }
             });     
     },
@@ -155,6 +158,9 @@ frappe.ui.keys.add_shortcut({
                         cur_frm.rec_dialog = c;
                         c.show();  
                     }
+                    else {
+                        frappe.show_alert({message:__('There is No Records'), indicator:'red'}, 5);
+                    }
                 }
             });     
     },
@@ -226,6 +232,9 @@ frappe.ui.keys.add_shortcut({
                         });
                         cur_frm.rec_dialog = e;
                         e.show();  
+                    }
+                    else {
+                        frappe.show_alert({message:__('There is No Records'), indicator:'red'}, 5);
                     }
                 }
             });     

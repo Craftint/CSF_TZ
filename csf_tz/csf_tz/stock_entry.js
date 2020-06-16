@@ -67,7 +67,7 @@ frappe.ui.keys.add_shortcut({
     shortcut: 'ctrl+q',
     action: () => { 
             const current_doc = $('.data-row.editable-row').parent().attr("data-name");
-            const item_row = locals["Sales Invoice Item"][current_doc];
+            const item_row = locals["Stock Entry Detail"][current_doc];
             frappe.call({
                 method: 'csf_tz.custom_api.get_item_info',
                 args: {item_code: item_row.item_code},
@@ -132,7 +132,7 @@ frappe.ui.keys.add_shortcut({
                         });
                         d.set_primary_action("Select", function() {
                             $(d.body).find('input:checked').each(function(i, input) {
-                                frappe.model.set_value(item_row.doctype, item_row.name, 'warehouse', $(input).attr('data-warehouse'));
+                                frappe.model.set_value(item_row.doctype, item_row.name, 's_warehouse', $(input).attr('data-warehouse'));
                                 if ($(input).attr('data-batch')) {
                                     frappe.model.set_value(item_row.doctype, item_row.name, 'batch_no', $(input).attr('data-batch'));
                                 }
@@ -142,6 +142,9 @@ frappe.ui.keys.add_shortcut({
                         });
                         cur_frm.rec_dialog = d;
                         d.show();  
+                    }
+                    else {
+                        frappe.show_alert({message:__('There is No Records'), indicator:'red'}, 5);
                     }
                 }
             });     

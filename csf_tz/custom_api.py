@@ -174,8 +174,9 @@ def get_item_info(item_code):
 def get_item_prices(item_code,currency,customer=None,company=None):
 	item_code = "'{0}'".format(item_code)
 	currency = "'{0}'".format(currency)
+	unique_records = int(frappe.db.get_value('CSF TZ Settings', None, 'unique_records'))
 	prices_list= []
-	unik_price_list = []
+	unique_price_list = []
 	max_records = frappe.db.get_value('Company', company, 'max_records_in_dialog') or 20
 	if customer:
 		conditions = " and SI.customer = '%s'" % customer
@@ -197,9 +198,8 @@ def get_item_prices(item_code,currency,customer=None,company=None):
 
 	items = frappe.db.sql(query,as_dict=True)
 	for item in items:
-		if item.rate not in unik_price_list and len(prices_list) <= max_records:
-			unik_price_list.append(item.rate)
-			item_dict = {
+		item_dict = {
+					"name": item.item_code,
 					"item_code" : item.item_code,
 					"price" : item.rate,
 					"date" : item.posting_date,
@@ -207,9 +207,70 @@ def get_item_prices(item_code,currency,customer=None,company=None):
 					"customer": item.customer,
 					"qty" : item.qty,
 				}
+		if unique_records == 1 and item.rate not in unique_price_list and len(prices_list) <= max_records: 
+			unique_price_list.append(item.rate)
 			prices_list.append(item_dict)
-				
+		elif unique_records != 1 and  item.rate and len(prices_list) <= max_records:
+			prices_list.append(item_dict)
+	return prices_list
 
+
+
+@frappe.whitelist()
+def get_item_prices_custom(*args):
+	# print_out(str(args))
+	filters = args[5]
+	start = args[3]
+	limit = args[4]
+	unique_records = int(frappe.db.get_value('CSF TZ Settings', None, 'unique_records'))
+	if "customer" in filters:
+		customer = filters["customer"]
+	else:
+		customer = ""
+	company = filters["company"]
+	item_code = "'{0}'".format(filters["item_code"])
+	currency = "'{0}'".format(filters["currency"])
+	prices_list= []
+	unique_price_list = []
+	max_records =  int(start) + int(limit)
+	conditions = ""
+	if "posting_date" in filters:
+		posting_date = filters["posting_date"]
+		from_date="'{from_date}'".format(from_date=posting_date[1][0])
+		to_date = "'{to_date}'".format(to_date=posting_date[1][1])
+		conditions += "AND DATE(SI.posting_date) BETWEEN {start} AND {end}".format(start=from_date,end=to_date)
+	if customer:
+		conditions += " AND SI.customer = '%s'" % customer
+
+	query = """ SELECT SI.name, SI.posting_date, SI.customer, SIT.item_code, SIT.qty,  SIT.rate
+            FROM `tabSales Invoice` AS SI 
+            INNER JOIN `tabSales Invoice Item` AS SIT ON SIT.parent = SI.name
+            WHERE 
+                SIT.item_code = {0} 
+                AND SIT.parent = SI.name
+                AND SI.docstatus= 1
+                AND SI.currency = {2}
+                AND SI.is_return != 1
+                AND SI.company = '{3}'
+                {1}
+            ORDER by SI.posting_date DESC""".format(item_code,conditions,currency,company) 
+
+	items = frappe.db.sql(query,as_dict=True)
+	for item in items:
+		item_dict = {
+					"name": item.item_code,
+					"item_code" : item.item_code,
+					"rate" : item.rate,
+					"posting_date" : item.posting_date,
+					"invoice" : item.name,
+					"customer": item.customer,
+					"qty" : item.qty,
+				}
+		if unique_records == 1 and item.rate not in unique_price_list and len(prices_list) <= max_records: 
+			unique_price_list.append(item.rate)
+			prices_list.append(item_dict)
+		elif unique_records != 1 and  item.rate and len(prices_list) <= max_records:
+			prices_list.append(item_dict)			
 	return prices_list
 
 
