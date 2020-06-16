@@ -314,3 +314,40 @@ def make_delivery_note(source_name, target_doc=None):
 	}, target_doc, set_missing_values)
 
 	return doclist
+
+
+
+def create_indirect_expense_item(doc,method=None):
+	if not "Indirect Expenses" in doc.parent_account and doc.item:
+		doc.item = ""
+		return
+	if not "Indirect Expenses" in doc.parent_account:
+		return 
+	item = frappe.get_value("Item", doc.name, "name")
+	if item:
+		doc.item = item
+		return item
+	new_item = frappe.get_doc(dict(
+		doctype = "Item",
+		item_code = doc.name,
+		item_group = "Indirect Expenses",
+		enable_deferred_expense = 1,
+		is_stock_item = 0,
+		include_item_in_manufacturing = 0,
+		deferred_expense_account = doc.name,
+	))
+	new_item.flags.ignore_permissions = True
+	frappe.flags.ignore_account_permission = True
+	new_item.save()
+	if new_item.name:
+		url = frappe.utils.get_url_to_form(new_item.doctype, new_item.name)
+		msgprint = "New Item is Created <a href='{0}'>{1}</a>".format(url,new_item.name)
+		frappe.msgprint(_(msgprint))
+		doc.item = new_item.name
+	return new_item.name
+
+
+@frappe.whitelist()
+def add_indirect_expense_item(account_name):
+	account = frappe.get_doc("Account", account_name)
+	return create_indirect_expense_item(account) 
