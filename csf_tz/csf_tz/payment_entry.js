@@ -1,5 +1,8 @@
 frappe.ui.form.on("Payment Entry", {
-    payment_type: function(frm) {
+	onload: function(frm) {
+		frm.trigger("payment_type");
+	},
+	payment_type: function(frm) {
         if (frm.doc.document_status == "Draft" || typeof frm.doc.document_status === "undefined") {
             if (frm.doc.payment_type == "Receive") {
                 frm.set_value("naming_series","RE-.YYYY.-");

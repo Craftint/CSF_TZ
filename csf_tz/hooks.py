@@ -47,6 +47,7 @@ fixtures = [
 		"Stock Entry-repack_template",
 		"Stock Entry-qty",
 		"Stock Entry-item_uom",
+		"Account-item",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-default_print_format",
@@ -78,6 +79,7 @@ fixtures = [
 # include js, css files in header of desk.html
 # app_include_css = "/assets/csf_tz/css/csf_tz.css"
 # app_include_js = "/assets/csf_tz/js/csf_tz.js"
+app_include_js = "/assets/js/select_dialog.min.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/csf_tz/css/csf_tz.css"
@@ -95,6 +97,7 @@ doctype_js = {
 	"Customer" : "csf_tz/customer.js",
 	"Supplier" : "csf_tz/supplier.js",
 	"Stock Entry" : "csf_tz/stock_entry.js",
+	"Account" : "csf_tz/account.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -154,7 +157,11 @@ doc_events = {
 	},
 	"Sales Invoice": {
 		"on_submit":"csf_tz.custom_api.create_delivery_note"
-	}
+	},
+	"Account": {
+		"validate":"csf_tz.custom_api.create_indirect_expense_item",
+		"after_insert":"csf_tz.custom_api.create_indirect_expense_item",
+	},
 }
 
 # Scheduled Tasks

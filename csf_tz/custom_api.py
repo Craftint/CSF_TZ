@@ -6,7 +6,7 @@ from frappe import _
 import frappe.permissions
 import frappe.share
 import traceback
-from frappe.utils import flt, cint, getdate
+from frappe.utils import flt, cint, getdate, get_datetime
 from frappe.model.mapper import get_mapped_doc
 # # from erpnext.accounts.doctype.sales_invoice.sales_invoice import make_delivery_note
 
@@ -174,8 +174,9 @@ def get_item_info(item_code):
 def get_item_prices(item_code,currency,customer=None,company=None):
 	item_code = "'{0}'".format(item_code)
 	currency = "'{0}'".format(currency)
+	unique_records = int(frappe.db.get_value('CSF TZ Settings', None, 'unique_records'))
 	prices_list= []
-	unik_price_list = []
+	unique_price_list = []
 	max_records = frappe.db.get_value('Company', company, 'max_records_in_dialog') or 20
 	if customer:
 		conditions = " and SI.customer = '%s'" % customer
@@ -197,9 +198,8 @@ def get_item_prices(item_code,currency,customer=None,company=None):
 
 	items = frappe.db.sql(query,as_dict=True)
 	for item in items:
-		if item.rate not in unik_price_list and len(prices_list) <= max_records:
-			unik_price_list.append(item.rate)
-			item_dict = {
+		item_dict = {
+					"name": item.item_code,
 					"item_code" : item.item_code,
 					"price" : item.rate,
 					"date" : item.posting_date,
@@ -207,9 +207,70 @@ def get_item_prices(item_code,currency,customer=None,company=None):
 					"customer": item.customer,
 					"qty" : item.qty,
 				}
+		if unique_records == 1 and item.rate not in unique_price_list and len(prices_list) <= max_records: 
+			unique_price_list.append(item.rate)
 			prices_list.append(item_dict)
-				
+		elif unique_records != 1 and  item.rate and len(prices_list) <= max_records:
+			prices_list.append(item_dict)
+	return prices_list
 
+
+
+@frappe.whitelist()
+def get_item_prices_custom(*args):
+	# print_out(str(args))
+	filters = args[5]
+	start = args[3]
+	limit = args[4]
+	unique_records = int(frappe.db.get_value('CSF TZ Settings', None, 'unique_records'))
+	if "customer" in filters:
+		customer = filters["customer"]
+	else:
+		customer = ""
+	company = filters["company"]
+	item_code = "'{0}'".format(filters["item_code"])
+	currency = "'{0}'".format(filters["currency"])
+	prices_list= []
+	unique_price_list = []
+	max_records =  int(start) + int(limit)
+	conditions = ""
+	if "posting_date" in filters:
+		posting_date = filters["posting_date"]
+		from_date="'{from_date}'".format(from_date=posting_date[1][0])
+		to_date = "'{to_date}'".format(to_date=posting_date[1][1])
+		conditions += "AND DATE(SI.posting_date) BETWEEN {start} AND {end}".format(start=from_date,end=to_date)
+	if customer:
+		conditions += " AND SI.customer = '%s'" % customer
+
+	query = """ SELECT SI.name, SI.posting_date, SI.customer, SIT.item_code, SIT.qty,  SIT.rate
+            FROM `tabSales Invoice` AS SI 
+            INNER JOIN `tabSales Invoice Item` AS SIT ON SIT.parent = SI.name
+            WHERE 
+                SIT.item_code = {0} 
+                AND SIT.parent = SI.name
+                AND SI.docstatus= 1
+                AND SI.currency = {2}
+                AND SI.is_return != 1
+                AND SI.company = '{3}'
+                {1}
+            ORDER by SI.posting_date DESC""".format(item_code,conditions,currency,company) 
+
+	items = frappe.db.sql(query,as_dict=True)
+	for item in items:
+		item_dict = {
+					"name": item.item_code,
+					"item_code" : item.item_code,
+					"rate" : item.rate,
+					"posting_date" : item.posting_date,
+					"invoice" : item.name,
+					"customer": item.customer,
+					"qty" : item.qty,
+				}
+		if unique_records == 1 and item.rate not in unique_price_list and len(prices_list) <= max_records: 
+			unique_price_list.append(item.rate)
+			prices_list.append(item_dict)
+		elif unique_records != 1 and  item.rate and len(prices_list) <= max_records:
+			prices_list.append(item_dict)			
 	return prices_list
 
 
@@ -237,20 +298,28 @@ def create_delivery_note(doc,method):
 	if doc.update_stock:
 		return
 	from_delivery_note = False
+	i = 0
+	warehouses_list =[]
 	for item in doc.items:
+		if item.warehouse not in warehouses_list:
+			warehouses_list.append(item.warehouse)
 		if item.delivery_note or item.delivered_by_supplier:
 			from_delivery_note = True
-			break
-	if from_delivery_note:
+		if check_item_is_maintain(item.item_code):
+			i += 1
+
+	if from_delivery_note or i == 0:
 		return
-	delivery_doc = frappe.get_doc(make_delivery_note(doc.name))
-	delivery_doc.flags.ignore_permissions = True
-	delivery_doc.flags.ignore_account_permission = True
-	delivery_doc.save()
-	# delivery_doc.submit()
-	url = frappe.utils.get_url_to_form(delivery_doc.doctype, delivery_doc.name)
-	msgprint = "Delivery Note Created as Draft at <a href='{0}'>{1}</a>".format(url,delivery_doc.name)
-	frappe.msgprint(_(msgprint))
+		
+	for warehouse in warehouses_list:
+		delivery_doc = frappe.get_doc(make_delivery_note(doc.name,warehouse))
+		delivery_doc.flags.ignore_permissions = True
+		delivery_doc.flags.ignore_account_permission = True
+		delivery_doc.save()
+		# delivery_doc.submit()
+		url = frappe.utils.get_url_to_form(delivery_doc.doctype, delivery_doc.name)
+		msgprint = "Delivery Note Created as Draft at <a href='{0}'>{1}</a>".format(url,delivery_doc.name)
+		frappe.msgprint(_(msgprint))
 
 
 
@@ -263,7 +332,7 @@ def check_item_is_maintain(item_name):
 	
 
 
-def make_delivery_note(source_name, target_doc=None):
+def make_delivery_note(source_name, warehouse, target_doc=None):
 	def set_missing_values(source, target):
 		target.ignore_pricing_rule = 1
 		target.run_method("set_missing_values")
@@ -275,6 +344,7 @@ def make_delivery_note(source_name, target_doc=None):
 
 		target_doc.base_amount = target_doc.qty * flt(source_doc.base_rate)
 		target_doc.amount = target_doc.qty * flt(source_doc.rate)
+
 
 	doclist = get_mapped_doc("Sales Invoice", source_name, 	{
 		"Sales Invoice": {
@@ -291,11 +361,14 @@ def make_delivery_note(source_name, target_doc=None):
 				"serial_no": "serial_no",
 				"sales_order": "against_sales_order",
 				"so_detail": "so_detail",
-				"cost_center": "cost_center"
+				"cost_center": "cost_center",
+				"Warehouse":"warehouse",
 			},
 			"postprocess": update_item,
 			"condition": lambda doc: check_item_is_maintain(doc.item_code),
+			"condition": lambda doc: doc.warehouse == warehouse,
 			# "condition": lambda doc: doc.delivered_by_supplier!=1,
+			
 		},
 		"Sales Taxes and Charges": {
 			"doctype": "Sales Taxes and Charges",
@@ -311,3 +384,63 @@ def make_delivery_note(source_name, target_doc=None):
 	}, target_doc, set_missing_values)
 
 	return doclist
+
+
+
+def create_indirect_expense_item(doc,method=None):
+	if doc.is_new() and method == "validate":
+		return
+	if not doc.parent_account or not "Indirect Expenses" in doc.parent_account or not doc.company:
+		return
+	if not doc.parent_account and not "Indirect Expenses" in doc.parent_account and doc.item:
+		doc.item = ""
+		return
+
+	item = frappe.db.exists("Item", doc.account_name)
+	if item:
+		item = frappe.get_doc("Item", doc.account_name)
+		doc.item = item.name
+		company_list = []
+		for i in item.item_defaults:
+			if doc.company not in company_list:
+				if i.company == doc.company:
+					company_list.append(doc.company)
+					if i.expense_account != doc.name:
+						i.expense_account == doc.name
+						item.save()
+		if doc.company not in company_list:
+			row = item.append('item_defaults', {})
+			row.company = doc.company
+			row.expense_account = doc.name
+			item.save()
+			company_list.append(i.company)
+			doc.db_update()
+		return item.name
+	new_item = frappe.get_doc(dict(
+		doctype = "Item",
+		item_code = doc.account_name,
+		item_group = "Indirect Expenses",
+		is_stock_item = 0,
+		include_item_in_manufacturing = 0,
+		item_defaults = [{
+			"company": doc.company,
+			"expense_account":doc.name,
+			"default_warehouse": "",
+		}],
+	))
+	new_item.flags.ignore_permissions = True
+	frappe.flags.ignore_account_permission = True
+	new_item.save()
+	if new_item.name:
+		url = frappe.utils.get_url_to_form(new_item.doctype, new_item.name)
+		msgprint = "New Item is Created <a href='{0}'>{1}</a>".format(url,new_item.name)
+		frappe.msgprint(_(msgprint))
+		doc.item = new_item.name
+	doc.db_update()
+	return new_item.name
+
+
+@frappe.whitelist()
+def add_indirect_expense_item(account_name):
+	account = frappe.get_doc("Account", account_name)
+	return create_indirect_expense_item(account) 

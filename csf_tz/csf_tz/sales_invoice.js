@@ -4,7 +4,6 @@ frappe.ui.form.on("Sales Invoice", {
         frm.trigger("update_stock");
     },
     refresh: function(frm) {
-
         frm.trigger("update_stock");
     },
     onload: function(frm) {
@@ -121,6 +120,9 @@ frappe.ui.keys.add_shortcut({
                         cur_frm.rec_dialog = d;
                         d.show();  
                     }
+                    else {
+                        frappe.show_alert({message:__('There is No Records'), indicator:'red'}, 5);
+                    }
                 }
             });     
     },
@@ -135,76 +137,68 @@ frappe.ui.keys.add_shortcut({
     action: () => { 
             const current_doc = $('.data-row.editable-row').parent().attr("data-name");
             const item_row = locals["Sales Invoice Item"][current_doc];
-            frappe.call({
-                method: 'csf_tz.custom_api.get_item_prices',
-                args: {
-                    item_code: item_row.item_code,
-                    customer: cur_frm.doc.customer,
-                    currency: cur_frm.doc.currency,
-                    company: cur_frm.doc.company
-                },
-                callback: function(r) {
-                    if (r.message.length > 0){
-                        const c = new frappe.ui.Dialog({
-                            title: __('Item Prices'),
-                            width: 600
-                        });
-                        $(`<div class="modal-body ui-front">
-                        <h2>${item_row.item_code} : ${item_row.qty}</h2>
-                            <p>Choose Price and click Select :</p>
-                            <table class="table table-bordered">
-                            <thead>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                            </table>
-                        </div>`).appendTo(c.body);
-                        const thead = $(c.body).find('thead');
-                        // if (r.message[0].rate){
-                            // r.message.sort((a,b) => a.expiry_status-b.expiry_status);
-                            $(`<tr>
-                            <th>Check</th>
-                            <th>Rate</th>
-                            <th>Qty</th>
-                            <th>Date</th>
-                            <th>Invoice</th>
-                            <th>Customer</th>
-                            </tr>`).appendTo(thead);
-                        // }
-                        r.message.forEach(element => {
-                            const tbody = $(c.body).find('tbody');
-                            const tr = $(`
-                            <tr>
-                                <td><input type="checkbox" class="check-rate" data-rate="${element.price}"></td>
-                                <td>${element.price}</td>
-                                <td>${element.qty}</td>
-                                <td>${element.date }</td>
-                                <td>${element.invoice }</td>
-                                <td>${element.customer }</td>
-                            </tr>
-                            `).appendTo(tbody);
-                         
-                            tbody.find('.check-rate').on('change', function() {
-                                $('input.check-rate').not(this).prop('checked', false);  
-                            });
-                        });
-                        c.set_primary_action("Select", function() {
-                            $(c.body).find('input:checked').each(function(i, input) {
-                                frappe.model.set_value(item_row.doctype, item_row.name, 'rate', $(input).attr('data-rate'));
-                            });
-                            cur_frm.rec_dialog.hide();
-                            cur_frm.refresh_fields();
-                        });
-                        cur_frm.rec_dialog = c;
-                        c.show();  
+            new frappe.ui.form.SelectDialog({
+                target: cur_frm,
+                title: "Select The Rate",
+                multi_select: 0,
+                date_field: "posting_date",
+                query_fields:[
+                    {
+                        fieldname: "rate",
+                        fieldtype: "Currency",
+                        label: "Rate",
+                        options: "currency",
+                        precision: "2",
+                        filter: 0
+                    },
+                    {
+                        fieldname: "qty",
+                        fieldtype: "Float",
+                        label: "Qty",
+                        filter: 0
+                    },
+                    {
+                        fieldname: "invoice",
+                        fieldtype: "Link",
+                        label: "Invoice",
+                        options: "Sales Invoice",
+                        filter: 0
+                    },
+                    {
+                        default: cur_frm.doc.customer,
+                        fieldname: "customer",
+                        fieldtype: "Link",
+                        label: "Customer",
+                        options: "Customer",
+                        filter: 1
+                    },
+                
+                ],
+                get_query() {
+                    return {
+                        filters: {
+                            item_code: item_row.item_code,
+                            customer: "",
+                            currency: cur_frm.doc.currency,
+                            company: cur_frm.doc.company
+                        },
+                        query:"csf_tz.custom_api.get_item_prices_custom",
                     }
+                },
+                return_field: "rate",
+                action(selections) {
+                    console.log(selections);
+                    frappe.model.set_value(item_row.doctype, item_row.name, 'rate', selections[0]);
+                    cur_frm.refresh_fields();
+                    
                 }
-            });     
+            });   
     },
     page: this.page,
     description: __('Select Customer Item Price'),
     ignore_inputs: true,
 });
+
 
 frappe.ui.keys.add_shortcut({
     shortcut: 'ctrl+u',
@@ -269,6 +263,9 @@ frappe.ui.keys.add_shortcut({
                         });
                         cur_frm.rec_dialog = e;
                         e.show();  
+                    }
+                    else {
+                        frappe.show_alert({message:__('There is No Records'), indicator:'red'}, 5);
                     }
                 }
             });     
