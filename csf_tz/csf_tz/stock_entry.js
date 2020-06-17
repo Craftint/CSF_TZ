@@ -25,13 +25,18 @@ frappe.ui.form.on("Stock Entry", {
                 qty: frm.doc.qty,
             },
             callback: function(r) {
-            //    console.log(r.message);
                frm.clear_table("items");
                r.message.forEach(d => {
                     const child = frm.add_child("items");
                     frappe.model.set_value(child.doctype, child.name, "item_code", d.item_code)
                     frappe.model.set_value(child.doctype, child.name, "qty", d.qty)
                     frappe.model.set_value(child.doctype, child.name, "uom", d.item_uom)
+                    if (d.s_warehouse) {
+                        frappe.model.set_value(child.doctype, child.name, "s_warehouse", d.s_warehouse)
+                    }
+                    if (d.t_warehouse) {
+                        frappe.model.set_value(child.doctype, child.name, "t_warehouse", d.t_warehouse)
+                    }
                 });
                 
             }
@@ -41,7 +46,6 @@ frappe.ui.form.on("Stock Entry", {
     stock_entry_type: function(frm) {
         if (frm.doc.stock_entry_type == "Repack from template") {
             frappe.meta.get_docfield("Stock Entry Detail", "item_code", frm.doc.name).read_only = 1;
-            frappe.meta.get_docfield("Stock Entry Detail", "qty", frm.doc.name).read_only = 1;
             frappe.meta.get_docfield("Stock Entry Detail", "item_group", frm.doc.name).read_only = 1;
             $('.grid-add-multiple-rows').hide();
 		    $('.grid-add-row').hide();
@@ -51,7 +55,6 @@ frappe.ui.form.on("Stock Entry", {
             frm.toggle_reqd("qty", frm.doc.stock_entry_type == "Repack from template" ? 1:0);
         } else {
             frappe.meta.get_docfield("Stock Entry Detail", "item_code", frm.doc.name).read_only = 0;
-            frappe.meta.get_docfield("Stock Entry Detail", "qty", frm.doc.name).read_only = 0;
             frappe.meta.get_docfield("Stock Entry Detail", "item_group", frm.doc.name).read_only = 0;
             $('.grid-add-multiple-rows').show();
 		    $('.grid-add-row').show();
@@ -61,6 +64,7 @@ frappe.ui.form.on("Stock Entry", {
             frm.toggle_reqd("qty", frm.doc.stock_entry_type == "Repack from template" ? 1:0);
         }
         frm.refresh_field("items");
+        frm.refresh();
     },
 });
 frappe.ui.keys.add_shortcut({

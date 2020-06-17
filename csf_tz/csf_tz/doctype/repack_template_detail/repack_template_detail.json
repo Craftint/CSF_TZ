@@ -1,5 +1,4 @@
 {
- "autoname": "field:item_name",
  "creation": "2020-05-29 11:15:08.636913",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -27,8 +26,7 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Item Name",
-   "read_only": 1,
-   "unique": 1
+   "read_only": 1
   },
   {
    "columns": 1,
@@ -49,7 +47,7 @@
   }
  ],
  "istable": 1,
- "modified": "2020-05-29 12:40:02.698523",
+ "modified": "2020-06-15 22:16:42.339035",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Repack Template Detail",

@@ -1,6 +1,6 @@
 {
  "allow_rename": 1,
- "autoname": "field:item_name",
+ "autoname": "format:{item_code}-{#####} ",
  "creation": "2020-05-29 11:18:36.828527",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -8,9 +8,12 @@
  "field_order": [
   "item_code",
   "item_name",
+  "column_break_3",
   "item_uom",
   "qty",
   "section_break_5",
+  "default_warehouse",
+  "section_break_8",
   "repack_template_details",
   "amended_from"
  ],
@@ -28,8 +31,7 @@
    "fieldname": "item_name",
    "fieldtype": "Data",
    "label": "Item Name",
-   "read_only": 1,
-   "unique": 1
+   "read_only": 1
   },
   {
    "fetch_from": "item_code.stock_uom",
@@ -63,10 +65,25 @@
    "options": "Repack Template",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "default_warehouse",
+   "fieldtype": "Link",
+   "label": "Default Warehouse",
+   "options": "Warehouse",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_8",
+   "fieldtype": "Section Break"
   }
  ],
  "is_submittable": 1,
- "modified": "2020-05-29 12:37:03.356279",
+ "modified": "2020-06-15 22:14:22.077798",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Repack Template",
@@ -85,7 +102,9 @@
    "write": 1
   }
  ],
+ "search_fields": "item_code, default_warehouse",
  "sort_field": "modified",
  "sort_order": "DESC",
+ "title_field": "item_name",
  "track_changes": 1
 }
