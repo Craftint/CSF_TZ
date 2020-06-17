@@ -2,25 +2,25 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Expense Record', {
-	// onload: function(frm,cdt,cdn) {
-	// 	auto_shift_selection(frm, cdt, cdn)
-	// },
-	// setup: function(frm) {
-	// 	frm.set_query('expense_type', function() {
-	// 		return {
-	// 			filters: {
-	// 				'fuel_station': frm.doc.fuel_station
-	// 			}
-	// 		}
-	// 	});
-	// 	frm.set_query('shift', function() {
-	// 		return {
-	// 			filters: {
-	// 				'shift_status': 'Open'
-	// 			}
-	// 		}
-	// 	});
-	// }
+	onload: function(frm,cdt,cdn) {
+		
+	},
+	setup: function(frm) {
+		frm.set_query('expense_type', function() {
+			return {
+				filters: {
+					'section': frm.doc.section
+				}
+			}
+		});
+		// frm.set_query('shift', function() {
+		// 	return {
+		// 		filters: {
+		// 			'shift_status': 'Open'
+		// 		}
+		// 	}
+		// });
+	}
 });
 // var auto_shift_selection = function (frm, cdt, cdn) {
 // 	if (frm.doc.__islocal) {

@@ -1,57 +1,33 @@
 {
- "autoname": "field:station_name",
+ "autoname": "field:section_name",
  "creation": "2020-06-17 01:49:57.503552",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "station_name",
+  "section_name",
   "company",
   "column_break_3",
-  "station_full_name",
-  "oil_company",
+  "section_full_name",
+  "section_manager",
   "section_break_6",
-  "cluster_manager",
-  "station_manager",
-  "column_break_9",
-  "fuel_station_type",
-  "column_break_5",
-  "mera_due_date",
-  "mbs_due_date",
-  "column_break_15",
   "business_license_due_date",
+  "column_break_8",
   "workplace_license_expiry",
   "section_break_18",
   "cost_center",
+  "section_break_12",
   "stock_adjustment",
   "column_break_20",
   "default_cash_account",
   "default_warehouse",
   "section_break_21",
   "cash_customer",
-  "column_break_25",
-  "cash_customer_pos_profile",
-  "section_break_27",
-  "allowable_difference",
-  "allow_change_of_dip_balance",
-  "column_break_30",
   "monthly_target",
-  "section_break_32",
-  "generator_make",
-  "generator_model",
-  "column_break_24",
-  "generator_capacity_in_kva",
-  "average_generator_fuel_consumption_per_hour"
+  "column_break_25",
+  "cash_customer_pos_profile"
  ],
  "fields": [
-  {
-   "fieldname": "station_name",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Station Name",
-   "reqd": 1,
-   "unique": 1
-  },
   {
    "fieldname": "company",
    "fieldtype": "Link",
@@ -66,70 +42,8 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "station_full_name",
-   "fieldtype": "Data",
-   "in_standard_filter": 1,
-   "label": "Station Full Name"
-  },
-  {
-   "fieldname": "oil_company",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Petroleum Products Company",
-   "options": "Customer",
-   "reqd": 1
-  },
-  {
    "fieldname": "section_break_6",
    "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "cluster_manager",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Cluster Manager",
-   "options": "User",
-   "permlevel": 1
-  },
-  {
-   "fieldname": "station_manager",
-   "fieldtype": "Link",
-   "label": "Station Manager",
-   "options": "User"
-  },
-  {
-   "fieldname": "column_break_9",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "fuel_station_type",
-   "fieldtype": "Select",
-   "label": "Fuel Station Type",
-   "options": "CODO\nCOCO",
-   "permlevel": 1,
-   "reqd": 1
-  },
-  {
-   "fieldname": "column_break_5",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "mera_due_date",
-   "fieldtype": "Date",
-   "in_list_view": 1,
-   "label": "MERA Due Date ",
-   "reqd": 1
-  },
-  {
-   "fieldname": "mbs_due_date",
-   "fieldtype": "Date",
-   "label": "MBS Due Date",
-   "reqd": 1
-  },
-  {
-   "fieldname": "column_break_15",
-   "fieldtype": "Column Break"
   },
   {
    "fieldname": "business_license_due_date",
@@ -146,7 +60,7 @@
   {
    "fieldname": "section_break_18",
    "fieldtype": "Section Break",
-   "label": "Accounting Details"
+   "label": "Accounting Dimensions"
   },
   {
    "fieldname": "cost_center",
@@ -205,63 +119,41 @@
    "reqd": 1
   },
   {
-   "fieldname": "section_break_27",
-   "fieldtype": "Section Break"
-  },
-  {
-   "default": "200",
-   "fieldname": "allowable_difference",
-   "fieldtype": "Float",
-   "label": "Allowable Difference"
-  },
-  {
-   "default": "0",
-   "fieldname": "allow_change_of_dip_balance",
-   "fieldtype": "Check",
-   "label": "Allow change of dip balance"
-  },
-  {
-   "fieldname": "column_break_30",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "monthly_target",
    "fieldtype": "Float",
    "label": "Monthly Target",
    "precision": "2"
   },
   {
-   "fieldname": "section_break_32",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "generator_make",
+   "fieldname": "section_name",
    "fieldtype": "Data",
-   "label": "Generator Make"
+   "in_list_view": 1,
+   "label": "Section Name",
+   "reqd": 1,
+   "unique": 1
   },
   {
-   "fieldname": "generator_model",
+   "fieldname": "section_full_name",
    "fieldtype": "Data",
-   "label": "Generator Model"
+   "in_standard_filter": 1,
+   "label": "Section Full Name"
   },
   {
-   "fieldname": "column_break_24",
+   "fieldname": "section_manager",
+   "fieldtype": "Link",
+   "label": "Section Manager",
+   "options": "User"
+  },
+  {
+   "fieldname": "column_break_8",
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "generator_capacity_in_kva",
-   "fieldtype": "Float",
-   "label": "Generator Capacity in KVA",
-   "precision": "1"
-  },
-  {
-   "fieldname": "average_generator_fuel_consumption_per_hour",
-   "fieldtype": "Float",
-   "label": "Average Generator Fuel Consumption per hour",
-   "precision": "2"
+   "fieldname": "section_break_12",
+   "fieldtype": "Section Break"
   }
  ],
- "modified": "2020-06-17 02:52:08.654420",
+ "modified": "2020-06-17 14:54:02.770229",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Section",
@@ -329,7 +221,7 @@
    "share": 1
   }
  ],
- "search_fields": "company,station_full_name",
+ "search_fields": "company,section_full_name",
  "sort_field": "modified",
  "sort_order": "DESC",
  "track_changes": 1
