@@ -31,6 +31,8 @@ class ExpenseRecord(Document):
 	def on_submit(self):
 		if self.supplier:
 			self.create_purchase_invoice()
+		else:
+			self.create_journal_entry()
 
 
 	def create_purchase_invoice(self):
@@ -69,6 +71,35 @@ class ExpenseRecord(Document):
 		si_msgprint = "Purchase Invoice Created <a href='{0}'>{1}</a>".format(invoice_url,pi.name)
 		frappe.msgprint(_(si_msgprint))
 		return pi.name
+		
+
+	def create_journal_entry(self):
+		account_details = make_account_row(
+			debit_account = frappe.get_value("Expense Type",self.expense_type,"expense_account"),
+			credit_account = frappe.get_value("Section",self.section,"default_cash_account"),
+			amount = self.amount,
+			cost_center =  frappe.get_value("Section",self.section,"cost_center")
+		)
+		company =  frappe.get_value("Section",self.section,"company")
+		user_remark = self.name + " " + self.doctype + " was created at " + self.section + " for " + self.expense_type
+		jv_doc = frappe.get_doc(dict(
+			doctype = "Journal Entry",
+			posting_date = self.date,
+			accounts = account_details,
+			bill_no = self.bill_no,
+			company = company,
+			expense_record = self.name,
+			user_remark = user_remark
+		))
+		jv_doc.flags.ignore_permissions = True
+		frappe.flags.ignore_account_permission = True
+		jv_doc.save()
+		self.journal_entry = jv_doc.name
+		jv_url = frappe.utils.get_url_to_form(jv_doc.doctype, jv_doc.name)
+		si_msgprint = "Journal Entry Created <a href='{0}'>{1}</a>".format(jv_url,jv_doc.name)
+		frappe.msgprint(_(si_msgprint))
+		return jv_doc.name
+
 
 
 
@@ -76,3 +107,21 @@ def getTax(purchase_invoice):
 	taxes = get_taxes_and_charges('Purchase Taxes and Charges Template',purchase_invoice.taxes_and_charges)
 	for tax in taxes:
 		purchase_invoice.append('taxes', tax)
+
+
+
+def make_account_row(debit_account,credit_account,amount,cost_center):
+	accounts = []
+	debit_row = dict(
+		account = debit_account,
+		debit_in_account_currency = amount,
+		cost_center = cost_center
+	)
+	accounts.append(debit_row)
+	credit_row = dict(
+		account = credit_account,
+		credit_in_account_currency = amount,
+		cost_center = cost_center
+	)
+	accounts.append(credit_row)
+	return accounts
