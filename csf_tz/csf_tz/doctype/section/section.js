@@ -19,6 +19,13 @@ frappe.ui.form.on('Section', {
 				}
 			}
 		});
+		frm.set_query('purchase_taxes_and_charges_template', function() {
+			return {
+				filters: {
+					'company': frm.doc.company,
+				}
+			}
+		});
 		frm.set_query('stock_adjustment', function() {
 			return {
 				filters: {
