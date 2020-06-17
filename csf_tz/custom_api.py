@@ -8,7 +8,7 @@ import frappe.share
 import traceback
 from frappe.utils import flt, cint, getdate
 from frappe.model.mapper import get_mapped_doc
-# # from erpnext.accounts.doctype.sales_invoice.sales_invoice import make_delivery_note
+from frappe.desk.form.linked_with import get_linked_docs, get_linked_doctypes
 
 @frappe.whitelist()
 def app_error_log(title,error):

@@ -28,7 +28,7 @@ class SpecialClosingBalance(Document):
 
 		stock_entry_doc = frappe.get_doc(dict(
 				doctype="Stock Entry",
-				posting_date=today(),
+				posting_date=self.posting_date,
 				items=items,
 				stock_entry_type='Material Receipt',
 				purpose='Material Receipt',
