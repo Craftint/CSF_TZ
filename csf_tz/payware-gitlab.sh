@@ -7,11 +7,8 @@ if [ $# -eq 0 ]
 fi
 
 
-vi apps/payware/payware/__init__.py
-bench --site demo.payware.co.tz export-fixtures
-# Below is to update csf after payware would have overwirtten the fixtures of csftz
-bench --site dev-csf-tz.aakvatech.com export-fixtures
-
+#vi apps/payware/payware/__init__.py
+#bench --site dsr-bm.aakvatech.com export-fixtures
 cd apps/payware
 git add .
 git commit -m "$1"
