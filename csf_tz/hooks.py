@@ -30,6 +30,7 @@ fixtures = [
 		"Payment Entry Reference-end_date",
 		"Sales Invoice-witholding_tax_certificate_number",
 		"Purchase Invoice Item-withholding_tax_rate",
+		"Sales Invoice Item-withholding_tax_rate",
 		"Payment Entry Reference-start_date",
 		"Sales Invoice-column_break_29",
 		"Sales Invoice-tra_control_number",
@@ -99,6 +100,7 @@ doctype_js = {
 	"Supplier" : "csf_tz/supplier.js",
 	"Stock Entry" : "csf_tz/stock_entry.js",
 	"Account" : "csf_tz/account.js",
+	"Asset" : "csf_tz/asset.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -160,7 +162,8 @@ doc_events = {
 		"on_submit":"csf_tz.custom_api.create_delivery_note"
 	},
 	"Account": {
-		"validate":"csf_tz.custom_api.create_indirect_expense_item"
+		"validate":"csf_tz.custom_api.create_indirect_expense_item",
+		"after_insert":"csf_tz.custom_api.create_indirect_expense_item",
 	},
 }
 

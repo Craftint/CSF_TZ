@@ -6,7 +6,7 @@ from frappe import _
 import frappe.permissions
 import frappe.share
 import traceback
-from frappe.utils import flt, cint, getdate
+from frappe.utils import flt, cint, getdate, get_datetime
 from frappe.model.mapper import get_mapped_doc
 from frappe.desk.form.linked_with import get_linked_docs, get_linked_doctypes
 
@@ -283,6 +283,7 @@ def get_repack_template(template_name,qty):
 		"item_uom": template_doc.item_uom,
 		"qty": cint(qty),
 		"item_template" : 1 ,
+		"s_warehouse":template_doc.default_warehouse,
 
 	})
 	for i in template_doc.repack_template_details:
@@ -291,6 +292,7 @@ def get_repack_template(template_name,qty):
 			"item_uom": i.item_uom,
 			"qty": cint(float(i.qty / template_doc.qty) * float(qty)),
 			"item_template" : 0 ,
+			"t_warehouse":template_doc.default_warehouse,
 		})
 	return rows
 
@@ -388,23 +390,45 @@ def make_delivery_note(source_name, warehouse, target_doc=None):
 
 
 def create_indirect_expense_item(doc,method=None):
-	if not "Indirect Expenses" in doc.parent_account and doc.item:
+	if doc.is_new() and method == "validate":
+		return
+	if not doc.parent_account or not "Indirect Expenses" in doc.parent_account or not doc.company:
+		return
+	if not doc.parent_account and not "Indirect Expenses" in doc.parent_account and doc.item:
 		doc.item = ""
 		return
-	if not "Indirect Expenses" in doc.parent_account:
-		return 
-	item = frappe.get_value("Item", doc.name, "name")
+
+	item = frappe.db.exists("Item", doc.account_name)
 	if item:
-		doc.item = item
-		return item
+		item = frappe.get_doc("Item", doc.account_name)
+		doc.item = item.name
+		company_list = []
+		for i in item.item_defaults:
+			if doc.company not in company_list:
+				if i.company == doc.company:
+					company_list.append(doc.company)
+					if i.expense_account != doc.name:
+						i.expense_account == doc.name
+						item.save()
+		if doc.company not in company_list:
+			row = item.append('item_defaults', {})
+			row.company = doc.company
+			row.expense_account = doc.name
+			item.save()
+			company_list.append(i.company)
+			doc.db_update()
+		return item.name
 	new_item = frappe.get_doc(dict(
 		doctype = "Item",
-		item_code = doc.name,
+		item_code = doc.account_name,
 		item_group = "Indirect Expenses",
-		enable_deferred_expense = 1,
 		is_stock_item = 0,
 		include_item_in_manufacturing = 0,
-		deferred_expense_account = doc.name,
+		item_defaults = [{
+			"company": doc.company,
+			"expense_account":doc.name,
+			"default_warehouse": "",
+		}],
 	))
 	new_item.flags.ignore_permissions = True
 	frappe.flags.ignore_account_permission = True
@@ -414,6 +438,7 @@ def create_indirect_expense_item(doc,method=None):
 		msgprint = "New Item is Created <a href='{0}'>{1}</a>".format(url,new_item.name)
 		frappe.msgprint(_(msgprint))
 		doc.item = new_item.name
+	doc.db_update()
 	return new_item.name
 
 
