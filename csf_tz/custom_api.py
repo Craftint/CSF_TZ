@@ -518,7 +518,7 @@ def delete_doc(doctype,docname):
 
 
 
-def get_pending_delivery_item_count(item_code,company):
+def get_pending_delivery_item_count(item_code, company, warehouse):
 	query = """ SELECT SUM(SIT.delivered_qty) as delivered_cont ,SUM(SIT.qty) as sold_cont
             FROM `tabSales Invoice` AS SI 
             INNER JOIN `tabSales Invoice Item` AS SIT ON SIT.parent = SI.name 
@@ -529,7 +529,8 @@ def get_pending_delivery_item_count(item_code,company):
                 AND SI.is_return != 1 
                 AND SI.update_stock != 1 
                 AND SI.company = '%s' 
-            """ %(item_code,company)
+                AND SI.warehouse = '%s' 
+            """ %(item_code,company,warehouse)
 
 	counts = frappe.db.sql(query,as_dict=True)
 
@@ -561,11 +562,11 @@ def get_item_balance(item_code, company, warehouse=None):
 
 
 @frappe.whitelist()
-def get_item_remaining_qty(item_code, company):
+def get_item_remaining_qty(item_code, company, warehouse):
 	is_stock_item = frappe.get_value("Item",item_code,"is_stock_item")
 	if is_stock_item == 1:
-		pending_delivery_item_count = get_pending_delivery_item_count(item_code,company)
-		item_balance = get_item_balance(item_code,company)
+		pending_delivery_item_count = get_pending_delivery_item_count(item_code, company, warehouse)
+		item_balance = get_item_balance(item_code, company, warehouse)
 		return item_balance - pending_delivery_item_count
 	else:
 		return "not_stock_item"
