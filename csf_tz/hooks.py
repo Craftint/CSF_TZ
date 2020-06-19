@@ -50,6 +50,9 @@ fixtures = [
 		"Account-item",
 		"Purchase Invoice-expense_record",
 		"Journal Entry-expense_record",
+		"Sales Invoice Item-allow_over_sell",
+		"Sales Invoice-delivery_status",
+		"Sales Invoice Item-delivery_status",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-default_print_format",
@@ -72,7 +75,6 @@ fixtures = [
 		"Payment Entry-payment_accounts_section-collapsible",
 		"Special Closing Balance-naming_series-options",
 		"Special Closing Balance-naming_series-default",
-		"Sales Invoice Item-allow_over_sell",
 	)]]},
 ]
 
@@ -160,8 +162,14 @@ doc_events = {
 		"validate": "csf_tz.custom_api.getInvoiceExchangeRate"
 	},
 	"Sales Invoice": {
-		"on_submit":"csf_tz.custom_api.create_delivery_note"
+		"on_submit":["csf_tz.custom_api.create_delivery_note",'csf_tz.custom_api.check_submit_delivery_note'],
+		'validate': 'csf_tz.custom_api.check_validate_delivery_note',
+		'on_cancel': 'csf_tz.custom_api.check_cancel_delivery_note',
 	},
+	'Delivery Note': {
+		'on_submit': 'csf_tz.custom_api.update_delivary_on_sales_invoice',
+		'on_cancel': 'csf_tz.custom_api.update_delivary_on_sales_invoice',
+  },
 	"Account": {
 		"validate":"csf_tz.custom_api.create_indirect_expense_item",
 		"after_insert":"csf_tz.custom_api.create_indirect_expense_item",

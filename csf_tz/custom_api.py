@@ -569,3 +569,81 @@ def get_item_remaining_qty(item_code, company):
 		return item_balance - pending_delivery_item_count
 	else:
 		return "not_stock_item"
+
+
+def check_validate_delivery_note(doc=None, method=None, doc_name=None):
+    if not doc and doc_name:
+        doc = frappe.get_doc("Sales Invoice", doc_name)
+        doc.to_save = True
+    else:
+        doc.to_save = False
+    doc.delivery_status = "Not Delivered"
+    if doc.update_stock:
+        return
+    
+    part_delivery = False
+    full_delivery = False
+    items_qty = 0
+    items_delivered_qty = 0
+    i = 0
+    for item in doc.items:
+        if doc.is_new():
+            item.delivery_status = "Not Delivered"
+            item.delivered_qty = 0
+        items_qty += item.qty
+        item.delivery_status = "Not Delivered"
+        if item.delivery_note or item.delivered_by_supplier:
+            part_delivery = True
+            i += 1
+        if item.delivered_qty:
+            if item.qty <= item.delivered_qty:
+                item.delivery_status = "Delivered"
+            elif item.qty > item.delivered_qty and item.delivered_qty > 0:
+                item.delivery_status = "Part Delivery"
+            items_delivered_qty += item.delivered_qty
+    if i == len(doc.items):
+        full_delivery = True
+
+    if full_delivery:
+        doc.delivery_status = "Delivered"
+    elif doc.to_save and items_delivered_qty >= items_qty:
+        doc.delivery_status = "Delivered"
+    elif doc.to_save and items_delivered_qty <= items_qty and items_delivered_qty > 0:
+        doc.delivery_status = "Part Delivery"
+    elif part_delivery:
+        doc.delivery_status = "Part Delivery"
+    else:
+        doc.delivery_status = "Not Delivered"
+    if doc.to_save:
+        doc.save()
+        
+
+
+def check_submit_delivery_note(doc, method):
+    if doc.update_stock and not doc.is_pos:
+        doc.delivery_status = "Delivered"
+        doc.save()
+        doc.db_set('delivery_status', "Delivered", commit=True)
+    if doc.update_stock:
+        doc.db_set('delivery_status', "Delivered", commit=True)
+        for item in doc.items:
+            item.db_set('delivered_qty', item.qty, commit=True)
+            item.db_set('delivery_status', "Delivered", commit=True)
+
+
+
+def check_cancel_delivery_note(doc, method):
+    if doc.update_stock:
+        doc.db_set('delivery_status', "Not Delivered", commit=True)
+        for item in doc.items:
+            item.db_set('delivered_qty', 0, commit=True)
+            item.db_set('delivery_status', "Not Delivered", commit=True)
+
+
+def update_delivary_on_sales_invoice(doc, method):
+    sales_invoice_list = []
+    for item in doc.items:
+        if item.against_sales_invoice and item.against_sales_invoice not in sales_invoice_list:
+            sales_invoice_list.append(item.against_sales_invoice)
+    for invoice in sales_invoice_list:
+        check_validate_delivery_note(None,None,invoice)
