@@ -43,7 +43,7 @@ frappe.ui.form.on("Sales Invoice Item", {
     item_code: function(frm, cdt, cdn) {
         validate_item_remaining_qty(frm, cdt, cdn);
     },
-    qty: function(frm, cdt, cdn) {
+    stock_qty: function(frm, cdt, cdn) {
         validate_item_remaining_qty(frm, cdt, cdn);    
     },
     allow_over_sell: function(frm, cdt, cdn) {
@@ -65,8 +65,7 @@ var validate_item_remaining_qty = function (frm, cdt, cdn) {
             if (r.message){
                 if (r.message != "not_stock_item") {
                     if (item_row.qty > r.message) {
-                        frappe.msgprint(__(`Remaining Qty Is: ${r.message}. Setting remaining quantity.`))
-                        frappe.model.set_value("Sales Invoice Item", item_row.name, 'qty', r.message);
+                        frappe.throw(__(`Remaining Qty Is: ${r.message}.`))
                     }
                 }
             }
