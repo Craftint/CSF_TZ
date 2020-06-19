@@ -72,6 +72,7 @@ fixtures = [
 		"Payment Entry-payment_accounts_section-collapsible",
 		"Special Closing Balance-naming_series-options",
 		"Special Closing Balance-naming_series-default",
+		"Sales Invoice Item-allow_over_sell",
 	)]]},
 ]
 

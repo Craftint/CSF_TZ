@@ -9,6 +9,7 @@ import traceback
 from frappe.utils import flt, cint, getdate, get_datetime
 from frappe.model.mapper import get_mapped_doc
 from frappe.desk.form.linked_with import get_linked_docs, get_linked_doctypes
+from erpnext.stock.utils import get_stock_balance, get_latest_stock_qty
 
 @frappe.whitelist()
 def app_error_log(title,error):
@@ -514,3 +515,57 @@ def delete_doc(doctype,docname):
 		doc.delete()
 		frappe.db.commit()
 		frappe.msgprint(_("{0} {1} is Deleted").format("Stock Entry",doc.name))
+
+
+
+def get_pending_delivery_item_count(item_code,company):
+	query = """ SELECT SUM(SIT.delivered_qty) as delivered_cont ,SUM(SIT.qty) as sold_cont
+            FROM `tabSales Invoice` AS SI 
+            INNER JOIN `tabSales Invoice Item` AS SIT ON SIT.parent = SI.name 
+            WHERE 
+                SIT.item_code = '%s' 
+                AND SIT.parent = SI.name 
+                AND SI.docstatus= 1 
+                AND SI.is_return != 1 
+                AND SI.update_stock != 1 
+                AND SI.company = '%s' 
+            """ %(item_code,company)
+
+	counts = frappe.db.sql(query,as_dict=True)
+
+	return counts[0]["sold_cont"] - counts[0]["delivered_cont"]
+
+
+def get_item_balance(item_code, company, warehouse=None):
+	if company and not warehouse:
+		warehouse = frappe.get_all('Warehouse', filters={'company': company, "lft": 1}, fields=['name'])[0]["name"]
+	values, condition = [item_code], ""
+	if warehouse:
+		lft, rgt, is_group = frappe.db.get_value("Warehouse", warehouse, ["lft", "rgt", "is_group"])
+
+		if is_group:
+			values.extend([lft, rgt])
+			condition += "and exists (\
+				select name from `tabWarehouse` wh where wh.name = tabBin.warehouse\
+				and wh.lft >= %s and wh.rgt <= %s)"
+
+		else:
+			values.append(warehouse)
+			condition += " AND warehouse = %s"
+
+	actual_qty = frappe.db.sql("""select sum(actual_qty) from tabBin
+		where item_code=%s {0}""".format(condition), values)[0][0]
+
+	return actual_qty
+
+
+
+@frappe.whitelist()
+def get_item_remaining_qty(item_code, company):
+	is_stock_item = frappe.get_value("Item",item_code,"is_stock_item")
+	if is_stock_item == 1:
+		pending_delivery_item_count = get_pending_delivery_item_count(item_code,company)
+		item_balance = get_item_balance(item_code,company)
+		return item_balance - pending_delivery_item_count
+	else:
+		return "not_stock_item"
