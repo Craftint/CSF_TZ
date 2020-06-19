@@ -163,7 +163,7 @@ doc_events = {
 	},
 	"Sales Invoice": {
 		"on_submit":["csf_tz.custom_api.create_delivery_note",'csf_tz.custom_api.check_submit_delivery_note'],
-		'validate': 'csf_tz.custom_api.check_validate_delivery_note',
+		'validate': ['csf_tz.custom_api.check_validate_delivery_note','csf_tz.custom_api.validate_items_remaining_qty'],
 		'on_cancel': 'csf_tz.custom_api.check_cancel_delivery_note',
 	},
 	'Delivery Note': {

@@ -528,7 +528,7 @@ def get_pending_delivery_item_count(item_code, company, warehouse):
                 AND SI.docstatus= 1 
                 AND SI.update_stock != 1 
                 AND SI.company = '%s' 
-                AND SI.warehouse = '%s' 
+                AND SIT.warehouse = '%s' 
             """ %(item_code,company,warehouse)
 
 	counts = frappe.db.sql(query,as_dict=True)
@@ -561,14 +561,21 @@ def get_item_balance(item_code, company, warehouse=None):
 
 
 @frappe.whitelist()
-def get_item_remaining_qty(item_code, company, warehouse):
+def validate_item_remaining_qty(item_code, company, warehouse, stock_qty):
 	is_stock_item = frappe.get_value("Item",item_code,"is_stock_item")
 	if is_stock_item == 1:
 		pending_delivery_item_count = get_pending_delivery_item_count(item_code, company, warehouse)
 		item_balance = get_item_balance(item_code, company, warehouse)
-		return item_balance - pending_delivery_item_count
-	else:
-		return "not_stock_item"
+		item_remaining_qty =  item_balance - pending_delivery_item_count
+		if float(stock_qty) > item_remaining_qty:
+			frappe.throw(_("Remaining Qty for '{0}' Is: '{1}'".format(item_code, item_remaining_qty)))
+
+
+def validate_items_remaining_qty(doc, methohd):
+	for item in doc.items:
+		if not item.allow_over_sell:
+			validate_item_remaining_qty(item.item_code, doc.company, item.warehouse ,item.stock_qty)
+
 
 
 def check_validate_delivery_note(doc=None, method=None, doc_name=None):
@@ -582,7 +589,7 @@ def check_validate_delivery_note(doc=None, method=None, doc_name=None):
         return
     
     part_delivery = False
-    full_delivery = False
+    # full_delivery = False
     items_qty = 0
     items_delivered_qty = 0
     i = 0
