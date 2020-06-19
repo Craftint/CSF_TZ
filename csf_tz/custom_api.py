@@ -595,7 +595,7 @@ def check_validate_delivery_note(doc=None, method=None, doc_name=None):
             part_delivery = True
             i += 1
         if item.delivered_qty:
-            if item.stock_qty = item.delivered_qty:
+            if item.stock_qty == item.delivered_qty:
                 item.delivery_status = "Delivered"
             elif item.stock_qty < item.delivered_qty:
                 item.delivery_status = "Over Delivered"
