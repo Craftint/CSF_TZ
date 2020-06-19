@@ -167,8 +167,8 @@ doc_events = {
 		'on_cancel': 'csf_tz.custom_api.check_cancel_delivery_note',
 	},
 	'Delivery Note': {
-		'on_submit': 'csf_tz.custom_api.update_delivary_on_sales_invoice',
-		'on_cancel': 'csf_tz.custom_api.update_delivary_on_sales_invoice',
+		'on_submit': 'csf_tz.custom_api.update_delivery_on_sales_invoice',
+		'on_cancel': 'csf_tz.custom_api.update_delivery_on_sales_invoice',
   },
 	"Account": {
 		"validate":"csf_tz.custom_api.create_indirect_expense_item",
