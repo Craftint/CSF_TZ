@@ -637,7 +637,7 @@ def check_cancel_delivery_note(doc, method):
             item.db_set('delivery_status', "Not Delivered", commit=True)
 
 
-def update_delivary_on_sales_invoice(doc, method):
+def update_delivery_on_sales_invoice(doc, method):
     sales_invoice_list = []
     for item in doc.items:
         if item.against_sales_invoice and item.against_sales_invoice not in sales_invoice_list:
