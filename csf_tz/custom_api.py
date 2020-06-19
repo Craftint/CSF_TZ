@@ -9,6 +9,7 @@ import traceback
 from frappe.utils import flt, cint, getdate, get_datetime
 from frappe.model.mapper import get_mapped_doc
 from frappe.desk.form.linked_with import get_linked_docs, get_linked_doctypes
+from erpnext.stock.utils import get_stock_balance, get_latest_stock_qty
 
 @frappe.whitelist()
 def app_error_log(title,error):
@@ -514,3 +515,132 @@ def delete_doc(doctype,docname):
 		doc.delete()
 		frappe.db.commit()
 		frappe.msgprint(_("{0} {1} is Deleted").format("Stock Entry",doc.name))
+
+
+
+def get_pending_delivery_item_count(item_code, company, warehouse):
+	query = """ SELECT SUM(SIT.delivered_qty) as delivered_cont ,SUM(SIT.stock_qty) as sold_cont
+            FROM `tabSales Invoice` AS SI 
+            INNER JOIN `tabSales Invoice Item` AS SIT ON SIT.parent = SI.name 
+            WHERE 
+                SIT.item_code = '%s' 
+                AND SIT.parent = SI.name 
+                AND SI.docstatus= 1 
+                AND SI.update_stock != 1 
+                AND SI.company = '%s' 
+                AND SI.warehouse = '%s' 
+            """ %(item_code,company,warehouse)
+
+	counts = frappe.db.sql(query,as_dict=True)
+
+	return counts[0]["sold_cont"] - counts[0]["delivered_cont"]
+
+
+def get_item_balance(item_code, company, warehouse=None):
+	if company and not warehouse:
+		warehouse = frappe.get_all('Warehouse', filters={'company': company, "lft": 1}, fields=['name'])[0]["name"]
+	values, condition = [item_code], ""
+	if warehouse:
+		lft, rgt, is_group = frappe.db.get_value("Warehouse", warehouse, ["lft", "rgt", "is_group"])
+
+		if is_group:
+			values.extend([lft, rgt])
+			condition += "and exists (\
+				select name from `tabWarehouse` wh where wh.name = tabBin.warehouse\
+				and wh.lft >= %s and wh.rgt <= %s)"
+
+		else:
+			values.append(warehouse)
+			condition += " AND warehouse = %s"
+
+	actual_qty = frappe.db.sql("""select sum(actual_qty) from tabBin
+		where item_code=%s {0}""".format(condition), values)[0][0]
+
+	return actual_qty
+
+
+
+@frappe.whitelist()
+def get_item_remaining_qty(item_code, company, warehouse):
+	is_stock_item = frappe.get_value("Item",item_code,"is_stock_item")
+	if is_stock_item == 1:
+		pending_delivery_item_count = get_pending_delivery_item_count(item_code, company, warehouse)
+		item_balance = get_item_balance(item_code, company, warehouse)
+		return item_balance - pending_delivery_item_count
+	else:
+		return "not_stock_item"
+
+
+def check_validate_delivery_note(doc=None, method=None, doc_name=None):
+    if not doc and doc_name:
+        doc = frappe.get_doc("Sales Invoice", doc_name)
+        doc.to_save = True
+    else:
+        doc.to_save = False
+    doc.delivery_status = "Not Delivered"
+    if doc.update_stock:
+        return
+    
+    part_delivery = False
+    full_delivery = False
+    items_qty = 0
+    items_delivered_qty = 0
+    i = 0
+    for item in doc.items:
+        if doc.is_new():
+            item.delivery_status = "Not Delivered"
+            item.delivered_qty = 0
+        items_qty += item.stock_qty
+        if item.delivery_note or item.delivered_by_supplier:
+            part_delivery = True
+            i += 1
+        if item.delivered_qty:
+            if item.stock_qty = item.delivered_qty:
+                item.delivery_status = "Delivered"
+            elif item.stock_qty < item.delivered_qty:
+                item.delivery_status = "Over Delivered"
+            elif item.stock_qty > item.delivered_qty and item.delivered_qty > 0:
+                item.delivery_status = "Part Delivery"
+            items_delivered_qty += item.delivered_qty
+    if i == len(doc.items):
+        doc.delivery_status = "Delivered"
+    elif doc.to_save and items_delivered_qty >= items_qty:
+        doc.delivery_status = "Delivered"
+    elif doc.to_save and items_delivered_qty <= items_qty and items_delivered_qty > 0:
+        doc.delivery_status = "Part Delivery"
+    elif part_delivery:
+        doc.delivery_status = "Part Delivery"
+    else:
+        doc.delivery_status = "Not Delivered"
+    if doc.to_save:
+        doc.save()
+        
+
+
+def check_submit_delivery_note(doc, method):
+    if doc.update_stock and not doc.is_pos:
+        doc.delivery_status = "Delivered"
+        doc.save()
+    if doc.update_stock:
+        doc.db_set('delivery_status', "Delivered", commit=True)
+        for item in doc.items:
+            item.db_set('delivered_qty', item.stock_qty, commit=True)
+            item.db_set('delivery_status', "Delivered", commit=True)
+
+
+
+def check_cancel_delivery_note(doc, method):
+    if doc.update_stock:
+        doc.db_set('delivery_status', "Not Delivered", commit=True)
+        for item in doc.items:
+            item.db_set('delivered_qty', 0, commit=True)
+            item.db_set('delivery_status', "Not Delivered", commit=True)
+
+
+def update_delivery_on_sales_invoice(doc, method):
+    sales_invoice_list = []
+    for item in doc.items:
+        if item.against_sales_invoice and item.against_sales_invoice not in sales_invoice_list:
+            sales_invoice_list.append(item.against_sales_invoice)
+    for invoice in sales_invoice_list:
+        check_validate_delivery_note(None,None,invoice)

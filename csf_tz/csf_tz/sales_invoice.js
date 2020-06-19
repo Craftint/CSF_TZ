@@ -39,6 +39,40 @@ frappe.ui.form.on("Sales Invoice", {
     },
 });
 
+frappe.ui.form.on("Sales Invoice Item", {
+    item_code: function(frm, cdt, cdn) {
+        validate_item_remaining_qty(frm, cdt, cdn);
+    },
+    stock_qty: function(frm, cdt, cdn) {
+        validate_item_remaining_qty(frm, cdt, cdn);    
+    },
+    allow_over_sell: function(frm, cdt, cdn) {
+        validate_item_remaining_qty(frm, cdt, cdn);    
+    },
+});
+
+var validate_item_remaining_qty = function (frm, cdt, cdn) {
+    const item_row = locals[cdt][cdn];
+    if (item_row.allow_over_sell == 1) {return}
+    frappe.call({
+        method: 'csf_tz.custom_api.get_item_remaining_qty',
+        args: {
+            item_code: item_row.item_code,
+            company: frm.doc.company,
+            warehouse: frm.doc.warehouse,
+        },
+        callback: function(r) {
+            if (r.message){
+                if (r.message != "not_stock_item") {
+                    if (item_row.qty > r.message) {
+                        frappe.throw(__(`Remaining Qty Is: ${r.message}.`))
+                    }
+                }
+            }
+        }
+    });     
+}
+
 
 frappe.ui.keys.add_shortcut({
     shortcut: 'ctrl+q',
