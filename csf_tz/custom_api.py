@@ -519,14 +519,13 @@ def delete_doc(doctype,docname):
 
 
 def get_pending_delivery_item_count(item_code, company, warehouse):
-	query = """ SELECT SUM(SIT.delivered_qty) as delivered_cont ,SUM(SIT.qty) as sold_cont
+	query = """ SELECT SUM(SIT.delivered_qty) as delivered_cont ,SUM(SIT.stock_qty) as sold_cont
             FROM `tabSales Invoice` AS SI 
             INNER JOIN `tabSales Invoice Item` AS SIT ON SIT.parent = SI.name 
             WHERE 
                 SIT.item_code = '%s' 
                 AND SIT.parent = SI.name 
                 AND SI.docstatus= 1 
-                AND SI.is_return != 1 
                 AND SI.update_stock != 1 
                 AND SI.company = '%s' 
                 AND SI.warehouse = '%s' 
@@ -591,21 +590,19 @@ def check_validate_delivery_note(doc=None, method=None, doc_name=None):
         if doc.is_new():
             item.delivery_status = "Not Delivered"
             item.delivered_qty = 0
-        items_qty += item.qty
-        item.delivery_status = "Not Delivered"
+        items_qty += item.stock_qty
         if item.delivery_note or item.delivered_by_supplier:
             part_delivery = True
             i += 1
         if item.delivered_qty:
-            if item.qty <= item.delivered_qty:
+            if item.stock_qty = item.delivered_qty:
                 item.delivery_status = "Delivered"
-            elif item.qty > item.delivered_qty and item.delivered_qty > 0:
+            elif item.stock_qty < item.delivered_qty:
+                item.delivery_status = "Over Delivered"
+            elif item.stock_qty > item.delivered_qty and item.delivered_qty > 0:
                 item.delivery_status = "Part Delivery"
             items_delivered_qty += item.delivered_qty
     if i == len(doc.items):
-        full_delivery = True
-
-    if full_delivery:
         doc.delivery_status = "Delivered"
     elif doc.to_save and items_delivered_qty >= items_qty:
         doc.delivery_status = "Delivered"
@@ -624,11 +621,10 @@ def check_submit_delivery_note(doc, method):
     if doc.update_stock and not doc.is_pos:
         doc.delivery_status = "Delivered"
         doc.save()
-        doc.db_set('delivery_status', "Delivered", commit=True)
     if doc.update_stock:
         doc.db_set('delivery_status', "Delivered", commit=True)
         for item in doc.items:
-            item.db_set('delivered_qty', item.qty, commit=True)
+            item.db_set('delivered_qty', item.stock_qty, commit=True)
             item.db_set('delivery_status', "Delivered", commit=True)
 
 
