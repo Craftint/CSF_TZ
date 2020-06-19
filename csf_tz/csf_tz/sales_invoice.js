@@ -59,12 +59,13 @@ var validate_item_remaining_qty = function (frm, cdt, cdn) {
         args: {
             item_code: item_row.item_code,
             company: frm.doc.company,
+            warehouse: frm.doc.warehouse,
         },
         callback: function(r) {
             if (r.message){
                 if (r.message != "not_stock_item") {
                     if (item_row.qty > r.message) {
-                        frappe.msgprint(__(`Remaining Qty Is: ${r.message}`))
+                        frappe.msgprint(__(`Remaining Qty Is: ${r.message}. Setting remaining quantity.`))
                         frappe.model.set_value("Sales Invoice Item", item_row.name, 'qty', r.message);
                     }
                 }
