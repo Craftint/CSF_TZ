@@ -48,6 +48,8 @@ fixtures = [
 		"Stock Entry-qty",
 		"Stock Entry-item_uom",
 		"Account-item",
+		"Purchase Invoice-expense_record",
+		"Journal Entry-expense_record",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-default_print_format",

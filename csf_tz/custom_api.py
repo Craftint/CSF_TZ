@@ -8,7 +8,7 @@ import frappe.share
 import traceback
 from frappe.utils import flt, cint, getdate, get_datetime
 from frappe.model.mapper import get_mapped_doc
-# # from erpnext.accounts.doctype.sales_invoice.sales_invoice import make_delivery_note
+from frappe.desk.form.linked_with import get_linked_docs, get_linked_doctypes
 
 @frappe.whitelist()
 def app_error_log(title,error):
@@ -445,4 +445,72 @@ def create_indirect_expense_item(doc,method=None):
 @frappe.whitelist()
 def add_indirect_expense_item(account_name):
 	account = frappe.get_doc("Account", account_name)
-	return create_indirect_expense_item(account) 
+	return create_indirect_expense_item(account)
+
+
+def get_linked_docs_info(doctype,docname):
+	linkinfo = get_linked_doctypes(doctype)
+	linked_doc = get_linked_docs(doctype,docname,linkinfo)
+	linked_doc_list =[]
+	if linked_doc:
+		for key, value in linked_doc.items() :
+			if key != "Activity Log":
+				for val in value:
+					dco_info = {
+						"doctype" : key,
+						"docname" : val.name,
+						"docstatus": val.docstatus,
+					}
+					linked_doc_list.append(dco_info)
+	return linked_doc_list
+
+
+def cancle_linked_docs(doc_list):
+	for doc_info in doc_list:
+		if doc_info["docstatus"] == 1:
+			linked_doc_list = get_linked_docs_info(doc_info["doctype"], doc_info["docname"])
+			if len(linked_doc_list)>0 :
+				cancle_linked_docs(linked_doc_list)
+			cancel_doc(doc_info["doctype"],doc_info["docname"])
+
+
+
+def delete_linked_docs(doc_list):
+	for doc_info in doc_list:	
+		linked_doc_list = get_linked_docs_info(doc_info["doctype"], doc_info["docname"])
+		if len(linked_doc_list)>0 :
+			delete_linked_docs(linked_doc_list)
+		delete_doc(doc_info["doctype"],doc_info["docname"])
+
+
+def cancel_doc(doctype,docname):
+	doc = frappe.get_doc(doctype,docname)
+	if doc.docstatus == 1:
+		doc.flags.ignore_permissions=True
+		doc.cancel()
+		doc = frappe.get_doc(doctype,docname)
+		if doc.docstatus == 2:
+			frappe.msgprint(_("{0} {1} is Canceled").format("Stock Entry",doc.name))
+		else:
+			frappe.msgprint(_("{0} {1} is Not Canceled").format("Stock Entry",doc.name))
+
+
+def delete_doc(doctype,docname):
+	doc = frappe.get_doc(doctype,docname)
+	if doc.docstatus == 1:
+		doc.flags.ignore_permissions=True
+		doc.cancel()
+		doc = frappe.get_doc(doctype,docname)
+		if doc.docstatus == 2:
+			frappe.msgprint(_("{0} {1} is Canceled").format("Stock Entry",doc.name))
+			doc.flags.ignore_permissions=True
+			doc.delete()
+			frappe.db.commit()
+			frappe.msgprint(_("{0} {1} is Deleted").format("Stock Entry",doc.name))
+		else:
+			frappe.msgprint(_("{0} {1} is Not Canceled").format("Stock Entry",doc.name))
+	elif doc.docstatus == 0 or doc.docstatus == 2:
+		doc.flags.ignore_permissions=True
+		doc.delete()
+		frappe.db.commit()
+		frappe.msgprint(_("{0} {1} is Deleted").format("Stock Entry",doc.name))
