@@ -130,7 +130,6 @@ def get_stock_ledger_entries(item_code):
 
 @frappe.whitelist()
 def get_item_info(item_code):
-
 	sle = get_stock_ledger_entries(item_code)
 	iwb_map = {}
 	float_precision = cint(frappe.db.get_default("float_precision")) or 3
@@ -167,7 +166,6 @@ def get_item_info(item_code):
 				}
 				lin_dict.update(value3)
 				iwd_list.append(lin_dict)
-
 	return iwd_list
 
 
@@ -315,7 +313,8 @@ def create_delivery_note(doc,method):
 		return
 		
 	for warehouse in warehouses_list:
-		delivery_doc = frappe.get_doc(make_delivery_note(doc.name,warehouse))
+		delivery_doc = frappe.get_doc(make_delivery_note(doc.name, None, warehouse))
+		delivery_doc.set_warehouse = warehouse
 		delivery_doc.flags.ignore_permissions = True
 		delivery_doc.flags.ignore_account_permission = True
 		delivery_doc.save()
@@ -334,15 +333,16 @@ def check_item_is_maintain(item_name):
 			return True
 	
 
-
-def make_delivery_note(source_name, warehouse, target_doc=None):
+@frappe.whitelist()
+def make_delivery_note(source_name, target_doc=None, warehouse=None,):
 	def set_missing_values(source, target):
 		target.ignore_pricing_rule = 1
 		target.run_method("set_missing_values")
 		target.run_method("calculate_taxes_and_totals")
 
 	def update_item(source_doc, target_doc, source_parent):
-		target_doc.qty = flt(source_doc.qty) - flt(source_doc.delivered_qty)
+		delivery_note_item_count = get_delivery_note_item_count(source_doc.item_code, source_doc.parent)
+		target_doc.qty = flt(source_doc.qty) - flt(source_doc.delivered_qty) - delivery_note_item_count
 		target_doc.stock_qty = target_doc.qty * flt(source_doc.conversion_factor)
 
 		target_doc.base_amount = target_doc.qty * flt(source_doc.base_rate)
@@ -365,11 +365,12 @@ def make_delivery_note(source_name, warehouse, target_doc=None):
 				"sales_order": "against_sales_order",
 				"so_detail": "so_detail",
 				"cost_center": "cost_center",
-				"Warehouse":"warehouse",
+				"warehouse":"warehouse",
 			},
 			"postprocess": update_item,
 			"condition": lambda doc: check_item_is_maintain(doc.item_code),
-			"condition": lambda doc: doc.warehouse == warehouse,
+			# "condition": lambda doc: doc.warehouse == warehouse,
+			"condition": lambda doc: doc.qty > 0,
 			# "condition": lambda doc: doc.delivered_by_supplier!=1,
 			
 		},
@@ -651,3 +652,71 @@ def update_delivery_on_sales_invoice(doc, method):
             sales_invoice_list.append(item.against_sales_invoice)
     for invoice in sales_invoice_list:
         check_validate_delivery_note(None,None,invoice)
+	
+
+
+def get_delivery_note_item_count(item_code, sales_invoice):
+	query = """ SELECT SUM(qty) as cont
+            FROM `tabDelivery Note Item` 
+            WHERE 
+                item_code = '%s' 
+                AND docstatus != 2 
+                AND against_sales_invoice = '%s' 
+            """ %(item_code,sales_invoice)
+
+	counts = frappe.db.sql(query,as_dict=True)
+	if len(counts) > 0 and counts[0]["cont"]:
+		return float(counts[0]["cont"])
+	else:
+		return 0
+
+
+@frappe.whitelist()
+def get_pending_sales_invoice(*args):
+	print_out(str(args))
+	filters = args[5]
+	start = cint(args[3])
+	page_length = cint(args[4])
+	if "customer" in filters:
+		customer = filters["customer"]
+	else:
+		customer = ""
+	if "company" in filters:
+		company = filters["company"]
+	else:
+		company = ""
+	conditions = ""
+	if "posting_date" in filters:
+		posting_date = filters["posting_date"]
+		from_date="'{from_date}'".format(from_date=posting_date[1][0])
+		to_date = "'{to_date}'".format(to_date=posting_date[1][1])
+		conditions += "AND DATE(SI.posting_date) BETWEEN {start} AND {end}".format(start=from_date,end=to_date)
+	if customer:
+		conditions += " AND SI.customer = '%s'" % customer
+	if args[1] != "":
+		conditions += " AND SI.name = '%s'" % args[1]
+	if company:
+		conditions += " AND SI.company = '%s'" % company
+	query = """ SELECT 
+					SI.name AS name, 
+					SI.posting_date AS posting_date, 
+					SI.customer As customer,
+					SI.company As company,
+					SIT.item_code AS item_code, 
+					SIT.stock_qty AS stock_qty, 
+					SIT.delivered_qty AS delivered_qty
+            FROM `tabSales Invoice` AS SI 
+            INNER JOIN `tabSales Invoice Item` AS SIT ON SIT.parent = SI.name 
+            WHERE 
+                SIT.parent = SI.name 
+                AND SI.docstatus= 1 
+                AND SI.update_stock != 1 
+                AND SIT.stock_qty != SIT.delivered_qty 
+				%s
+			LIMIT %s
+			OFFSET %s 
+            """ %(conditions, page_length, start)
+	data = frappe.db.sql(query,as_dict=True)
+	
+
+	return data
