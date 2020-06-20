@@ -99,29 +99,22 @@ frappe.ui.form.on("Delivery Note", {
                 let query_args = {
                     query:"csf_tz.custom_api.get_pending_sales_invoice",
                     filters: {
-                        docstatus: 1,
+                        // docstatus: 1,
                         company: frm.doc.company,
-                        project: frm.doc.project || undefined,
-                        delivery_status:["not in", ["Delivered",""]],
+                    //     project: frm.doc.project || undefined,
+                    //     delivery_status:["not in", ["Delivered",""]],
                     }
                 }
 				frm.add_custom_button(__('Sales Invoice'),
 					function() {
 						erpnext.utils.map_current_doc({
                             method: "csf_tz.custom_api.make_delivery_note",
-                            // method: "erpnext.accounts.doctype.sales_invoice.sales_invoice.make_delivery_note",
 							source_doctype: "Sales Invoice",
 							target: frm,
 							setters: {
 								customer: frm.doc.customer || undefined,
                             },
                             date_field: "posting_date",
-							// get_query_filters: {
-							// 	docstatus: 1,
-							// 	company: frm.doc.company,
-                            //     project: frm.doc.project || undefined,
-                            //     delivery_status:["not in", ["Delivered",""]],
-                            // },
                             get_query() {
                                 return query_args;
                             },
