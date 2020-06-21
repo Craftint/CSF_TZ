@@ -346,8 +346,8 @@ def make_delivery_note(source_name, target_doc=None, warehouse=None):
 		target.run_method("calculate_taxes_and_totals")
 
 	def update_item(source_doc, target_doc, source_parent):
-		delivery_note_item_count = get_delivery_note_item_count(source_doc.item_code, source_doc.parent)
-		target_doc.qty = flt(source_doc.qty) - flt(source_doc.delivered_qty) - delivery_note_item_count
+		delivery_note_item_count = get_delivery_note_item_count(source_doc.name, source_doc.parent)
+		target_doc.qty = flt(source_doc.qty) - delivery_note_item_count
 		target_doc.stock_qty = target_doc.qty * flt(source_doc.conversion_factor)
 		target_doc.base_amount = target_doc.qty * flt(source_doc.base_rate)
 		target_doc.amount = target_doc.qty * flt(source_doc.rate)
@@ -664,14 +664,14 @@ def update_delivery_on_sales_invoice(doc, method):
 	
 
 
-def get_delivery_note_item_count(item_code, sales_invoice):
+def get_delivery_note_item_count(item_row_name, sales_invoice):
 	query = """ SELECT SUM(qty) as cont
             FROM `tabDelivery Note Item` 
             WHERE 
-                item_code = '%s' 
+                si_detail = '%s' 
                 AND docstatus != 2 
                 AND against_sales_invoice = '%s' 
-            """ %(item_code,sales_invoice)
+            """ %(item_row_name,sales_invoice)
 
 	counts = frappe.db.sql(query,as_dict=True)
 	if len(counts) > 0 and counts[0]["cont"]:
@@ -704,8 +704,9 @@ def get_pending_sales_invoice(*args):
 					SI.customer As customer,
 					SI.company As company,
 					SIT.item_code AS item_code, 
-					SUM(SIT.stock_qty) AS stock_qty, 
-					SUM(SIT.delivered_qty) AS delivered_qty
+					SIT.name AS si_detail,
+					SIT.stock_qty AS stock_qty, 
+					SIT.delivered_qty AS delivered_qty
             FROM `tabSales Invoice` AS SI 
             INNER JOIN `tabSales Invoice Item` AS SIT ON SIT.parent = SI.name 
             WHERE 
@@ -714,13 +715,13 @@ def get_pending_sales_invoice(*args):
                 AND SI.update_stock != 1 
                 AND SIT.stock_qty != SIT.delivered_qty 
 				%s
-			GROUP by SI.name, SI.posting_date, SI.customer, SI.company, SIT.item_code
             """ %(conditions)
 	data = frappe.db.sql(query,as_dict=True)
 	filtered_data = []
 	invoices = []
 	for item in data:
-		delivery_note_item_count = get_delivery_note_item_count(item.item_code, item.name)
+		delivery_note_item_count = get_delivery_note_item_count(item.si_detail, item.name)
+		print_out(delivery_note_item_count)
 		print_out(item.name)
 		print_out(item.stock_qty)
 		print_out(delivery_note_item_count)
