@@ -687,10 +687,9 @@ def get_delivery_note_item_count(item_row_name, sales_invoice):
 
 @frappe.whitelist()
 def get_pending_sales_invoice(*args):
-	print_out(str(args))
 	filters = args[5]
-	# start = cint(args[3])
-	# page_length = cint(args[4])
+	start = cint(args[3])
+	page_length = cint(args[4])
 	conditions = ""
 	if args[1] != "":
 		conditions += " AND SI.name = '%s'" % args[1]
@@ -703,35 +702,32 @@ def get_pending_sales_invoice(*args):
 		conditions += " AND SI.customer = '%s'" %filters["customer"]
 	if "company" in filters:
 		conditions += " AND SI.company = '%s'" % filters["company"]
-	query = """ SELECT 
-					SI.name AS name, 
-					SI.posting_date AS posting_date, 
+	query = """ 
+			WITH CTE AS(
+				SELECT
+					SIT.stock_qty, 
+					SIT.delivered_qty, 
+					SUM(DNI.stock_qty),           
+					SI.name AS name,                      
+					SI.posting_date AS posting_date,                      
 					SI.customer As customer,
-					SI.company As company,
-					SIT.item_code AS item_code, 
-					SIT.name AS si_detail,
-					SIT.stock_qty AS stock_qty, 
-					SIT.delivered_qty AS delivered_qty
-            FROM `tabSales Invoice` AS SI 
-            INNER JOIN `tabSales Invoice Item` AS SIT ON SIT.parent = SI.name 
-            WHERE 
-                SIT.parent = SI.name 
-                AND SI.docstatus= 1 
-                AND SI.update_stock != 1 
-                AND SIT.stock_qty != SIT.delivered_qty 
-				%s
-            """ %(conditions)
+					ROW_NUMBER()OVER(PARTITION BY SI.name ORDER BY SI.name) AS RN            
+				FROM `tabSales Invoice` AS SI              
+					INNER JOIN `tabSales Invoice Item` AS SIT ON SIT.parent = SI.name              
+					LEFT OUTER JOIN `tabDelivery Note Item` as DNI on DNI.si_detail = SIT.name
+				WHERE                  
+					SIT.parent = SI.name                  
+					AND SI.docstatus= 1              
+					AND SI.update_stock != 1 
+					AND SIT.stock_qty != SIT.delivered_qty 
+					AND DNI.docstatus < 2
+					%s    
+				GROUP BY SI.name, SIT.name
+				HAVING SIT.stock_qty > SUM(DNI.stock_qty) 
+			)
+			SELECT * FROM `CTE` WHERE RN = 1
+			LIMIT %s
+			OFFSET %s
+            """ %(conditions, page_length, start)
 	data = frappe.db.sql(query,as_dict=True)
-	filtered_data = []
-	invoices = []
-	for item in data:
-		delivery_note_item_count = get_delivery_note_item_count(item.si_detail, item.name)
-		print_out(delivery_note_item_count)
-		print_out(item.name)
-		print_out(item.stock_qty)
-		print_out(delivery_note_item_count)
-		if item.stock_qty > delivery_note_item_count:
-			if item.name not in invoices:
-				invoices.append(item.name)
-				filtered_data.append(item)
-	return filtered_data
+	return data

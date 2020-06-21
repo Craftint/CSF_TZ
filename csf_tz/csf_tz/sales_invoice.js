@@ -58,6 +58,9 @@ frappe.ui.form.on("Sales Invoice Item", {
     conversion_factor: function(frm, cdt, cdn) {
         validate_item_remaining_stock_qty(frm, cdt, cdn);    
     },
+    warehouse: function(frm, cdt, cdn) {
+        validate_item_remaining_stock_qty(frm, cdt, cdn);    
+    },
 });
 
 var validate_item_remaining_qty = function (frm, cdt, cdn) {
