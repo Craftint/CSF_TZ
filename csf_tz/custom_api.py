@@ -344,10 +344,14 @@ def make_delivery_note(source_name, target_doc=None, warehouse=None):
 		target.ignore_pricing_rule = 1
 		target.run_method("set_missing_values")
 		target.run_method("calculate_taxes_and_totals")
+	
+	def get_qty(source_doc):
+		delivery_note_item_count = get_delivery_note_item_count(source_doc.name, source_doc.parent)
+		return flt(source_doc.qty) - delivery_note_item_count
+		
 
 	def update_item(source_doc, target_doc, source_parent):
-		delivery_note_item_count = get_delivery_note_item_count(source_doc.name, source_doc.parent)
-		target_doc.qty = flt(source_doc.qty) - delivery_note_item_count
+		target_doc.qty = get_qty(source_doc)
 		target_doc.stock_qty = target_doc.qty * flt(source_doc.conversion_factor)
 		target_doc.base_amount = target_doc.qty * flt(source_doc.base_rate)
 		target_doc.amount = target_doc.qty * flt(source_doc.rate)
@@ -374,6 +378,7 @@ def make_delivery_note(source_name, target_doc=None, warehouse=None):
 			"postprocess": update_item,
 			"condition": lambda doc: check_item_is_maintain(doc.item_code),
 			"condition": lambda doc: warehouse_condition(doc),
+			"condition": lambda doc: get_qty(doc) != 0,
 		},
 		"Sales Taxes and Charges": {
 			"doctype": "Sales Taxes and Charges",
