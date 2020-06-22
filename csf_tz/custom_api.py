@@ -298,20 +298,27 @@ def get_repack_template(template_name,qty):
 @frappe.whitelist()
 def create_delivery_note(doc=None, method=None, doc_name=None):
 	if not doc and doc_name:
-		doc = frappe.get_doc("Sales Invoice",doc_name)
+		doc = frappe.get_doc("Sales Invoice", doc_name)
 	if doc.update_stock:
 		return
 	from_delivery_note = False
 	i = 0
+	msg = ""
 	warehouses_list =[]
+	space = "<br>"
 	for item in doc.items:
-		pending_qty = flt(item.qty) - get_delivery_note_item_count(item.name, item.parent)
+		pending_qty = flt(item.stock_qty) - get_delivery_note_item_count(item.name, item.parent)
 		if item.warehouse not in warehouses_list and check_item_is_maintain(item.item_code) and pending_qty != 0:
 			warehouses_list.append(item.warehouse)
+		else:
+			msg += "Warehouse " + item.warehouse + " item " + item.item_code + " does not need to create Delivery Note" + space
 		if item.delivery_note or item.delivered_by_supplier:
 			from_delivery_note = True
 		if check_item_is_maintain(item.item_code):
 			i += 1
+
+	if msg or msg != "":
+		frappe.msgprint(msg=msg, title="Warning", indicator="orange")
 
 	if from_delivery_note or i == 0:
 		return
@@ -355,12 +362,12 @@ def make_delivery_note(source_name, target_doc=None, set_warehouse=None):
 	
 	def get_qty(source_doc):
 		delivery_note_item_count = get_delivery_note_item_count(source_doc.name, source_doc.parent)
-		return flt(source_doc.qty) - delivery_note_item_count
+		return flt(source_doc.stock_qty) - delivery_note_item_count
 		
 
 	def update_item(source_doc, target_doc, source_parent):
-		target_doc.qty = get_qty(source_doc)
-		target_doc.stock_qty = target_doc.qty * flt(source_doc.conversion_factor)
+		target_doc.stock_qty = get_qty(source_doc)
+		target_doc.qty = target_doc.stock_qty / flt(source_doc.conversion_factor)
 		target_doc.base_amount = target_doc.qty * flt(source_doc.base_rate)
 		target_doc.amount = target_doc.qty * flt(source_doc.rate)
 
@@ -399,6 +406,11 @@ def make_delivery_note(source_name, target_doc=None, set_warehouse=None):
 			"add_if_empty": True
 		}
 	}, target_doc, set_missing_values)
+	items_list = []
+	for it in doclist.items:
+		if float(it.qty) != 0.0:
+			items_list.append(it)
+	doclist.items = items_list
 
 	return doclist
 
@@ -677,7 +689,7 @@ def update_delivery_on_sales_invoice(doc, method):
 
 
 def get_delivery_note_item_count(item_row_name, sales_invoice):
-	query = """ SELECT SUM(qty) as cont
+	query = """ SELECT SUM(stock_qty) as cont
             FROM `tabDelivery Note Item` 
             WHERE 
                 si_detail = '%s' 
