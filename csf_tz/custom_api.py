@@ -294,7 +294,11 @@ def get_repack_template(template_name,qty):
 		})
 	return rows
 
-def create_delivery_note(doc, method=None):
+
+@frappe.whitelist()
+def create_delivery_note(doc=None, method=None, doc_name=None):
+	if not doc and doc_name:
+		doc = frappe.get_doc("Sales Invoice",doc_name)
 	if doc.update_stock:
 		return
 	from_delivery_note = False
