@@ -99,10 +99,8 @@ frappe.ui.form.on("Delivery Note", {
                 let query_args = {
                     query:"csf_tz.custom_api.get_pending_sales_invoice",
                     filters: {
-                        // docstatus: 1,
                         company: frm.doc.company,
-                    //     project: frm.doc.project || undefined,
-                    //     delivery_status:["not in", ["Delivered",""]],
+                        set_warehouse: frm.doc.set_warehouse || ""
                     }
                 }
 				frm.add_custom_button(__('Sales Invoice'),
@@ -112,7 +110,8 @@ frappe.ui.form.on("Delivery Note", {
 							source_doctype: "Sales Invoice",
 							target: frm,
 							setters: {
-								customer: frm.doc.customer || undefined,
+                                customer: frm.doc.customer || undefined,
+                                set_warehouse: frm.doc.set_warehouse || "",
                             },
                             date_field: "posting_date",
                             get_query() {

@@ -338,10 +338,10 @@ def check_item_is_maintain(item_name):
 	
 
 @frappe.whitelist()
-def make_delivery_note(source_name, target_doc=None, warehouse=None):
+def make_delivery_note(source_name, target_doc=None, set_warehouse=None):
 	def warehouse_condition(doc):
-		if warehouse:
-			return doc.warehouse == warehouse
+		if set_warehouse:
+			return doc.warehouse == set_warehouse
 		else:
 			return True
 	def set_missing_values(source, target):
@@ -705,11 +705,14 @@ def get_pending_sales_invoice(*args):
 		conditions += " AND SI.customer = '%s'" %filters["customer"]
 	if "company" in filters:
 		conditions += " AND SI.company = '%s'" % filters["company"]
+	if "set_warehouse" in filters:
+		conditions += " AND SIT.warehouse = '%s'" %filters["set_warehouse"]
 	query = """ 
 			WITH CTE AS(
 				SELECT
 					SIT.stock_qty, 
 					SIT.delivered_qty, 
+					SIT.warehouse AS set_warehouse, 
 					COALESCE (SUM(DNI.stock_qty), 0) As DNI_sum_stock_qty,           
 					SI.name AS name,                      
 					SI.posting_date AS posting_date,                      
