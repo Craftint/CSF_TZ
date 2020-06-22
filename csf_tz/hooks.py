@@ -179,23 +179,23 @@ doc_events = {
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-#	"all": [
-#		"csf_tz.tasks.all"
-#	],
-#	"daily": [
-#		"csf_tz.tasks.daily"
-#	],
-#	"hourly": [
-#		"csf_tz.tasks.hourly"
-#	],
-#	"weekly": [
-#		"csf_tz.tasks.weekly"
-#	]
-#	"monthly": [
-#		"csf_tz.tasks.monthly"
-#	]
-# }
+scheduler_events = {
+	# "all": [
+	# 	"csf_tz.tasks.all"
+	# ],
+	"daily": [
+		"csf_tz.custom_api.create_delivery_note_for_all_pending_sales_invoice"
+	],
+	# "hourly": [
+	# 	"csf_tz.tasks.hourly"
+	# ],
+	# "weekly": [
+	# 	"csf_tz.tasks.weekly"
+	# ]
+	# "monthly": [
+	# 	"csf_tz.tasks.monthly"
+	# ]
+}
 
 # Testing
 # -------
