@@ -5,6 +5,7 @@ frappe.ui.form.on("Sales Invoice", {
     },
     refresh: function(frm) {
         frm.trigger("update_stock");
+        frm.trigger("make_sales_invoice_btn");
     },
     onload: function(frm) {
         if (frm.doc.document_status == "Draft") {
@@ -37,6 +38,21 @@ frappe.ui.form.on("Sales Invoice", {
             refresh_field("items");
         }
     },
+    make_sales_invoice_btn: function(frm){
+        if (frm.doc.docstatus == 1){
+            frm.add_custom_button(__('Create Delivery Note'),
+                    
+            function() {
+                frappe.call({
+                    method: "csf_tz.custom_api.create_delivery_note",
+                    args: {
+                        doc_name: frm.doc.name,
+                        method: 1,
+                    },
+                }); 
+            });               
+        }
+    },
 });
 
 frappe.ui.form.on("Sales Invoice Item", {
@@ -56,6 +72,9 @@ frappe.ui.form.on("Sales Invoice Item", {
         validate_item_remaining_stock_qty(frm, cdt, cdn);    
     },
     conversion_factor: function(frm, cdt, cdn) {
+        validate_item_remaining_stock_qty(frm, cdt, cdn);    
+    },
+    warehouse: function(frm, cdt, cdn) {
         validate_item_remaining_stock_qty(frm, cdt, cdn);    
     },
 });

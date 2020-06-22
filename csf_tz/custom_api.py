@@ -130,7 +130,6 @@ def get_stock_ledger_entries(item_code):
 
 @frappe.whitelist()
 def get_item_info(item_code):
-
 	sle = get_stock_ledger_entries(item_code)
 	iwb_map = {}
 	float_precision = cint(frappe.db.get_default("float_precision")) or 3
@@ -167,7 +166,6 @@ def get_item_info(item_code):
 				}
 				lin_dict.update(value3)
 				iwd_list.append(lin_dict)
-
 	return iwd_list
 
 
@@ -219,7 +217,6 @@ def get_item_prices(item_code,currency,customer=None,company=None):
 
 @frappe.whitelist()
 def get_item_prices_custom(*args):
-	# print_out(str(args))
 	filters = args[5]
 	start = args[3]
 	limit = args[4]
@@ -297,14 +294,19 @@ def get_repack_template(template_name,qty):
 		})
 	return rows
 
-def create_delivery_note(doc,method):
+
+@frappe.whitelist()
+def create_delivery_note(doc=None, method=None, doc_name=None):
+	if not doc and doc_name:
+		doc = frappe.get_doc("Sales Invoice",doc_name)
 	if doc.update_stock:
 		return
 	from_delivery_note = False
 	i = 0
 	warehouses_list =[]
 	for item in doc.items:
-		if item.warehouse not in warehouses_list:
+		pending_qty = flt(item.qty) - get_delivery_note_item_count(item.name, item.parent)
+		if item.warehouse not in warehouses_list and check_item_is_maintain(item.item_code) and pending_qty != 0:
 			warehouses_list.append(item.warehouse)
 		if item.delivery_note or item.delivered_by_supplier:
 			from_delivery_note = True
@@ -315,14 +317,19 @@ def create_delivery_note(doc,method):
 		return
 		
 	for warehouse in warehouses_list:
-		delivery_doc = frappe.get_doc(make_delivery_note(doc.name,warehouse))
+		if not doc.is_new():
+			check=get_list_pending_sales_invoice(doc.name, warehouse)
+			if warehouse and len(check) == 0:
+				return
+		delivery_doc = frappe.get_doc(make_delivery_note(doc.name, None, warehouse))
+		delivery_doc.set_warehouse = warehouse
 		delivery_doc.flags.ignore_permissions = True
 		delivery_doc.flags.ignore_account_permission = True
 		delivery_doc.save()
-		# delivery_doc.submit()
-		url = frappe.utils.get_url_to_form(delivery_doc.doctype, delivery_doc.name)
-		msgprint = "Delivery Note Created as Draft at <a href='{0}'>{1}</a>".format(url,delivery_doc.name)
-		frappe.msgprint(_(msgprint))
+		if method:
+			url = frappe.utils.get_url_to_form(delivery_doc.doctype, delivery_doc.name)
+			msgprint = "Delivery Note Created as Draft at <a href='{0}'>{1}</a>".format(url,delivery_doc.name)
+			frappe.msgprint(_(msgprint))
 
 
 
@@ -334,17 +341,26 @@ def check_item_is_maintain(item_name):
 			return True
 	
 
-
-def make_delivery_note(source_name, warehouse, target_doc=None):
+@frappe.whitelist()
+def make_delivery_note(source_name, target_doc=None, set_warehouse=None):
+	def warehouse_condition(doc):
+		if set_warehouse:
+			return doc.warehouse == set_warehouse
+		else:
+			return True
 	def set_missing_values(source, target):
 		target.ignore_pricing_rule = 1
 		target.run_method("set_missing_values")
 		target.run_method("calculate_taxes_and_totals")
+	
+	def get_qty(source_doc):
+		delivery_note_item_count = get_delivery_note_item_count(source_doc.name, source_doc.parent)
+		return flt(source_doc.qty) - delivery_note_item_count
+		
 
 	def update_item(source_doc, target_doc, source_parent):
-		target_doc.qty = flt(source_doc.qty) - flt(source_doc.delivered_qty)
+		target_doc.qty = get_qty(source_doc)
 		target_doc.stock_qty = target_doc.qty * flt(source_doc.conversion_factor)
-
 		target_doc.base_amount = target_doc.qty * flt(source_doc.base_rate)
 		target_doc.amount = target_doc.qty * flt(source_doc.rate)
 
@@ -369,9 +385,7 @@ def make_delivery_note(source_name, warehouse, target_doc=None):
 			},
 			"postprocess": update_item,
 			"condition": lambda doc: check_item_is_maintain(doc.item_code),
-			"condition": lambda doc: doc.warehouse == warehouse,
-			# "condition": lambda doc: doc.delivered_by_supplier!=1,
-			
+			"condition": lambda doc: warehouse_condition(doc),
 		},
 		"Sales Taxes and Charges": {
 			"doctype": "Sales Taxes and Charges",
@@ -532,8 +546,14 @@ def get_pending_delivery_item_count(item_code, company, warehouse):
             """ %(item_code,company,warehouse)
 
 	counts = frappe.db.sql(query,as_dict=True)
-
-	return counts[0]["sold_cont"] - counts[0]["delivered_cont"]
+	if len(counts) > 0:
+		if not counts[0]["sold_cont"]:
+			counts[0]["sold_cont"] = 0
+		if not counts[0]["delivered_cont"]:
+			counts[0]["delivered_cont"] = 0
+		return counts[0]["sold_cont"] - counts[0]["delivered_cont"]
+	else:
+		return 0
 
 
 def get_item_balance(item_code, company, warehouse=None):
@@ -561,7 +581,9 @@ def get_item_balance(item_code, company, warehouse=None):
 
 
 @frappe.whitelist()
-def validate_item_remaining_qty(item_code, company, warehouse, stock_qty):
+def validate_item_remaining_qty(item_code, company, warehouse = None, stock_qty = None):
+	if not warehouse:
+		return
 	is_stock_item = frappe.get_value("Item",item_code,"is_stock_item")
 	if is_stock_item == 1:
 		pending_delivery_item_count = get_pending_delivery_item_count(item_code, company, warehouse)
@@ -651,3 +673,114 @@ def update_delivery_on_sales_invoice(doc, method):
             sales_invoice_list.append(item.against_sales_invoice)
     for invoice in sales_invoice_list:
         check_validate_delivery_note(None,None,invoice)
+	
+
+
+def get_delivery_note_item_count(item_row_name, sales_invoice):
+	query = """ SELECT SUM(qty) as cont
+            FROM `tabDelivery Note Item` 
+            WHERE 
+                si_detail = '%s' 
+                AND docstatus != 2 
+                AND against_sales_invoice = '%s' 
+            """ %(item_row_name,sales_invoice)
+
+	counts = frappe.db.sql(query,as_dict=True)
+	if len(counts) > 0 and counts[0]["cont"]:
+		return float(counts[0]["cont"])
+	else:
+		return 0
+
+
+@frappe.whitelist()
+def get_pending_sales_invoice(*args):
+	filters = args[5]
+	start = cint(args[3])
+	page_length = cint(args[4])
+	conditions = ""
+	if args[1] != "":
+		conditions += " AND SI.name = '%s'" % args[1]
+	if "posting_date" in filters:
+		posting_date = filters["posting_date"]
+		from_date="'{from_date}'".format(from_date=posting_date[1][0])
+		to_date = "'{to_date}'".format(to_date=posting_date[1][1])
+		conditions += "AND DATE(SI.posting_date) BETWEEN {start} AND {end}".format(start=from_date,end=to_date)
+	if "customer" in filters:
+		conditions += " AND SI.customer = '%s'" %filters["customer"]
+	if "company" in filters:
+		conditions += " AND SI.company = '%s'" % filters["company"]
+	if "set_warehouse" in filters:
+		conditions += " AND SIT.warehouse = '%s'" %filters["set_warehouse"]
+	query = """ 
+			WITH CTE AS(
+				SELECT
+					SIT.stock_qty, 
+					SIT.delivered_qty, 
+					SIT.warehouse AS set_warehouse, 
+					COALESCE (SUM(DNI.stock_qty), 0) As DNI_sum_stock_qty,           
+					SI.name AS name,                      
+					SI.posting_date AS posting_date,                      
+					SI.customer As customer,
+					ROW_NUMBER()OVER(PARTITION BY SI.name ORDER BY SI.name) AS RN            
+				FROM `tabSales Invoice` AS SI              
+					INNER JOIN `tabSales Invoice Item` AS SIT ON SIT.parent = SI.name 
+					INNER JOIN `tabItem` AS IT ON IT.name = SIT.item_code and IT.is_stock_item = 1
+					LEFT OUTER JOIN `tabDelivery Note Item` as DNI on DNI.si_detail = SIT.name AND DNI.docstatus < 2
+				WHERE                  
+					SIT.parent = SI.name                  
+					AND SI.docstatus= 1              
+					AND SI.update_stock != 1 
+					AND SIT.stock_qty != SIT.delivered_qty 
+					%s    
+				GROUP BY SI.name, SIT.name
+				HAVING SIT.stock_qty > DNI_sum_stock_qty
+			)
+			SELECT * FROM `CTE` WHERE RN = 1
+			LIMIT %s
+			OFFSET %s
+            """ %(conditions, page_length, start)
+	data = frappe.db.sql(query,as_dict=True)
+	return data
+
+
+
+def get_list_pending_sales_invoice(invoice_name=None, warehouse=None):
+	conditions = ""
+	if invoice_name:
+		conditions += " AND SI.name = '%s'" % invoice_name
+	if warehouse:
+		conditions += " AND SIT.warehouse = '%s'" % warehouse
+	query = """ 
+			WITH CTE AS(
+				SELECT
+					SIT.stock_qty, 
+					SIT.delivered_qty, 
+					COALESCE (SUM(DNI.stock_qty), 0) As DNI_sum_stock_qty,           
+					SI.name AS name,                      
+					SI.posting_date AS posting_date,                      
+					SI.customer As customer, 
+					ROW_NUMBER()OVER(PARTITION BY SI.name ORDER BY SI.name) AS RN 
+				FROM `tabSales Invoice` AS SI 
+					INNER JOIN `tabSales Invoice Item` AS SIT ON SIT.parent = SI.name
+					INNER JOIN `tabItem` AS IT ON IT.name = SIT.item_code and IT.is_stock_item = 1
+					LEFT OUTER JOIN `tabDelivery Note Item` as DNI on DNI.si_detail = SIT.name AND DNI.docstatus < 2
+				WHERE                  
+					SIT.parent = SI.name                  
+					AND SI.docstatus= 1              
+					AND SI.update_stock != 1 
+					AND SIT.stock_qty != SIT.delivered_qty 
+					%s 
+				GROUP BY SI.name, SIT.name
+				HAVING SIT.stock_qty > DNI_sum_stock_qty 
+			)
+			SELECT * FROM `CTE` WHERE RN = 1
+			"""%(conditions)
+	data = frappe.db.sql(query,as_dict=True)
+	return data
+
+
+def create_delivery_note_for_all_pending_sales_invoice(doc=None,method=None):
+	invoices = get_list_pending_sales_invoice()
+	for i in invoices:
+		invoice = frappe.get_doc("Sales Invoice",i.name)
+		create_delivery_note(invoice)
