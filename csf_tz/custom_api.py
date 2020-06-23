@@ -425,7 +425,15 @@ def create_indirect_expense_item(doc,method=None):
 	if not doc.parent_account and not "Indirect Expenses" in doc.parent_account and doc.item:
 		doc.item = ""
 		return
-
+	indirect_expenses_group = frappe.db.exists("Item Group", "Indirect Expenses")
+	if not indirect_expenses_group:
+		indirect_expenses_group = frappe.get_doc(dict(
+			doctype = "Item Group",
+			item_group_name = "Indirect Expenses",
+		))
+		indirect_expenses_group.flags.ignore_permissions = True
+		frappe.flags.ignore_account_permission = True
+		indirect_expenses_group.save()
 	item = frappe.db.exists("Item", doc.account_name)
 	if item:
 		item = frappe.get_doc("Item", doc.account_name)
