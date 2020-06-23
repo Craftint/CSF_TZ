@@ -424,6 +424,10 @@ def create_indirect_expense_item(doc,method=None):
 	if not doc.parent_account and not "Indirect Expenses" in doc.parent_account and doc.item:
 		doc.item = ""
 		return
+	item_group = frappe.db.exists("Item Group", "Indirect Expenses")
+	if not item_group:
+		# to do: write code to autocreate item group if missing
+		return
 
 	item = frappe.db.exists("Item", doc.account_name)
 	if item:
