@@ -290,7 +290,7 @@ def get_repack_template(template_name,qty):
 			"item_uom": i.item_uom,
 			"qty": cint(float(i.qty / template_doc.qty) * float(qty)),
 			"item_template" : 0 ,
-			"t_warehouse":template_doc.default_warehouse,
+			"t_warehouse": i.default_target_warehouse,
 		})
 	return rows
 
