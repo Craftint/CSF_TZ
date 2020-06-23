@@ -406,9 +406,10 @@ def make_delivery_note(source_name, target_doc=None, set_warehouse=None):
 			"add_if_empty": True
 		}
 	}, target_doc, set_missing_values)
+
 	items_list = []
 	for it in doclist.items:
-		if float(it.qty) != 0.0:
+		if float(it.qty) != 0.0 and check_item_is_maintain(it.item_code):
 			items_list.append(it)
 	doclist.items = items_list
 
