@@ -290,7 +290,7 @@ def get_repack_template(template_name,qty):
 			"item_uom": i.item_uom,
 			"qty": cint(float(i.qty / template_doc.qty) * float(qty)),
 			"item_template" : 0 ,
-			"t_warehouse":template_doc.default_warehouse,
+			"t_warehouse": i.default_target_warehouse,
 		})
 	return rows
 
@@ -406,9 +406,10 @@ def make_delivery_note(source_name, target_doc=None, set_warehouse=None):
 			"add_if_empty": True
 		}
 	}, target_doc, set_missing_values)
+
 	items_list = []
 	for it in doclist.items:
-		if float(it.qty) != 0.0:
+		if float(it.qty) != 0.0 and check_item_is_maintain(it.item_code):
 			items_list.append(it)
 	doclist.items = items_list
 
@@ -424,11 +425,15 @@ def create_indirect_expense_item(doc,method=None):
 	if not doc.parent_account and not "Indirect Expenses" in doc.parent_account and doc.item:
 		doc.item = ""
 		return
-	item_group = frappe.db.exists("Item Group", "Indirect Expenses")
-	if not item_group:
-		# to do: write code to autocreate item group if missing
-		return
-
+	indirect_expenses_group = frappe.db.exists("Item Group", "Indirect Expenses")
+	if not indirect_expenses_group:
+		indirect_expenses_group = frappe.get_doc(dict(
+			doctype = "Item Group",
+			item_group_name = "Indirect Expenses",
+		))
+		indirect_expenses_group.flags.ignore_permissions = True
+		frappe.flags.ignore_account_permission = True
+		indirect_expenses_group.save()
 	item = frappe.db.exists("Item", doc.account_name)
 	if item:
 		item = frappe.get_doc("Item", doc.account_name)
