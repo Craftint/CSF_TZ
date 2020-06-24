@@ -53,6 +53,7 @@ fixtures = [
 		"Sales Invoice Item-allow_over_sell",
 		"Sales Invoice-delivery_status",
 		"Sales Invoice Item-delivery_status",
+		"Stock Entry-final_warehouse",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-default_print_format",
