@@ -811,8 +811,8 @@ def create_delivery_note_for_all_pending_sales_invoice(doc=None,method=None):
 
 
 def get_pending_material_request():
-	mat_req_list = frappe.get_all("Material Request",filters = [["Material Request","status","in",["Pending"]]],fields = ["name"])
-	# mat_req_list = frappe.get_all("Material Request",filters = [["Material Request","status","in",["Draft"]]],fields = ["name"])
+	# mat_req_list = frappe.get_all("Material Request",filters = [["Material Request","status","in",["Pending"]]],fields = ["name"])
+	mat_req_list = frappe.get_all("Material Request",filters = [["Material Request","status","in",["Draft"]]],fields = ["name"])
 	return mat_req_list
 
 
@@ -865,8 +865,8 @@ def get_stock_balance_for(item_code, warehouse,
 	}
 
 
-
-def make_stock_reconciliation_for_all_pending_material_request():
+@frappe.whitelist()
+def make_stock_reconciliation_for_all_pending_material_request(*args):
 	mat_req_list = get_pending_material_request()
 	data={}
 
