@@ -54,6 +54,17 @@ fixtures = [
 		"Sales Invoice-delivery_status",
 		"Sales Invoice Item-delivery_status",
 		"Stock Entry-final_warehouse",
+		"Stock Entry-transport_receipt_date",
+		"Stock Entry-driver_name",
+		"Stock Entry-transporter_name",
+		"Stock Entry-column_break_69",
+		"Stock Entry-vehicle_no",
+		"Stock Entry-transport_receipt_no",
+		"Stock Entry-driver",
+		"Stock Entry-transporter",
+		"Stock Entry-transporter_info",
+		"Stock Entry-transporter_info",
+		"Stock Entry-transporter_info",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-default_print_format",
@@ -76,6 +87,7 @@ fixtures = [
 		"Payment Entry-payment_accounts_section-collapsible",
 		"Special Closing Balance-naming_series-options",
 		"Special Closing Balance-naming_series-default",
+		"Stock Entry-from_warehouse-fetch_from",
 	)]]},
 ]
 
