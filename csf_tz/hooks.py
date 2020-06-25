@@ -54,6 +54,8 @@ fixtures = [
 		"Sales Invoice-delivery_status",
 		"Sales Invoice Item-delivery_status",
 		"Stock Entry-final_warehouse",
+		"Material Request Item-stock_reconciliation",
+		"Stock Reconciliation Item-material_request",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-default_print_format",
@@ -190,9 +192,9 @@ scheduler_events = {
 	# "hourly": [
 	# 	"csf_tz.tasks.hourly"
 	# ],
-	# "weekly": [
-	# 	"csf_tz.tasks.weekly"
-	# ]
+	"weekly": [
+		"csf_tz.custom_api.make_stock_reconciliation_for_all_pending_material_request"
+	]
 	# "monthly": [
 	# 	"csf_tz.tasks.monthly"
 	# ]

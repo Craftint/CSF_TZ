@@ -6,10 +6,11 @@ from frappe import _
 import frappe.permissions
 import frappe.share
 import traceback
-from frappe.utils import flt, cint, getdate, get_datetime
+from frappe.utils import flt, cint, getdate, get_datetime, nowdate, nowtime
 from frappe.model.mapper import get_mapped_doc
 from frappe.desk.form.linked_with import get_linked_docs, get_linked_doctypes
 from erpnext.stock.utils import get_stock_balance, get_latest_stock_qty
+from erpnext.stock.doctype.batch.batch import get_batch_qty
 
 @frappe.whitelist()
 def app_error_log(title,error):
@@ -130,6 +131,7 @@ def get_stock_ledger_entries(item_code):
 
 @frappe.whitelist()
 def get_item_info(item_code):
+	make_stock_reconciliation_for_all_pending_material_request()
 	sle = get_stock_ledger_entries(item_code)
 	iwb_map = {}
 	float_precision = cint(frappe.db.get_default("float_precision")) or 3
@@ -805,3 +807,105 @@ def create_delivery_note_for_all_pending_sales_invoice(doc=None,method=None):
 	for i in invoices:
 		invoice = frappe.get_doc("Sales Invoice",i.name)
 		create_delivery_note(invoice)
+
+
+
+def get_pending_material_request():
+	mat_req_list = frappe.get_all("Material Request",filters = [["Material Request","status","in",["Pending"]]],fields = ["name"])
+	# mat_req_list = frappe.get_all("Material Request",filters = [["Material Request","status","in",["Draft"]]],fields = ["name"])
+	return mat_req_list
+
+
+
+def make_stock_reconciliation(items ,company):
+	stock_rec_doc = frappe.get_doc({
+		'doctype': 'Stock Reconciliation',
+		'company': company,
+		'purpose': "Stock Reconciliation",
+		'Posting Date': getdate(),
+		'items': items,
+	})
+	if stock_rec_doc:
+		stock_rec_doc.flags.ignore_permissions = True
+		stock_rec_doc.flags.ignore_account_permission = True
+		stock_rec_doc.run_method("set_missing_values")
+		stock_rec_doc.save()
+		url = frappe.utils.get_url_to_form(stock_rec_doc.doctype, stock_rec_doc.name)
+		msgprint = "Stock Reconciliation Created as Draft at <a href='{0}'>{1}</a>".format(url,stock_rec_doc.name)
+		frappe.msgprint(_(msgprint))
+		return stock_rec_doc.name
+
+
+
+def get_stock_balance_for(item_code, warehouse,
+	posting_date=None, posting_time=None, batch_no=None, with_valuation_rate= True):
+	# frappe.has_permission("Stock Reconciliation", "write", throw = True)
+	if not posting_date: posting_date = nowdate()
+	if not posting_time: posting_time = nowtime()
+	item_dict = frappe.db.get_value("Item", item_code,
+		["has_serial_no", "has_batch_no"], as_dict=1)
+
+	serial_nos = ""
+	with_serial_no = True if item_dict.get("has_serial_no") else False
+	data = get_stock_balance(item_code, warehouse, posting_date, posting_time,
+		with_valuation_rate=with_valuation_rate, with_serial_no=with_serial_no)
+
+	if with_serial_no:
+		qty, rate, serial_nos = data
+	else:
+		qty, rate = data
+
+	if item_dict.get("has_batch_no"):
+		qty = get_batch_qty(batch_no, warehouse) or 0
+
+	return {
+		'qty': qty,
+		'rate': rate,
+		'serial_nos': serial_nos
+	}
+
+
+
+def make_stock_reconciliation_for_all_pending_material_request():
+	mat_req_list = get_pending_material_request()
+	data={}
+
+	for i in mat_req_list:
+		mat_req_doc = frappe.get_doc("Material Request",i["name"])
+
+		if  not data.get(mat_req_doc.company):
+			data[mat_req_doc.company] = {}
+
+		for item in mat_req_doc.items:
+			if not check_item_is_maintain(item.item_code):
+				continue
+			if not data.get(mat_req_doc.company).get(item.warehouse) and not item.stock_reconciliation:
+				data[mat_req_doc.company][item.warehouse] = []
+				item_dict = get_stock_balance_for(item.item_code, item.warehouse)
+				item.valuation_rate = item_dict.get("rate")
+				item_dict= {
+					"item_code"  : item.item_code,
+					"warehouse"  : item.warehouse,
+					"valuation_rate"  : item_dict.get("rate"),
+					"batch_no"  : "",
+					"qty"  : item_dict.get("qty") + item.stock_qty,
+					"material_request": i["name"],
+					"company" : mat_req_doc.company,
+					"row_name": item.name,
+				}
+				data[mat_req_doc.company][item.warehouse].append(item_dict)
+
+	for key, value in data.items():
+		for key1, value1 in value.items():
+			if len(value1) > 0:
+				items_list = []
+				items = []
+				for item in value1:
+					if item["item_code"] not in items_list:
+						items.append(item)
+						items_list.append(item["item_code"])
+				if len(items) > 0:
+					stock_rec_name	= make_stock_reconciliation(value1, key)
+					if stock_rec_name:
+						for item in items:
+							frappe.db.set_value('Material Request Item', item["row_name"], 'stock_reconciliation', stock_rec_name, update_modified=False)
