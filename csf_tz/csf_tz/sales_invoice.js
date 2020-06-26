@@ -1,10 +1,10 @@
 frappe.ui.form.on("Sales Invoice", {
     setup: function(frm) {
 
-        frm.trigger("update_stock");
+        // frm.trigger("update_stock");
     },
     refresh: function(frm) {
-        frm.trigger("update_stock");
+        // frm.trigger("update_stock");
         frm.trigger("make_sales_invoice_btn");
     },
     onload: function(frm) {
@@ -17,27 +17,27 @@ frappe.ui.form.on("Sales Invoice", {
 				frm.set_value("select_print_heading","CREDIT NOTE");
             }
         }
-        frm.trigger("update_stock");
+        // frm.trigger("update_stock");
     },  
-    update_stock: (frm) => {
-        const warehouse_field = frappe.meta.get_docfield("Sales Invoice Item", "warehouse", frm.doc.name);
-        const item_field = frappe.meta.get_docfield("Sales Invoice Item", "item_code", frm.doc.name);
-        const qty_field = frappe.meta.get_docfield("Sales Invoice Item", "qty", frm.doc.name);
-        if (frm.doc.update_stock){
-            warehouse_field.in_list_view = 1;
-            warehouse_field.idx = 3;
-            warehouse_field.columns = 2;
-            item_field.columns =3;
-            qty_field.columns =1;
-            refresh_field("items");
-        }else{
-            warehouse_field.in_list_view = 0;
-            warehouse_field.columns = 0;
-            item_field.columns =4;
-            qty_field.columns =2;
-            refresh_field("items");
-        }
-    },
+    // update_stock: (frm) => {
+    //     const warehouse_field = frappe.meta.get_docfield("Sales Invoice Item", "warehouse", frm.doc.name);
+    //     const item_field = frappe.meta.get_docfield("Sales Invoice Item", "item_code", frm.doc.name);
+    //     const qty_field = frappe.meta.get_docfield("Sales Invoice Item", "qty", frm.doc.name);
+    //     if (frm.doc.update_stock){
+    //         warehouse_field.in_list_view = 1;
+    //         warehouse_field.idx = 3;
+    //         warehouse_field.columns = 2;
+    //         item_field.columns =3;
+    //         qty_field.columns =1;
+    //         refresh_field("items");
+    //     }else{
+    //         warehouse_field.in_list_view = 0;
+    //         warehouse_field.columns = 0;
+    //         item_field.columns =4;
+    //         qty_field.columns =2;
+    //         refresh_field("items");
+    //     }
+    // },
     make_sales_invoice_btn: function(frm){
         if (frm.doc.docstatus == 1){
             frm.add_custom_button(__('Create Delivery Note'),
