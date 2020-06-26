@@ -81,6 +81,7 @@ frappe.ui.form.on("Sales Invoice Item", {
 
 var validate_item_remaining_qty = function (frm, cdt, cdn) {
     const item_row = locals[cdt][cdn];
+    if (item_row.item_code == null) {return}
     if (item_row.allow_over_sell == 1) {return}
     const conversion_factor = get_conversion_factor(item_row, item_row.item_code, item_row.uom);
     frappe.call({
@@ -92,7 +93,7 @@ var validate_item_remaining_qty = function (frm, cdt, cdn) {
             stock_qty: item_row.qty * conversion_factor,
         },
         async: false,
-    });     
+    });
 };
 
 var validate_item_remaining_stock_qty = function (frm, cdt, cdn) {
