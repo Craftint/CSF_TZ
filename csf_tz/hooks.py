@@ -65,6 +65,8 @@ fixtures = [
 		"Stock Entry-transporter_info",
 		"Stock Entry-transporter_info",
 		"Stock Entry-transporter_info",
+		"Material Request Item-stock_reconciliation",
+		"Stock Reconciliation Item-material_request",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-default_print_format",
@@ -117,6 +119,7 @@ doctype_js = {
 	"Stock Entry" : "csf_tz/stock_entry.js",
 	"Account" : "csf_tz/account.js",
 	"Asset" : "csf_tz/asset.js",
+	"Warehouse" : "csf_tz/warehouse.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -202,9 +205,9 @@ scheduler_events = {
 	# "hourly": [
 	# 	"csf_tz.tasks.hourly"
 	# ],
-	# "weekly": [
-	# 	"csf_tz.tasks.weekly"
-	# ]
+	"weekly": [
+		"csf_tz.custom_api.make_stock_reconciliation_for_all_pending_material_request"
+	]
 	# "monthly": [
 	# 	"csf_tz.tasks.monthly"
 	# ]
