@@ -110,7 +110,7 @@ def get_context(context):
 		if self.is_standard:
 			self.load_standard_properties(context)
 
-
+		
 		if self.set_property_after_alert:
 			allow_update = True
 			if doc.docstatus == 1 and not doc.meta.get_field(self.set_property_after_alert).allow_on_submit:
@@ -119,7 +119,8 @@ def get_context(context):
 			if allow_update:
 				frappe.db.set_value(doc.doctype, doc.name, self.set_property_after_alert,
 					self.property_value, update_modified = False)
-				doc.set(self.set_property_after_alert, self.property_value)
+				doc.db_set(self.set_property_after_alert, self.property_value)
+				frappe.db.commit()
 
 
 
@@ -161,6 +162,8 @@ def run_visibility(doc, method):
 		"on_update": "Save",
 		"after_insert": "New",
 		"on_submit": "Submit",
+		"before_submit": "Submit",
+		"before_update_after_submit": "Submit",
 		"on_cancel": "Cancel"
 	}
 

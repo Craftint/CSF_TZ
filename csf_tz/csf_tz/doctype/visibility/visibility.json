@@ -44,7 +44,6 @@
    "label": "Filters"
   },
   {
-   "description": "To add dynamic subject, use jinja tags like\n\n<div><pre><code>{{ doc.name }} Delivered</code></pre></div>",
    "fieldname": "subject",
    "fieldtype": "Data",
    "ignore_xss_filter": 1,
@@ -147,16 +146,18 @@
   {
    "fieldname": "set_property_after_alert",
    "fieldtype": "Select",
-   "label": "Set Property After Trigger"
+   "label": "Set Property After Trigger",
+   "reqd": 1
   },
   {
    "fieldname": "property_value",
    "fieldtype": "Data",
-   "label": "Value To Be Set"
+   "label": "Value To Be Set",
+   "reqd": 1
   }
  ],
  "icon": "fa fa-envelope",
- "modified": "2020-06-27 02:51:24.999868",
+ "modified": "2020-06-27 02:58:09.623162",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Visibility",

@@ -201,6 +201,7 @@ doc_events = {
                 "before_validate"               :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
                 "before_save"                   :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
 				"on_update"                     :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
+				"before_submit"                 :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
                 "autoname"                      :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
 		        "on_cancel"                     :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
 		        "on_trash"                      :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
