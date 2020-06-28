@@ -68,6 +68,7 @@ fixtures = [
 		"Material Request Item-stock_reconciliation",
 		"Stock Reconciliation Item-material_request",
 		"Sales Invoice-price_reduction",
+		"Delivery Note-form_sales_invoice",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-default_print_format",

@@ -299,42 +299,44 @@ def get_repack_template(template_name,qty):
 
 @frappe.whitelist()
 def create_delivery_note(doc=None, method=None, doc_name=None):
-    if not doc and doc_name:
-        doc = frappe.get_doc("Sales Invoice", doc_name)
-    if doc.update_stock:
-        return
-    from_delivery_note = False
-    i = 0
-    msg = ""
-    warehouses_list =[]
-    space = "<br>"
-    for item in doc.items:
-        pending_qty = flt(item.stock_qty) - get_delivery_note_item_count(item.name, item.parent)
-        if item.warehouse not in warehouses_list and check_item_is_maintain(item.item_code) and pending_qty != 0:
-            warehouses_list.append(item.warehouse)
-        if item.delivery_note or item.delivered_by_supplier:
-            from_delivery_note = True
-        if check_item_is_maintain(item.item_code):
-            i += 1
-
-    if from_delivery_note or i == 0:
-        return
-        
-    for warehouse in warehouses_list:
-        if not doc.is_new():
-            check=get_list_pending_sales_invoice(doc.name, warehouse)
-            if warehouse and len(check) == 0:
-                frappe.msgprint(msg="All Delivery Notes already created.", title="Warning", indicator="orange")
-                return
-        delivery_doc = frappe.get_doc(make_delivery_note(doc.name, None, warehouse))
-        delivery_doc.set_warehouse = warehouse
-        delivery_doc.flags.ignore_permissions = True
-        delivery_doc.flags.ignore_account_permission = True
-        delivery_doc.save()
-        if method:
-            url = frappe.utils.get_url_to_form(delivery_doc.doctype, delivery_doc.name)
-            msgprint = "Delivery Note Created as Draft at <a href='{0}'>{1}</a>".format(url,delivery_doc.name)
-            frappe.msgprint(_(msgprint), title="Delivery Note Created", indicator="green")
+	if not doc and doc_name:
+		doc = frappe.get_doc("Sales Invoice", doc_name)
+	if doc.update_stock:
+		return
+	from_delivery_note = False
+	i = 0
+	msg = ""
+	warehouses_list =[]
+	space = "<br>"
+	for item in doc.items:
+		pending_qty = flt(item.stock_qty) - get_delivery_note_item_count(item.name, item.parent)
+		if item.warehouse not in warehouses_list and check_item_is_maintain(item.item_code) and pending_qty != 0:
+			warehouses_list.append(item.warehouse)
+		if item.delivery_note or item.delivered_by_supplier:
+			from_delivery_note = True
+		if check_item_is_maintain(item.item_code):
+			i += 1
+	if len(warehouses_list) == 0:
+			frappe.msgprint(msg="All Delivery Notes already created.", title="Warning", indicator="orange")
+	if from_delivery_note or i == 0:
+		return
+		
+	for warehouse in warehouses_list:
+		if not doc.is_new():
+			check=get_list_pending_sales_invoice(doc.name, warehouse)
+			if warehouse and len(check) == 0:
+				frappe.msgprint(msg="All Delivery Notes already created.", title="Warning", indicator="orange")
+				return
+		delivery_doc = frappe.get_doc(make_delivery_note(doc.name, None, warehouse))
+		delivery_doc.set_warehouse = warehouse
+		delivery_doc.form_sales_invoice = doc.name
+		delivery_doc.flags.ignore_permissions = True
+		delivery_doc.flags.ignore_account_permission = True
+		delivery_doc.save()
+		if method:
+			url = frappe.utils.get_url_to_form(delivery_doc.doctype, delivery_doc.name)
+			msgprint = "Delivery Note Created as Draft at <a href='{0}'>{1}</a>".format(url,delivery_doc.name)
+			frappe.msgprint(_(msgprint), title="Delivery Note Created", indicator="green")
 
 
 
