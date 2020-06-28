@@ -67,6 +67,7 @@ fixtures = [
 		"Stock Entry-transporter_info",
 		"Material Request Item-stock_reconciliation",
 		"Stock Reconciliation Item-material_request",
+		"Sales Invoice-price_reduction",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-default_print_format",
@@ -179,7 +180,11 @@ doc_events = {
 	},
 	"Sales Invoice": {
 		"on_submit":["csf_tz.custom_api.create_delivery_note",'csf_tz.custom_api.check_submit_delivery_note'],
-		'validate': ['csf_tz.custom_api.check_validate_delivery_note','csf_tz.custom_api.validate_items_remaining_qty'],
+		'validate': [
+					'csf_tz.custom_api.check_validate_delivery_note',
+					'csf_tz.custom_api.validate_items_remaining_qty',
+					'csf_tz.custom_api.calculate_price_reduction',
+					],
 		'on_cancel': 'csf_tz.custom_api.check_cancel_delivery_note',
 	},
 	'Delivery Note': {
