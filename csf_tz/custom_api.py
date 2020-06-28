@@ -629,7 +629,7 @@ def check_validate_delivery_note(doc=None, method=None, doc_name=None):
         doc.to_save = True
     else:
         doc.to_save = False
-    doc.delivery_status = "Not Delivered"
+    doc.db_set('delivery_status', "Not Delivered", commit=True)
     if doc.update_stock:
         return
     
@@ -640,7 +640,7 @@ def check_validate_delivery_note(doc=None, method=None, doc_name=None):
     i = 0
     for item in doc.items:
         if doc.is_new():
-            item.delivery_status = "Not Delivered"
+	        item.db_set('delivery_status', "Not Delivered", commit=True)
             item.delivered_qty = 0
         items_qty += item.stock_qty
         if item.delivery_note or item.delivered_by_supplier:
@@ -648,31 +648,29 @@ def check_validate_delivery_note(doc=None, method=None, doc_name=None):
             i += 1
         if item.delivered_qty:
             if item.stock_qty == item.delivered_qty:
-                item.delivery_status = "Delivered"
+		        item.db_set('delivery_status', "Delivered", commit=True)
             elif item.stock_qty < item.delivered_qty:
-                item.delivery_status = "Over Delivered"
+		        item.db_set('delivery_status', "Over Delivered", commit=True)
             elif item.stock_qty > item.delivered_qty and item.delivered_qty > 0:
                 item.delivery_status = "Part Delivery"
+		        item.db_set('delivery_status', "Part Delivery", commit=True)
             items_delivered_qty += item.delivered_qty
     if i == len(doc.items):
-        doc.delivery_status = "Delivered"
+        doc.db_set('delivery_status', "Delivered", commit=True)
     elif doc.to_save and items_delivered_qty >= items_qty:
-        doc.delivery_status = "Delivered"
+        doc.db_set('delivery_status', "Delivered", commit=True)
     elif doc.to_save and items_delivered_qty <= items_qty and items_delivered_qty > 0:
-        doc.delivery_status = "Part Delivery"
+        doc.db_set('delivery_status', "Part Delivered", commit=True)
     elif part_delivery:
-        doc.delivery_status = "Part Delivery"
+        doc.db_set('delivery_status', "Part Delivery", commit=True)
     else:
-        doc.delivery_status = "Not Delivered"
+        doc.db_set('delivery_status', "Not Delivered", commit=True)
     if doc.to_save:
         doc.save()
         
 
 
 def check_submit_delivery_note(doc, method):
-    if doc.update_stock and not doc.is_pos:
-        doc.delivery_status = "Delivered"
-        doc.save()
     if doc.update_stock:
         doc.db_set('delivery_status', "Delivered", commit=True)
         for item in doc.items:
@@ -682,7 +680,7 @@ def check_submit_delivery_note(doc, method):
 
 
 def check_cancel_delivery_note(doc, method):
-    if doc.update_stock:
+    if not doc.update_stock:
         doc.db_set('delivery_status', "Not Delivered", commit=True)
         for item in doc.items:
             item.db_set('delivered_qty', 0, commit=True)
@@ -696,7 +694,6 @@ def update_delivery_on_sales_invoice(doc, method):
             sales_invoice_list.append(item.against_sales_invoice)
     for invoice in sales_invoice_list:
         check_validate_delivery_note(None,None,invoice)
-	
 
 
 def get_delivery_note_item_count(item_row_name, sales_invoice):
