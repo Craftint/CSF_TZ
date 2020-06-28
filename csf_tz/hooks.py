@@ -195,6 +195,25 @@ doc_events = {
 		"validate":"csf_tz.custom_api.create_indirect_expense_item",
 		"after_insert":"csf_tz.custom_api.create_indirect_expense_item",
 	},
+	"*": {
+                "validate"                      :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
+                "onload"                        :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
+                "before_insert"                 :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
+                "after_insert"                  :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
+                "before_naming"                 :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
+                "before_change"                 :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
+                "before_update_after_submit"    :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
+                "before_validate"               :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
+                "before_save"                   :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
+				"on_update"                     :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
+				"before_submit"                 :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
+                "autoname"                      :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
+		        "on_cancel"                     :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
+		        "on_trash"                      :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
+		        "on_submit"                     :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
+		        "on_update_after_submit"        :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
+                "on_change"                     :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
+	},
 }
 
 # Scheduled Tasks
@@ -205,7 +224,8 @@ scheduler_events = {
 	# 	"csf_tz.tasks.all"
 	# ],
 	"daily": [
-		"csf_tz.custom_api.create_delivery_note_for_all_pending_sales_invoice"
+		"csf_tz.custom_api.create_delivery_note_for_all_pending_sales_invoice",
+		"csf_tz.csf_tz.doctype.visibility.visibility.trigger_daily_alerts",
 	],
 	# "hourly": [
 	# 	"csf_tz.tasks.hourly"
