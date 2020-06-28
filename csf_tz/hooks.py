@@ -219,7 +219,8 @@ scheduler_events = {
 	# 	"csf_tz.tasks.all"
 	# ],
 	"daily": [
-		"csf_tz.custom_api.create_delivery_note_for_all_pending_sales_invoice"
+		"csf_tz.custom_api.create_delivery_note_for_all_pending_sales_invoice",
+		"csf_tz.csf_tz.doctype.visibility.visibility.trigger_daily_alerts",
 	],
 	# "hourly": [
 	# 	"csf_tz.tasks.hourly"
