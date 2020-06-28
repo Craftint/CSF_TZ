@@ -908,3 +908,11 @@ def make_stock_reconciliation_for_all_pending_material_request(*args):
 					if stock_rec_name:
 						for item in items:
 							frappe.db.set_value('Material Request Item', item["row_name"], 'stock_reconciliation', stock_rec_name, update_modified=False)
+
+
+
+def calculate_price_reduction(doc,method):
+	price_reduction = 0
+	for item in doc.items:
+		price_reduction += item.qty * item.discount_amount
+	doc.price_reduction = price_reduction
