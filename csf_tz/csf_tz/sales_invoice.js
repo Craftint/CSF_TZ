@@ -104,6 +104,7 @@ var validate_item_remaining_qty = function (frm, cdt, cdn) {
 
 var validate_item_remaining_stock_qty = function (frm, cdt, cdn) {
     const item_row = locals[cdt][cdn];
+    if (item_row.item_code == null) {return}
     if (item_row.allow_over_sell == 1) {return}
     frappe.call({
         method: 'csf_tz.custom_api.validate_item_remaining_qty',
