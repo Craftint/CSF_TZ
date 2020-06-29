@@ -13,7 +13,6 @@ def get_data():
 					"name": "EFD Z Report",
 					"description": _("Accounting journal entries with Multi-Currency."),
 				},
-			"items": [
 				{
 					"type": "doctype",
 					"name": "Visibility",
