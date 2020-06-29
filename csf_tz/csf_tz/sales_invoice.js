@@ -6,7 +6,7 @@ frappe.ui.form.on("Sales Invoice", {
     refresh: function(frm) {
         // frm.trigger("update_stock");
         frm.trigger("make_sales_invoice_btn");
-        if (frappe.user_roles.includes("POS User")) {
+        if (frappe.user_roles.includes("POS Only User")) {
             console.log("Special access granted to " + frappe.session.user)
             // Assume that the user is allowed to update pump detials 
             frm.set_value("is_pos", true);
