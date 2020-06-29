@@ -6,6 +6,12 @@ frappe.ui.form.on("Sales Invoice", {
     refresh: function(frm) {
         // frm.trigger("update_stock");
         frm.trigger("make_sales_invoice_btn");
+        if (frappe.user_roles.includes("POS User")) {
+            console.log("Special access granted to " + frappe.session.user)
+            // Assume that the user is allowed to update pump detials 
+            frm.set_value("is_pos", true);
+            frm.set_df_property("is_pos", "read_only", true);
+        }
     },
     onload: function(frm) {
         if (frm.doc.document_status == "Draft") {
@@ -14,7 +20,7 @@ frappe.ui.form.on("Sales Invoice", {
             }
             else if (frm.doc.is_return == "1") {
                 frm.set_value("naming_series","ACC-CN-.YYYY.-");
-				frm.set_value("select_print_heading","CREDIT NOTE");
+                frm.set_value("select_print_heading","CREDIT NOTE");
             }
         }
         // frm.trigger("update_stock");
@@ -113,26 +119,26 @@ var validate_item_remaining_stock_qty = function (frm, cdt, cdn) {
 
 
 var get_conversion_factor = function (item_row, item_code, uom) {
-		if(item_code && uom) {
+        if(item_code && uom) {
             let conversion_factor = 0;
-			frappe.call({
-				method: "erpnext.stock.get_item_details.get_conversion_factor",
-				child: item_row,
-				args: {
-					item_code: item_code,
-					uom: uom
+            frappe.call({
+                method: "erpnext.stock.get_item_details.get_conversion_factor",
+                child: item_row,
+                args: {
+                    item_code: item_code,
+                    uom: uom
                 },
                 async: false,
-				callback: function(r) {
-					if(!r.exc) {
+                callback: function(r) {
+                    if(!r.exc) {
                         
                         conversion_factor = r.message.conversion_factor
-					}
-				}
+                    }
+                }
             });
             return conversion_factor
-		}
-	};
+        }
+    };
 
 frappe.ui.keys.add_shortcut({
     shortcut: 'ctrl+q',
@@ -343,7 +349,7 @@ frappe.ui.keys.add_shortcut({
                                 <td>${element.customer }</td>
                             </tr>
                             `).appendTo(tbody);
-                         
+                        
                             tbody.find('.check-rate').on('change', function() {
                                 $('input.check-rate').not(this).prop('checked', false);  
                             });
