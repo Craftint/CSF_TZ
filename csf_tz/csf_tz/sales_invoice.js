@@ -4,16 +4,12 @@ frappe.ui.form.on("Sales Invoice", {
         // frm.trigger("update_stock");
     },
     refresh: function(frm) {
-        // frm.trigger("update_stock");
+        frm.trigger("set_pos");
         frm.trigger("make_sales_invoice_btn");
-        if (frappe.user_roles.includes("POS Only User")) {
-            console.log("Special access granted to " + frappe.session.user)
-            // Assume that the user is allowed to update pump detials 
-            frm.set_value("is_pos", true);
-            frm.set_df_property("is_pos", "read_only", true);
-        }
+        
     },
     onload: function(frm) {
+        frm.trigger("set_pos");
         if (frm.doc.document_status == "Draft") {
             if (frm.doc.is_return == "0") {
                 frm.set_value("naming_series","ACC-SINV-.YYYY.-");
@@ -58,6 +54,22 @@ frappe.ui.form.on("Sales Invoice", {
                 }); 
             });               
         }
+    },
+    set_pos:function(frm) {
+        frappe.db.get_value("CSF TZ Settings", {},"auto_pos_for_role").then(r =>{
+            if (r.message){
+                if (
+                    frappe.user_roles.includes(r.message.auto_pos_for_role) && 
+                    frm.doc.docstatus == 0 && 
+                    frappe.session.user != 'Administrator' &&
+                    frm.doc.is_pos != 1
+                )
+                {
+                    frm.set_value("is_pos", true);
+                    frm.set_df_property("is_pos", "read_only", true);
+                }
+            }
+        });
     },
 });
 
