@@ -53,7 +53,7 @@ fixtures = [
 		"Sales Invoice Item-allow_over_sell",
 		"Sales Invoice-delivery_status",
 		"Sales Invoice Item-delivery_status",
-		"Stock Entry-final_warehouse",
+		"Stock Entry-final_destination",
 		"Stock Entry-transport_receipt_date",
 		"Stock Entry-driver_name",
 		"Stock Entry-transporter_name",
