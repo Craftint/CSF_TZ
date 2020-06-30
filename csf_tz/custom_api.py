@@ -405,7 +405,7 @@ def make_delivery_note(source_name, target_doc=None, set_warehouse=None):
             },
             "add_if_empty": True
         }
-    }, target_doc, set_missing_values)
+    }, target_doc, set_missing_values, ignore_permissions=True)
 
     items_list = []
     for it in doclist.items:
