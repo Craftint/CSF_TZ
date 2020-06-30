@@ -916,8 +916,16 @@ def make_stock_reconciliation_for_all_pending_material_request(*args):
 
 
 
-def calculate_price_reduction(doc,method):
+def calculate_price_reduction(doc, method):
     price_reduction = 0
     for item in doc.items:
         price_reduction += item.qty * item.discount_amount
     doc.price_reduction = price_reduction
+
+
+def calculate_total_net_weight(doc, method):
+    if doc.meta.get_field('total_net_weight'):
+        doc.total_net_weight = 0.0
+        for d in doc.items:
+            if d.total_weight:
+                doc.total_net_weight += d.total_weight

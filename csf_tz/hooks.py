@@ -92,6 +92,12 @@ fixtures = [
 		"Special Closing Balance-naming_series-options",
 		"Special Closing Balance-naming_series-default",
 		"Stock Entry-from_warehouse-fetch_from",
+		"Stock Entry-total_net_weight",
+		"Stock Entry Detail-item_weight_details",
+		"Stock Entry Detail-weight_per_unit",
+		"Stock Entry Detail-total_weight",
+		"Stock Entry Detail-column_break_32",
+		"Stock Entry Detail-weight_uom",
 	)]]},
 ]
 
@@ -196,6 +202,7 @@ doc_events = {
 		"validate":"csf_tz.custom_api.create_indirect_expense_item",
 		"after_insert":"csf_tz.custom_api.create_indirect_expense_item",
 	},
+
 	"*": {
                 "validate"                      :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
                 "onload"                        :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
@@ -214,6 +221,9 @@ doc_events = {
 		        "on_submit"                     :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
 		        "on_update_after_submit"        :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
                 "on_change"                     :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
+	},
+	"Stock Entry": {
+		"validate": "csf_tz.custom_api.calculate_total_net_weight"
 	},
 }
 
