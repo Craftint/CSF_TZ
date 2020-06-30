@@ -69,6 +69,12 @@ fixtures = [
 		"Stock Reconciliation Item-material_request",
 		"Sales Invoice-price_reduction",
 		"Delivery Note-form_sales_invoice",
+		"Stock Entry-total_net_weight",
+		"Stock Entry Detail-item_weight_details",
+		"Stock Entry Detail-weight_per_unit",
+		"Stock Entry Detail-total_weight",
+		"Stock Entry Detail-column_break_32",
+		"Stock Entry Detail-weight_uom",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-default_print_format",
@@ -92,12 +98,6 @@ fixtures = [
 		"Special Closing Balance-naming_series-options",
 		"Special Closing Balance-naming_series-default",
 		"Stock Entry-from_warehouse-fetch_from",
-		"Stock Entry-total_net_weight",
-		"Stock Entry Detail-item_weight_details",
-		"Stock Entry Detail-weight_per_unit",
-		"Stock Entry Detail-total_weight",
-		"Stock Entry Detail-column_break_32",
-		"Stock Entry Detail-weight_uom",
 	)]]},
 ]
 
