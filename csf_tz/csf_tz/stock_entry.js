@@ -1,4 +1,9 @@
 frappe.ui.form.on("Stock Entry", {
+    setup: function(frm) {
+        if(me.frm.fields_dict["items"]) {
+			me["items_remove"] = me.calculate_net_weight;
+		}
+    },
     onload: function(frm) {
         frm.trigger("stock_entry_type");
         frm.set_query("repack_template", function() {
@@ -63,9 +68,35 @@ frappe.ui.form.on("Stock Entry", {
             $('.grid-upload').show();
             frm.toggle_reqd("qty", frm.doc.stock_entry_type == "Repack from template" ? 1:0);
         }
+        if (["Repack from template","Manufacture"].includes(frm.doc.stock_entry_type)) {
+            frm.set_df_property('total_net_weight', 'hidden', 1)
+        }
+        else {
+            frm.set_df_property('total_net_weight', 'hidden', 0)
+        }
         frm.refresh_field("items");
         frm.refresh();
     },
+    calculate_net_weight: function(frm){
+		frm.doc.total_net_weight= 0.0;
+
+		$.each(frm.doc["items"] || [], function(i, item) {
+			frm.doc.total_net_weight += flt(item.total_weight);
+		});
+		refresh_field("total_net_weight");
+	},
+});
+
+frappe.ui.form.on("Stock Entry Detail", {
+    conversion_factor: function(frm, cdt, cdn){
+        var item = frappe.get_doc(cdt, cdn);
+        item.total_weight = flt(item.transfer_qty * item.weight_per_unit * item.conversion_factor);
+        refresh_field("total_weight");
+        frm.trigger("calculate_net_weight");
+    },
+    qty: function(frm, cdt, cdn) {
+        frm.script_manager.trigger("conversion_factor",cdt,cdn);
+	},
 });
 frappe.ui.keys.add_shortcut({
     shortcut: 'ctrl+q',
