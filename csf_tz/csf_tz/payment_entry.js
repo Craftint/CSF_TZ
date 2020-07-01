@@ -3,6 +3,10 @@ frappe.ui.form.on("Payment Entry", {
 		frm.trigger("payment_type");
 	},
 	payment_type: function(frm) {
+		if (frm.doc.docstatus > 0) {
+			return
+		}
+		console.log("Run")
         if (frm.doc.document_status == "Draft" || typeof frm.doc.document_status === "undefined") {
             if (frm.doc.payment_type == "Receive") {
                 frm.set_value("naming_series","RE-.YYYY.-");
@@ -19,6 +23,9 @@ frappe.ui.form.on("Payment Entry", {
     },
  
     party: function(frm) {
+		if (frm.doc.docstatus > 0) {
+			return
+		}
 		const today = frappe.datetime.get_today();
         const filters = {
             from_posting_date: frappe.datetime.add_days(today, -365), 
