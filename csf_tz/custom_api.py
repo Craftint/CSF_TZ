@@ -451,7 +451,7 @@ def create_indirect_expense_item(doc,method=None):
             row.company = doc.company
             row.expense_account = doc.name
             item.save()
-            company_list.append(i.company)
+            company_list.append(doc.company)
             doc.db_update()
         return item.name
     new_item = frappe.get_doc(dict(
