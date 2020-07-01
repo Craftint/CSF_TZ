@@ -77,7 +77,6 @@ fixtures = [
 		"Stock Entry Detail-weight_uom",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
-		"Sales Invoice-default_print_format",
 		"Sales Invoice-pos_profile-in_standard_filter",
 		"Sales Invoice-posting_date-in_list_view",
 		"Sales Invoice-is_pos-in_standard_filter",
@@ -92,11 +91,8 @@ fixtures = [
 		"Bank Reconciliation Detail-posting_date-in_list_view",
 		"Bank Reconciliation Detail-posting_date-columns",
 		"Bank Reconciliation Detail-payment_entry-columns",
-		"Purchase Invoice-default_print_format",
 		"Payment Entry-section_break_12-collapsible",
 		"Payment Entry-payment_accounts_section-collapsible",
-		"Special Closing Balance-naming_series-options",
-		"Special Closing Balance-naming_series-default",
 		"Stock Entry-from_warehouse-fetch_from",
 	)]]},
 ]
