@@ -933,7 +933,7 @@ def calculate_total_net_weight(doc, method):
 
 def validate_net_rate(doc, method):
     def throw_message(idx, item_name, rate, ref_rate_field):
-        frappe.throw(_("""Row #{}: Net Selling rate for item {} is lower than its {}. Selling rate should be atleast above {}""")
+        frappe.throw(_("""Row #{}: Net Selling rate for item {} is lower than its {}. Net Selling rate should be atleast above {}""")
             .format(idx, item_name, ref_rate_field, rate))
 
 
@@ -947,7 +947,18 @@ def validate_net_rate(doc, method):
         if not it.item_code or it.allow_override_net_rate:
             continue
 
-        last_purchase_rate = frappe.get_cached_value("Item", it.item_code, "last_purchase_rate")
+        last_purchase_rate, is_stock_item = frappe.get_cached_value("Item", it.item_code, ["last_purchase_rate", "is_stock_item"])
         last_purchase_rate_in_sales_uom = last_purchase_rate / (it.conversion_factor or 1)
         if flt(it.net_rate) < flt(last_purchase_rate_in_sales_uom):
             throw_message(it.idx, frappe.bold(it.item_name), last_purchase_rate_in_sales_uom, "last purchase rate")
+
+        last_valuation_rate = frappe.db.sql("""
+            SELECT valuation_rate FROM `tabStock Ledger Entry` WHERE item_code = %s
+            AND warehouse = %s AND valuation_rate > 0
+            ORDER BY posting_date DESC, posting_time DESC, creation DESC LIMIT 1
+            """, (it.item_code, it.warehouse))
+        if last_valuation_rate:
+            last_valuation_rate_in_sales_uom = last_valuation_rate[0][0] / (it.conversion_factor or 1)
+            if is_stock_item and flt(it.net_rate) < flt(last_valuation_rate_in_sales_uom) \
+                and not doc.get('is_internal_customer'):
+                throw_message(it.idx, frappe.bold(it.item_name), last_valuation_rate_in_sales_uom, "valuation rate")
