@@ -929,3 +929,12 @@ def calculate_total_net_weight(doc, method):
         for d in doc.items:
             if d.total_weight:
                 doc.total_net_weight += d.total_weight
+
+
+@frappe.whitelist()
+def get_warehouse_options(company):
+    warehouses = frappe.get_all("Warehouse",filters = [["Warehouse","company","=",company],["Warehouse","is_group","=",0]],fields = ["name"])
+    warehouses_list = []
+    for warehouse in warehouses:
+        warehouses_list.append(warehouse["name"])
+    return warehouses_list

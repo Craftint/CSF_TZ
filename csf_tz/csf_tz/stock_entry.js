@@ -2,7 +2,8 @@ frappe.ui.form.on("Stock Entry", {
     setup: function(frm) {
         if(me.frm.fields_dict["items"]) {
 			me["items_remove"] = me.calculate_net_weight;
-		}
+        }
+        frm.trigger("set_warehouse_options");
     },
     onload: function(frm) {
         frm.trigger("stock_entry_type");
@@ -12,8 +13,11 @@ frappe.ui.form.on("Stock Entry", {
 					"docstatus": 1
 				}
 			};
-		
-		});
+        });
+        frm.trigger("set_warehouse_options");
+    },
+    company: function (frm) {
+        frm.trigger("set_warehouse_options");
     },
     repack_template: function(frm) {
         frm.trigger("get_repack_template");
@@ -84,7 +88,20 @@ frappe.ui.form.on("Stock Entry", {
 			frm.doc.total_net_weight += flt(item.total_weight);
 		});
 		refresh_field("total_net_weight");
-	},
+    },
+    set_warehouse_options: function(frm) {
+        frappe.call({
+            "method": "csf_tz.custom_api.get_warehouse_options",
+            "args":{company:frm.doc.company},
+            callback: function(r) {
+                if(r.message && r.message.length) {
+                    // frappe.meta.get_docfield("ModulesT", "module", frm.doc.name).options = r.message;
+                    // frm.get_docfield("taxes", "rate").reqd = 0;
+                    frm.set_df_property("final_destination", "options", r.message);
+                }
+            }
+        });
+    },
 });
 
 frappe.ui.form.on("Stock Entry Detail", {
