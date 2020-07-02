@@ -75,6 +75,7 @@ fixtures = [
 		"Stock Entry Detail-total_weight",
 		"Stock Entry Detail-column_break_32",
 		"Stock Entry Detail-weight_uom",
+		"Sales Invoice Item-allow_override_net_rate",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-pos_profile-in_standard_filter",
@@ -182,7 +183,11 @@ doc_events = {
 		"validate": "csf_tz.custom_api.getInvoiceExchangeRate"
 	},
 	"Sales Invoice": {
-		"on_submit":["csf_tz.custom_api.create_delivery_note",'csf_tz.custom_api.check_submit_delivery_note'],
+		"on_submit":[
+			'csf_tz.custom_api.validate_net_rate',
+			"csf_tz.custom_api.create_delivery_note",
+			'csf_tz.custom_api.check_submit_delivery_note',
+			],
 		'validate': [
 					'csf_tz.custom_api.check_validate_delivery_note',
 					'csf_tz.custom_api.validate_items_remaining_qty',

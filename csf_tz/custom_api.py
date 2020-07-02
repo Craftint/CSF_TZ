@@ -929,3 +929,25 @@ def calculate_total_net_weight(doc, method):
         for d in doc.items:
             if d.total_weight:
                 doc.total_net_weight += d.total_weight
+            
+
+def validate_net_rate(doc, method):
+    def throw_message(idx, item_name, rate, ref_rate_field):
+        frappe.throw(_("""Row #{}: Net Selling rate for item {} is lower than its {}. Selling rate should be atleast above {}""")
+            .format(idx, item_name, ref_rate_field, rate))
+
+
+    if not frappe.db.get_single_value("CSF TZ Settings", "validate_net_rate"):
+        return
+
+    if hasattr(doc, "is_return") and doc.is_return:
+        return
+
+    for it in doc.get("items"):
+        if not it.item_code or it.allow_override_net_rate:
+            continue
+
+        last_purchase_rate = frappe.get_cached_value("Item", it.item_code, "last_purchase_rate")
+        last_purchase_rate_in_sales_uom = last_purchase_rate / (it.conversion_factor or 1)
+        if flt(it.net_rate) < flt(last_purchase_rate_in_sales_uom):
+            throw_message(it.idx, frappe.bold(it.item_name), last_purchase_rate_in_sales_uom, "last purchase rate")
