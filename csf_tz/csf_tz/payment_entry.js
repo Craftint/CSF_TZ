@@ -5,34 +5,33 @@ frappe.ui.form.on("Payment Entry", {
 		}
 	},
 	payment_type: function(frm) {
-        if (typeof frm.doc.document_status === "undefined") {
-            if (frm.doc.payment_type == "Receive") {
-                frm.set_value("naming_series","RE-.YYYY.-");
-                frm.set_value("party_type", "Customer");
-            }
-            else if (frm.doc.payment_type == "Pay") {
-                frm.set_value("naming_series","PE-.YYYY.-");
-                frm.set_value("party_type", "Supplier");
-            }
-            else if (frm.doc.payment_type == "Internal Transfer") {
-                frm.set_value("naming_series","IT-.YYYY.-");
-            }
-        }
-    },
- 
-    party: function(frm) {
-		if (frm.doc.docstatus > 0) {
-			return
+		if (typeof frm.doc.document_status === "undefined") {
+			if (frm.doc.payment_type == "Receive") {
+				frm.set_value("naming_series","RE-.YYYY.-");
+				frm.set_value("party_type", "Customer");
+			}
+			else if (frm.doc.payment_type == "Pay") {
+				frm.set_value("naming_series","PE-.YYYY.-");
+				frm.set_value("party_type", "Supplier");
+			}
+			else if (frm.doc.payment_type == "Internal Transfer") {
+				frm.set_value("naming_series","IT-.YYYY.-");
+			}
 		}
-		const today = frappe.datetime.get_today();
-        const filters = {
-            from_posting_date: frappe.datetime.add_days(today, -365), 
-            to_posting_date: today, 
-            allocate_payment_amount: 1}
-        frm.events.get_outstanding_documents(frm, filters);
-    },
+	},
 
-    get_outstanding_documents: function(frm, filters) {
+	party: function(frm) {
+		if ((frm.is_new())) {
+			const today = frappe.datetime.get_today();
+			const filters = {
+				from_posting_date: frappe.datetime.add_days(today, -365), 
+				to_posting_date: today, 
+				allocate_payment_amount: 1}
+			frm.events.get_outstanding_documents(frm, filters);
+		}
+	},
+
+	get_outstanding_documents: function(frm, filters) {
 		frm.clear_table("references");
 
 		if(!frm.doc.party) {
@@ -40,7 +39,7 @@ frappe.ui.form.on("Payment Entry", {
 		}
 
 		frm.events.check_mandatory_to_fetch(frm);
-		var company_currency = frappe.get_doc(":Company", frm.doc.company).default_currency;
+		var company_currency = frappe.get_doc("Company", frm.doc.company).default_currency;
 
 		var args = {
 			"posting_date": frm.doc.posting_date,
