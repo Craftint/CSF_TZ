@@ -131,7 +131,6 @@ def get_stock_ledger_entries(item_code):
 
 @frappe.whitelist()
 def get_item_info(item_code):
-    make_stock_reconciliation_for_all_pending_material_request()
     sle = get_stock_ledger_entries(item_code)
     iwb_map = {}
     float_precision = cint(frappe.db.get_default("float_precision")) or 3
