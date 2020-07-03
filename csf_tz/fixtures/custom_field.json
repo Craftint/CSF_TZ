@@ -1638,7 +1638,7 @@
   "modified": "2020-06-29 18:07:10.893479",
   "name": "Stock Entry-final_destination",
   "no_copy": 0,
-  "options": "\nWarehouse",
+  "options": "",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
