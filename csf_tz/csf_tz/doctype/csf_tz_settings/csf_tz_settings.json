@@ -5,6 +5,8 @@
  "engine": "InnoDB",
  "field_order": [
   "unique_records",
+  "validate_net_rate",
+  "column_break_3",
   "auto_pos_for_role"
  ],
  "fields": [
@@ -19,10 +21,20 @@
    "fieldtype": "Link",
    "label": "Auto Pos For Role",
    "options": "Role"
+  },
+  {
+   "default": "0",
+   "fieldname": "validate_net_rate",
+   "fieldtype": "Check",
+   "label": "Validate Net Rate in Sales Invoice"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
   }
  ],
  "issingle": 1,
- "modified": "2020-06-29 22:13:41.692907",
+ "modified": "2020-07-02 16:36:27.922374",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "CSF TZ Settings",

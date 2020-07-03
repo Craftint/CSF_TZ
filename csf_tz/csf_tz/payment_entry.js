@@ -21,6 +21,9 @@ frappe.ui.form.on("Payment Entry", {
     },
  
     party: function(frm) {
+		if (frm.doc.docstatus > 0) {
+			return
+		}
 		const today = frappe.datetime.get_today();
         const filters = {
             from_posting_date: frappe.datetime.add_days(today, -365), 
