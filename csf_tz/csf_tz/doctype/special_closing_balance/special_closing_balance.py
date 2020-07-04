@@ -25,6 +25,7 @@ class SpecialClosingBalance(Document):
 						s_warehouse=self.warehouse
 					)
 					item_row.item_balance = item_balance
+					item_row.db_update()
 					items.append(item_dict)
 		stock_entry_doc = frappe.get_doc(dict(
 				doctype="Stock Entry",
