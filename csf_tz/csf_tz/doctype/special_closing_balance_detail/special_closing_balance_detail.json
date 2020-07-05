@@ -39,12 +39,13 @@
   {
    "fieldname": "item_balance",
    "fieldtype": "Float",
-   "label": "Item Balance",
+   "in_list_view": 1,
+   "label": "Stock Balance On Submit",
    "read_only": 1
   }
  ],
  "istable": 1,
- "modified": "2020-04-27 00:55:55.637592",
+ "modified": "2020-07-04 05:17:15.968749",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Special Closing Balance Detail",
