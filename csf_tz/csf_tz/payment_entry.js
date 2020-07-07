@@ -1,11 +1,11 @@
 frappe.ui.form.on("Payment Entry", {
 	onload: function(frm) {
-		if ((frm.is_new())) {
+		if (frm.is_new()) {
 			frm.trigger("payment_type");
 		}
 	},
 	payment_type: function(frm) {
-		if (typeof frm.doc.document_status === "undefined") {
+		if (frm.is_new()) {
 			if (frm.doc.payment_type == "Receive") {
 				frm.set_value("naming_series","RE-.YYYY.-");
 				frm.set_value("party_type", "Customer");
@@ -21,7 +21,7 @@ frappe.ui.form.on("Payment Entry", {
 	},
 
 	party: function(frm) {
-		if ((frm.is_new())) {
+		if (frm.is_new()) {
 			const today = frappe.datetime.get_today();
 			const filters = {
 				from_posting_date: frappe.datetime.add_days(today, -365), 
@@ -39,7 +39,7 @@ frappe.ui.form.on("Payment Entry", {
 		}
 
 		frm.events.check_mandatory_to_fetch(frm);
-		var company_currency = frappe.get_doc("Company", frm.doc.company).default_currency;
+		var company_currency = frappe.get_doc(":Company", frm.doc.company).default_currency;
 
 		var args = {
 			"posting_date": frm.doc.posting_date,
