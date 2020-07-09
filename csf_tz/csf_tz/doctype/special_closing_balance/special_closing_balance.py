@@ -16,7 +16,7 @@ class SpecialClosingBalance(Document):
 		user_remarks = "Special Closing Balance - {0}".format(self.name)
 		for item_row in self.closing_balance_details:
 			if item_row.item and item_row.quantity:
-				item_balance = get_latest_stock_qty(item_row.item, self.warehouse)
+				item_balance = get_latest_stock_qty(item_row.item, self.warehouse) or 0
 				if item_row.quantity != item_balance:
 					item_dict = dict(
 						item_code=item_row.item,
