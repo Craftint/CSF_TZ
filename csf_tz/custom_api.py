@@ -604,6 +604,8 @@ def get_item_balance(item_code, company, warehouse=None):
 def validate_item_remaining_qty(item_code, company, warehouse = None, stock_qty = None):
     if not warehouse:
         return
+    if frappe.db.get_single_value("Stock Settings", "allow_negative_stock"):
+        return
     is_stock_item = frappe.get_value("Item",item_code,"is_stock_item")
     if is_stock_item == 1:
         pending_delivery_item_count = get_pending_delivery_item_count(item_code, company, warehouse) or 0
