@@ -22,16 +22,16 @@ frappe.ui.form.on("Stock Entry", {
     repack_template: function(frm) {
         frm.trigger("get_repack_template");
     },
-    qty: function(frm) {
+    repack_qty: function(frm) {
         frm.trigger("get_repack_template");
     },
     get_repack_template: function(frm) {
-        if (!frm.doc.repack_template || !frm.doc.qty){return}
+        if (!frm.doc.repack_template || !frm.doc.repack_qty){return}
         frappe.call({
             method: 'csf_tz.custom_api.get_repack_template',
             args: {
                 template_name: frm.doc.repack_template,
-                qty: frm.doc.qty,
+                qty: frm.doc.repack_qty,
             },
             callback: function(r) {
                frm.clear_table("items");
