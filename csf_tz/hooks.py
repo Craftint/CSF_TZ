@@ -45,7 +45,7 @@ fixtures = [
 		"Item-witholding_tax_rate_on_purchase",
 		"Company-max_records_in_dialog",
 		"Stock Entry-repack_template",
-		"Stock Entry-qty",
+		"Stock Entry-repack_qty",
 		"Stock Entry-item_uom",
 		"Account-item",
 		"Purchase Invoice-expense_record",
