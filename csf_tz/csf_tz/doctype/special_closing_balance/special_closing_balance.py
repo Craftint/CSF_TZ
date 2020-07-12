@@ -11,11 +11,23 @@ from erpnext.stock.utils import get_latest_stock_qty, get_stock_balance
 
 
 class SpecialClosingBalance(Document):
+	def validate(self):
+		items = []
+		user_remarks = "Special Closing Balance - {0}".format(self.name)
+		for item_row in self.closing_balance_details:
+			if not item_row.quantity:
+				item_row.quantity = 0
+			if item_row.item :
+				item_balance = get_latest_stock_qty(item_row.item, self.warehouse) or 0
+				item_row.item_balance = item_balance
+				# item_row.db_update()
+
+
 	def on_submit(self):
 		items = []
 		user_remarks = "Special Closing Balance - {0}".format(self.name)
 		for item_row in self.closing_balance_details:
-			if item_row.item and item_row.quantity != None:
+			if item_row.item :
 				item_balance = get_latest_stock_qty(item_row.item, self.warehouse) or 0
 				item_row.item_balance = item_balance
 				item_row.db_update()
