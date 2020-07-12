@@ -15,8 +15,10 @@ class SpecialClosingBalance(Document):
 		items = []
 		user_remarks = "Special Closing Balance - {0}".format(self.name)
 		for item_row in self.closing_balance_details:
-			if item_row.item and item_row.quantity:
+			if item_row.item and item_row.quantity != None:
 				item_balance = get_latest_stock_qty(item_row.item, self.warehouse) or 0
+				item_row.item_balance = item_balance
+				item_row.db_update()
 				if item_row.quantity != item_balance:
 					item_dict = dict(
 						item_code=item_row.item,
@@ -24,8 +26,6 @@ class SpecialClosingBalance(Document):
 						uom=item_row.uom,
 						s_warehouse=self.warehouse
 					)
-					item_row.item_balance = item_balance
-					item_row.db_update()
 					items.append(item_dict)
 		stock_entry_doc = frappe.get_doc(dict(
 				doctype="Stock Entry",
