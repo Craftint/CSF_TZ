@@ -60,7 +60,7 @@ frappe.ui.form.on('Special Closing Balance', {
 				for(var i=0; i< r.message.length; i++) {
 					var d = frm.add_child("closing_balance_details");
 					$.extend(d, r.message[i]);
-					if(!d.quantity) d.quantity = null;
+					if(!d.quantity) d.quantity = 0;
 				}
 				frm.refresh_field("closing_balance_details");
 			}
