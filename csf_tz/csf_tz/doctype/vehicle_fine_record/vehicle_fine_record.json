@@ -1,0 +1,98 @@
+{
+ "creation": "2020-07-12 16:43:35.877811",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "reference",
+  "issued_date",
+  "officer",
+  "vehicle",
+  "licence",
+  "location",
+  "offence",
+  "charge",
+  "penalty",
+  "total",
+  "status"
+ ],
+ "fields": [
+  {
+   "fieldname": "reference",
+   "fieldtype": "Data",
+   "label": "REFERENCE"
+  },
+  {
+   "fieldname": "issued_date",
+   "fieldtype": "Data",
+   "label": "ISSUED DATE"
+  },
+  {
+   "fieldname": "officer",
+   "fieldtype": "Data",
+   "label": "OFFICER"
+  },
+  {
+   "fieldname": "vehicle",
+   "fieldtype": "Data",
+   "label": "VEHICLE"
+  },
+  {
+   "fieldname": "licence",
+   "fieldtype": "Data",
+   "label": "LICENCE"
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Data",
+   "label": "LOCATION"
+  },
+  {
+   "fieldname": "offence",
+   "fieldtype": "Text",
+   "label": "OFFENCE"
+  },
+  {
+   "fieldname": "charge",
+   "fieldtype": "Currency",
+   "label": "CHARGE"
+  },
+  {
+   "fieldname": "penalty",
+   "fieldtype": "Currency",
+   "label": "PENALTY"
+  },
+  {
+   "fieldname": "total",
+   "fieldtype": "Currency",
+   "label": "TOTAL"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Data",
+   "label": "STATUS"
+  }
+ ],
+ "modified": "2020-07-12 16:43:35.877811",
+ "modified_by": "Administrator",
+ "module": "CSF TZ",
+ "name": "Vehicle Fine Record",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
