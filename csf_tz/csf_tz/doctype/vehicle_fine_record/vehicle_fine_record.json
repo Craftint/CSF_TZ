@@ -1,0 +1,122 @@
+{
+ "autoname": "field:reference",
+ "creation": "2020-07-12 16:43:35.877811",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "reference",
+  "issued_date",
+  "officer",
+  "vehicle",
+  "licence",
+  "location",
+  "offence",
+  "charge",
+  "penalty",
+  "total",
+  "status"
+ ],
+ "fields": [
+  {
+   "fieldname": "reference",
+   "fieldtype": "Data",
+   "label": "REFERENCE",
+   "read_only": 1,
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "issued_date",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "ISSUED DATE",
+   "read_only": 1
+  },
+  {
+   "fieldname": "officer",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "OFFICER",
+   "read_only": 1
+  },
+  {
+   "fieldname": "vehicle",
+   "fieldtype": "Link",
+   "label": "VEHICLE",
+   "options": "Vehicle",
+   "read_only": 1
+  },
+  {
+   "fieldname": "licence",
+   "fieldtype": "Data",
+   "label": "LICENCE",
+   "read_only": 1
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "LOCATION",
+   "read_only": 1
+  },
+  {
+   "fieldname": "offence",
+   "fieldtype": "Text",
+   "in_list_view": 1,
+   "label": "OFFENCE",
+   "read_only": 1
+  },
+  {
+   "fieldname": "charge",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "CHARGE",
+   "read_only": 1
+  },
+  {
+   "fieldname": "penalty",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "PENALTY",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "TOTAL",
+   "read_only": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "STATUS",
+   "read_only": 1
+  }
+ ],
+ "modified": "2020-07-13 16:51:23.070829",
+ "modified_by": "Administrator",
+ "module": "CSF TZ",
+ "name": "Vehicle Fine Record",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "vehicle",
+ "track_changes": 1
+}
