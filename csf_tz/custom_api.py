@@ -458,6 +458,7 @@ def create_indirect_expense_item(doc,method=None):
         item_code = doc.account_name,
         item_group = "Indirect Expenses",
         is_stock_item = 0,
+        stock_uom = "Nos",
         include_item_in_manufacturing = 0,
         item_defaults = [{
             "company": doc.company,
