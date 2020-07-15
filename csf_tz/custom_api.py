@@ -419,9 +419,9 @@ def make_delivery_note(source_name, target_doc=None, set_warehouse=None):
 def create_indirect_expense_item(doc,method=None):
     if doc.is_new() and method == "validate":
         return
-    if not doc.parent_account or not "Indirect Expenses" in doc.parent_account or not doc.company:
+    if not doc.parent_account or doc.is_group or not check_expenses_in_parent_accounts(doc.name) or not doc.company:
         return
-    if not doc.parent_account and not "Indirect Expenses" in doc.parent_account and doc.item:
+    if not doc.parent_account and not check_expenses_in_parent_accounts(doc.account_name) and doc.item:
         doc.item = ""
         return
     indirect_expenses_group = frappe.db.exists("Item Group", "Indirect Expenses")
@@ -476,6 +476,23 @@ def create_indirect_expense_item(doc,method=None):
         doc.item = new_item.name
     doc.db_update()
     return new_item.name
+
+
+def check_expenses_in_parent_accounts(account_name):
+    parent_account_1 = frappe.get_value('Account', account_name, "parent_account")
+    if "Indirect Expenses" in str(parent_account_1):
+        return True
+    else:
+        parent_account_2 = frappe.get_value('Account', parent_account_1, "parent_account")
+        if "Indirect Expenses" in str(parent_account_2):
+            return True
+        else:
+            parent_account_3 = frappe.get_value('Account', parent_account_2, "parent_account")
+            if "Indirect Expenses" in str(parent_account_3):
+                return True
+            else:
+                return False
+    return False
 
 
 @frappe.whitelist()
