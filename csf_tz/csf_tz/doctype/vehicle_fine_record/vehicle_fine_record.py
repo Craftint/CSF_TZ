@@ -56,9 +56,14 @@ def get_fine(number_plate=None):
 						i += 1
 				if len(tds)>1:
 					if frappe.db.exists("Vehicle Fine Record", fields_dict["reference"]):
-						return
-					fine_doc = frappe.get_doc(fields_dict)
-					fine_doc.insert()
+						doc = frappe.get_doc("Vehicle Fine Record", fields_dict["reference"])
+						for key, value in fields_dict.items():
+							if key != "qr_code":
+								doc[key] = value
+						doc.save()
+					else:
+						fine_doc = frappe.get_doc(fields_dict)
+						fine_doc.insert()
 
 		
 		else:
