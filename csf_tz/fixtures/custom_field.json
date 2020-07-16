@@ -2420,7 +2420,7 @@
   "modified": "2020-06-19 18:17:11.595366",
   "name": "Sales Invoice Item-delivery_status",
   "no_copy": 0,
-  "options": "\nNot Delivered\nPart Delivery\nDelivered\nOver Delivered",
+  "options": "\nNot Delivered\nPart Delivered\nDelivered\nOver Delivered",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
