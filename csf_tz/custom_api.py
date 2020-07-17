@@ -11,6 +11,7 @@ from frappe.model.mapper import get_mapped_doc
 from frappe.desk.form.linked_with import get_linked_docs, get_linked_doctypes
 from erpnext.stock.utils import get_stock_balance, get_latest_stock_qty
 from erpnext.stock.doctype.batch.batch import get_batch_qty
+from erpnext.accounts.utils import get_account_currency
 
 @frappe.whitelist()
 def app_error_log(title,error):
@@ -993,3 +994,49 @@ def validate_net_rate(doc, method):
                 and not doc.get('is_internal_customer'):
                 throw_message(it.idx, frappe.bold(it.item_name), last_valuation_rate_in_sales_uom, "valuation rate")
 
+
+
+def make_withholding_tax_gl_entries(doc, method):
+    withholding_payable_account, default_currency = frappe.get_value("Company", doc.company, ["default_withholding_payable_account","default_currency"])
+    for item in doc.items:
+        if not item.withholding_tax_rate > 0:
+            continue
+        amount = item.base_net_rate * item.withholding_tax_rate / 100
+        base_amount = amount if doc.party_account_currency == default_currency else item.net_rate * item.withholding_tax_rate / 100
+        jl_rows = []
+        debit_row = dict(
+            account = doc.credit_to,
+            party_type = "Supplier",
+            party = doc.supplier,
+            debit_in_account_currency = base_amount,
+            account_curremcy = default_currency if doc.party_account_currency == default_currency else doc.currency,
+            exchange_rate = 1 if doc.party_account_currency == default_currency else doc.conversion_rate,
+            cost_center =  doc.cost_center,
+            reference_type = "Purchase Invoice",
+            reference_name = doc.name
+        )
+        jl_rows.append(debit_row)
+        credit_row = dict(
+            account = withholding_payable_account,
+            credit_in_account_currency = item.base_net_rate * item.withholding_tax_rate / 100,
+            cost_center =  doc.cost_center,
+            account_curremcy = default_currency,
+        )
+        jl_rows.append(credit_row)
+        user_remark = "Withholding Tax Against Item " + item.item_code + " In " + doc.doctype + " " + doc.name 
+        jv_doc = frappe.get_doc(dict(
+            doctype = "Journal Entry",
+            posting_date = doc.posting_date,
+            accounts = jl_rows,
+            company = doc.company,
+            multi_currency = 0 if doc.party_account_currency == default_currency else 1,
+            user_remark = user_remark
+        ))
+        jv_doc.flags.ignore_permissions = True
+        frappe.flags.ignore_account_permission = True
+        jv_doc.save()
+        jv_doc.submit()
+        item.withholding_tax_entry = jv_doc.name
+        jv_url = frappe.utils.get_url_to_form(jv_doc.doctype, jv_doc.name)
+        si_msgprint = "Journal Entry Created for Withholding Tax <a href='{0}'>{1}</a>".format(jv_url,jv_doc.name)
+        frappe.msgprint(_(si_msgprint))

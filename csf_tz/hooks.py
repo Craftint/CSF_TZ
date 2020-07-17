@@ -76,6 +76,8 @@ fixtures = [
 		"Stock Entry Detail-column_break_32",
 		"Stock Entry Detail-weight_uom",
 		"Sales Invoice Item-allow_override_net_rate",
+		"Company-default_withholding_payable_account",
+		"Purchase Invoice Item-withholding_tax_entry",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-pos_profile-in_standard_filter",
@@ -125,6 +127,7 @@ doctype_js = {
 	"Account" : "csf_tz/account.js",
 	"Asset" : "csf_tz/asset.js",
 	"Warehouse" : "csf_tz/warehouse.js",
+	"Company": "csf_tz/company.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -202,6 +205,9 @@ doc_events = {
 	"Account": {
 		"validate":"csf_tz.custom_api.create_indirect_expense_item",
 		"after_insert":"csf_tz.custom_api.create_indirect_expense_item",
+	},
+	"Purchase Invoice": {
+		"on_submit":"csf_tz.custom_api.make_withholding_tax_gl_entries",
 	},
 
 	"*": {
