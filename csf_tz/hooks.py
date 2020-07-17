@@ -79,6 +79,7 @@ fixtures = [
 		"Company-default_withholding_payable_account",
 		"Purchase Invoice Item-withholding_tax_entry",
 		"Company-enabled_auto_create_delivery_notes",
+		"Stock Reconciliation-sort_items",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-pos_profile-in_standard_filter",
@@ -129,6 +130,7 @@ doctype_js = {
 	"Asset" : "csf_tz/asset.js",
 	"Warehouse" : "csf_tz/warehouse.js",
 	"Company": "csf_tz/company.js",
+	"Stock Reconciliation": "csf_tz/stock_reconciliation.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
