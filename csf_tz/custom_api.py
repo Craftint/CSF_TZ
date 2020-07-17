@@ -418,8 +418,6 @@ def make_delivery_note(source_name, target_doc=None, set_warehouse=None):
 
 
 def create_indirect_expense_item(doc,method=None):
-    if doc.is_new() and method == "validate":
-        return
     if not doc.parent_account or doc.is_group or not check_expenses_in_parent_accounts(doc.name) or not doc.company:
         return
     if not doc.parent_account and not check_expenses_in_parent_accounts(doc.account_name) and doc.item:
@@ -998,6 +996,8 @@ def validate_net_rate(doc, method):
 
 def make_withholding_tax_gl_entries(doc, method):
     withholding_payable_account, default_currency = frappe.get_value("Company", doc.company, ["default_withholding_payable_account","default_currency"])
+    if not withholding_payable_account:
+        frappe.throw(_("Please Setup Withholding Ppayable Account in Company Master"))
     for item in doc.items:
         if not item.withholding_tax_rate > 0:
             continue

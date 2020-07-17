@@ -203,7 +203,7 @@ doc_events = {
 		'on_cancel': 'csf_tz.custom_api.update_delivery_on_sales_invoice',
   },
 	"Account": {
-		"validate":"csf_tz.custom_api.create_indirect_expense_item",
+		"on_update":"csf_tz.custom_api.create_indirect_expense_item",
 		"after_insert":"csf_tz.custom_api.create_indirect_expense_item",
 	},
 	"Purchase Invoice": {
