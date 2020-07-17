@@ -78,6 +78,7 @@ fixtures = [
 		"Sales Invoice Item-allow_override_net_rate",
 		"Company-default_withholding_payable_account",
 		"Purchase Invoice Item-withholding_tax_entry",
+		"Company-enabled_auto_create_delivery_notes",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-pos_profile-in_standard_filter",
