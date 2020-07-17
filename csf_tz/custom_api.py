@@ -997,33 +997,33 @@ def validate_net_rate(doc, method):
 def make_withholding_tax_gl_entries(doc, method):
     withholding_payable_account, default_currency = frappe.get_value("Company", doc.company, ["default_withholding_payable_account","default_currency"])
     if not withholding_payable_account:
-        frappe.throw(_("Please Setup Withholding Ppayable Account in Company Master"))
+        frappe.throw(_("Please Setup Withholding Payable Account in Company " + str(doc.company)))
     for item in doc.items:
         if not item.withholding_tax_rate > 0:
             continue
-        amount = item.base_net_rate * item.withholding_tax_rate / 100
-        base_amount = amount if doc.party_account_currency == default_currency else item.net_rate * item.withholding_tax_rate / 100
+        wtax_base_amount = item.base_net_rate * item.qty * item.withholding_tax_rate / 100
+        creditor_amount = wtax_base_amount if doc.party_account_currency == default_currency else item.net_rate* item.qty * item.withholding_tax_rate / 100
         jl_rows = []
         debit_row = dict(
             account = doc.credit_to,
             party_type = "Supplier",
             party = doc.supplier,
-            debit_in_account_currency = base_amount,
+            debit_in_account_currency = creditor_amount,
             account_curremcy = default_currency if doc.party_account_currency == default_currency else doc.currency,
             exchange_rate = 1 if doc.party_account_currency == default_currency else doc.conversion_rate,
-            cost_center =  doc.cost_center,
+            cost_center =  item.cost_center,
             reference_type = "Purchase Invoice",
             reference_name = doc.name
         )
         jl_rows.append(debit_row)
         credit_row = dict(
             account = withholding_payable_account,
-            credit_in_account_currency = item.base_net_rate * item.withholding_tax_rate / 100,
-            cost_center =  doc.cost_center,
+            credit_in_account_currency = item.base_net_rate * item.qty * item.withholding_tax_rate / 100,
+            cost_center =  item.cost_center,
             account_curremcy = default_currency,
         )
         jl_rows.append(credit_row)
-        user_remark = "Withholding Tax Against Item " + item.item_code + " In " + doc.doctype + " " + doc.name 
+        user_remark = "Withholding Tax Payable Against Item " + item.item_code + " in " + doc.doctype + " " + doc.name + " of amount " + str(item.net_amount) + " " + doc.currency + " with exchange rate of " + str(doc.conversion_rate)
         jv_doc = frappe.get_doc(dict(
             doctype = "Journal Entry",
             posting_date = doc.posting_date,
