@@ -14,7 +14,10 @@ from frappe.utils import today, format_datetime, now, nowdate, getdate, get_url,
 from time import sleep
 import binascii
 import os
-# from werkzeug import url_fix
+from werkzeug import url_fix
+import urllib.parse as urlparse
+from urllib.parse import parse_qs
+from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
 
 
 class ToObject(object):
@@ -97,10 +100,45 @@ def invoice_submission(doc, method):
 @frappe.whitelist(allow_guest=True)
 def receive_callback(*args, **kwargs):
     r = frappe.request
-    # uri = url_fix(r.url.replace("+"," "))
-    http_method = r.method
+    uri = url_fix(r.url.replace("+"," "))
+    # http_method = r.method
     body = r.get_data()
-    headers = r.headers
+    # headers = r.headers
+    message = {}
+    if body :
+        data = body.decode('utf-8')
+        msgs =  ToObject(data)
+        atr_list = list(msgs.__dict__)
 
-    print_out(headers)
-    print_out(body)
+        for atr in atr_list:
+            if getattr(msgs, atr) :
+                message[atr] = getattr(msgs, atr)
+    else:
+        print_out(message)
+    parsed_url = urlparse.urlparse(uri)
+    message["fees_token"] = parsed_url[4][6:]
+    message["doctype"] = "NMB Callback"
+    nmb_doc = frappe.get_doc(message)
+    make  = make_payment_entry(nmb_doc)
+    message["payment_entry"] = make
+    nmb_doc.insert(ignore_permissions=True)
+    response = {"status":1,"description":"success"}
+    return response
+
+
+def make_payment_entry(nmb_doc):
+    frappe.set_user("Administrator")
+    fees_name = str(nmb_doc.reference)[7:]
+    fees_token = frappe.get_value("Fees", fees_name, "callback_token")
+    if fees_token == nmb_doc.fees_token:
+        payment_entry = get_payment_entry("Fees", fees_name)
+        payment_entry.update({
+            "reference_no": nmb_doc.reference,
+            "reference_date": nmb_doc.timestamp,
+            "remarks": "Payment Entry against {0} {1} via NMB Bank Payment {2}".format("Fees",
+                fees_name, nmb_doc.reference),
+        })
+        payment_entry.flags.ignore_permissions=True
+        frappe.flags.ignore_account_permission = True
+        payment_entry.save()
+    return payment_entry.name
