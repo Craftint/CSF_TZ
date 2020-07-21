@@ -85,7 +85,7 @@ def invoice_submission(doc, method):
     "type" : "Fees Invoice",
     "code" : doc.name,
     "allow_partial" :"TRUE",
-    "callback_url" : "https://" + get_host_name() + "/api/method/csf_tz.bank_api.recive_callback?token=" + doc.callback_token,
+    "callback_url" : "https://" + get_host_name() + "/api/method/csf_tz.bank_api.receive_callback?token=" + doc.callback_token,
     }
     print_out(data)
     message = send_nmb("invoice_submission", data)
@@ -95,7 +95,7 @@ def invoice_submission(doc, method):
 
 
 @frappe.whitelist(allow_guest=True)
-def recive_callback(*args, **kwargs):
+def receive_callback(*args, **kwargs):
     r = frappe.request
     # uri = url_fix(r.url.replace("+"," "))
     http_method = r.method
