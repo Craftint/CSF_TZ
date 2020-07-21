@@ -18,6 +18,7 @@ from werkzeug import url_fix
 import urllib.parse as urlparse
 from urllib.parse import parse_qs
 from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
+from frappe.utils.background_jobs import enqueue
 
 
 class ToObject(object):
@@ -119,26 +120,28 @@ def receive_callback(*args, **kwargs):
     message["fees_token"] = parsed_url[4][6:]
     message["doctype"] = "NMB Callback"
     nmb_doc = frappe.get_doc(message)
-    make  = make_payment_entry(nmb_doc)
-    message["payment_entry"] = make
     nmb_doc.insert(ignore_permissions=True)
     response = {"status":1,"description":"success"}
+    enqueue(method=make_payment_entry, queue='short', timeout=10000, is_async=True , kwargs =nmb_doc )
     return response
 
 
-def make_payment_entry(nmb_doc):
-    frappe.set_user("Administrator")
-    fees_name = str(nmb_doc.reference)[7:]
-    fees_token = frappe.get_value("Fees", fees_name, "callback_token")
-    if fees_token == nmb_doc.fees_token:
-        payment_entry = get_payment_entry("Fees", fees_name)
-        payment_entry.update({
-            "reference_no": nmb_doc.reference,
-            "reference_date": nmb_doc.timestamp,
-            "remarks": "Payment Entry against {0} {1} via NMB Bank Payment {2}".format("Fees",
-                fees_name, nmb_doc.reference),
-        })
-        payment_entry.flags.ignore_permissions=True
-        frappe.flags.ignore_account_permission = True
-        payment_entry.save()
-    return payment_entry.name
+def make_payment_entry(**kwargs):
+    for key, value in kwargs.items(): 
+        nmb_doc = value
+        frappe.set_user("Administrator")
+        fees_name = str(nmb_doc.reference)[7:]
+        fees_token = frappe.get_value("Fees", fees_name, "callback_token")
+        if fees_token == nmb_doc.fees_token:
+            payment_entry = get_payment_entry("Fees", fees_name)
+            payment_entry.update({
+                "reference_no": nmb_doc.reference,
+                "reference_date": nmb_doc.timestamp,
+                "remarks": "Payment Entry against {0} {1} via NMB Bank Payment {2}".format("Fees",
+                    fees_name, nmb_doc.reference),
+            })
+            payment_entry.flags.ignore_permissions=True
+            frappe.flags.ignore_account_permission = True
+            payment_entry.save()
+            payment_entry.submit()
+        return nmb_doc
