@@ -80,6 +80,8 @@ fixtures = [
 		"Purchase Invoice Item-withholding_tax_entry",
 		"Company-enabled_auto_create_delivery_notes",
 		"Stock Reconciliation-sort_items",
+		"Student-bank",
+		"Fees-callback_token",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-pos_profile-in_standard_filter",
@@ -194,7 +196,7 @@ doc_events = {
 			"csf_tz.custom_api.create_delivery_note",
 			'csf_tz.custom_api.check_submit_delivery_note',
 			],
-		'validate': [
+		'Fees': [
 					'csf_tz.custom_api.check_validate_delivery_note',
 					'csf_tz.custom_api.validate_items_remaining_qty',
 					'csf_tz.custom_api.calculate_price_reduction',
@@ -211,6 +213,10 @@ doc_events = {
 	},
 	"Purchase Invoice": {
 		"on_submit":"csf_tz.custom_api.make_withholding_tax_gl_entries",
+	},
+	"Fees": {
+		"validate":"csf_tz.bank_api.set_callback_token",
+		"on_submit":"csf_tz.bank_api.invoice_submission",
 	},
 
 	"*": {
