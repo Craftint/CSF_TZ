@@ -91,9 +91,9 @@ def invoice_submission(doc, method):
     "allow_partial" :"TRUE",
     "callback_url" : "https://" + get_host_name() + "/api/method/csf_tz.bank_api.receive_callback?token=" + doc.callback_token,
     }
-    print_out(data)
+    # print_out(data)
     message = send_nmb("invoice_submission", data)
-    print_out(message)
+    # print_out(message)
     frappe.msgprint(str(message))
 
 
@@ -115,7 +115,8 @@ def receive_callback(*args, **kwargs):
             if getattr(msgs, atr) :
                 message[atr] = getattr(msgs, atr)
     else:
-        print_out(message)
+        return
+        # print_out(message)
     parsed_url = urlparse.urlparse(uri)
     message["fees_token"] = parsed_url[4][6:]
     message["doctype"] = "NMB Callback"
