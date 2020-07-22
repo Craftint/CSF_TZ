@@ -110,21 +110,25 @@ def receive_callback(*args, **kwargs):
         data = body.decode('utf-8')
         msgs =  ToObject(data)
         atr_list = list(msgs.__dict__)
-
         for atr in atr_list:
             if getattr(msgs, atr) :
                 message[atr] = getattr(msgs, atr)
     else:
-        return
+        frappe.throw("This has no body!")
         # print_out(message)
     parsed_url = urlparse.urlparse(uri)
     message["fees_token"] = parsed_url[4][6:]
     message["doctype"] = "NMB Callback"
     nmb_doc = frappe.get_doc(message)
-    nmb_doc.insert(ignore_permissions=True)
-    response = {"status":1,"description":"success"}
+    
+    if nmb_doc.insert(ignore_permissions=True):
+        frappe.response['status'] = 1
+        frappe.response['description'] = "success"
+    else:
+        frappe.response['description'] = "insert failed"
+        frappe.response['http_status_code'] = 409
+
     enqueue(method=make_payment_entry, queue='short', timeout=10000, is_async=True , kwargs =nmb_doc )
-    return response
 
 
 def make_payment_entry(**kwargs):
