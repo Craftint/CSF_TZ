@@ -1047,6 +1047,9 @@ def make_withholding_tax_gl_entries(doc, method):
 
 @frappe.whitelist()
 def get_tax_category(doc_type, company):
+    fetch_default_tax_category = frappe.db.get_value('CSF TZ Settings', None, 'fetch_default_tax_category') or 0
+    if int(fetch_default_tax_category) != 1:
+        return ""
     sales_list_types = ["Sales Order","Sales Invoice","Delivery Note","Quotation"]
     Puchase_list_types = ["Purchase Order","Purchase Invoice","Purchase Receipt"]
     tax_category = []
@@ -1069,15 +1072,3 @@ def get_tax_category(doc_type, company):
             fields = ["name","tax_category"]
         )
     return tax_category[0]["tax_category"] if len(tax_category) > 0 else [""]
-
-
-# def set_tax_category(doc, method):
-#     if doc.tax_category:
-#         return
-#     tax_category = get_tax_category(doc.doctype, doc.company)
-#     # print_out(tax_category)
-#     doc.tax_category = tax_category
-#     # for item in doc.items:
-#     # #     item.item_tax_template = ""
-#     # doc.run_method("set_missing_values")
-#     # doc.run_method("calculate_taxes_and_totals")
