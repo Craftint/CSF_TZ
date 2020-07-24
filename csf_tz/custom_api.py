@@ -1043,3 +1043,41 @@ def make_withholding_tax_gl_entries(doc, method):
         jv_url = frappe.utils.get_url_to_form(jv_doc.doctype, jv_doc.name)
         si_msgprint = "Journal Entry Created for Withholding Tax <a href='{0}'>{1}</a>".format(jv_url,jv_doc.name)
         frappe.msgprint(_(si_msgprint))
+
+
+@frappe.whitelist()
+def get_tax_category(doc_type, company):
+    sales_list_types = ["Sales Order","Sales Invoice","Delivery Note","Quotation"]
+    Puchase_list_types = ["Purchase Order","Purchase Invoice","Purchase Receipt"]
+    tax_category = []
+    if doc_type in sales_list_types:
+        tax_category = frappe.get_all(
+            "Sales Taxes and Charges Template",
+            filters = [
+                ["Sales Taxes and Charges Template","company","=",company],
+                ["Sales Taxes and Charges Template","is_default","=",1]
+            ],
+            fields = ["name","tax_category"]
+        )
+    elif doc_type in Puchase_list_types:
+        tax_category = frappe.get_all(
+            "Purchase Taxes and Charges Template",
+            filters = [
+                ["Purchase Taxes and Charges Template","company","=",company],
+                ["Purchase Taxes and Charges Template","is_default","=",1]
+            ],
+            fields = ["name","tax_category"]
+        )
+    return tax_category[0]["tax_category"] if len(tax_category) > 0 else [""]
+
+
+# def set_tax_category(doc, method):
+#     if doc.tax_category:
+#         return
+#     tax_category = get_tax_category(doc.doctype, doc.company)
+#     # print_out(tax_category)
+#     doc.tax_category = tax_category
+#     # for item in doc.items:
+#     # #     item.item_tax_template = ""
+#     # doc.run_method("set_missing_values")
+#     # doc.run_method("calculate_taxes_and_totals")

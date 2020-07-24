@@ -21,6 +21,25 @@ frappe.ui.form.on("Sales Invoice", {
         }
         // frm.trigger("update_stock");
     },  
+    customer: function(frm) {
+        setTimeout(function() {
+            if (!frm.doc.tax_category){
+                frappe.call({
+                    method: "csf_tz.custom_api.get_tax_category",
+                    args: {
+                        doc_type: frm.doc.doctype,
+                        company: frm.doc.company,
+                    },
+                    callback: function(r) {
+                        if(!r.exc) {
+                            frm.set_value("tax_category", r.message);
+                            frm.trigger("tax_category");
+                        }
+                    }
+                });           
+        }
+          }, 1000);   
+    },
     // update_stock: (frm) => {
     //     const warehouse_field = frappe.meta.get_docfield("Sales Invoice Item", "warehouse", frm.doc.name);
     //     const item_field = frappe.meta.get_docfield("Sales Invoice Item", "item_code", frm.doc.name);
