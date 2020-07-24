@@ -1531,7 +1531,7 @@
   "doctype": "Custom Field",
   "dt": "Purchase Invoice Item",
   "fetch_from": "item_code.witholding_tax_rate_on_purchase",
-  "fetch_if_empty": 0,
+  "fetch_if_empty": 1,
   "fieldname": "withholding_tax_rate",
   "fieldtype": "Float",
   "hidden": 0,
