@@ -92,7 +92,6 @@ frappe.ui.keys.add_shortcut({
 
 
 frappe.ui.form.on("Delivery Note", {
-	
 	refresh: function(frm, dt, dn) {
 		if ((!frm.is_return) && (frm.status!="Closed" || frm.is_new())) {
 			if (frm.doc.docstatus===0) {
@@ -122,7 +121,26 @@ frappe.ui.form.on("Delivery Note", {
 			}
 		}
 
-	},
-
-
+    },
+    customer: function(frm) {
+        console.log(frm.doc.name);
+        setTimeout(function() {
+            if (!frm.doc.tax_category){
+                frappe.call({
+                    method: "csf_tz.custom_api.get_tax_category",
+                    args: {
+                        doc_type: frm.doc.doctype,
+                        company: frm.doc.company,
+                    },
+                    callback: function(r) {
+                        console.log(r.message);
+                        if(!r.exc) {
+                            frm.set_value("tax_category", r.message);
+                            frm.trigger("tax_category");
+                        }
+                    }
+                });           
+        }
+          }, 1000);   
+    },
 });

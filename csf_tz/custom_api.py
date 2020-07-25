@@ -1043,3 +1043,32 @@ def make_withholding_tax_gl_entries(doc, method):
         jv_url = frappe.utils.get_url_to_form(jv_doc.doctype, jv_doc.name)
         si_msgprint = "Journal Entry Created for Withholding Tax <a href='{0}'>{1}</a>".format(jv_url,jv_doc.name)
         frappe.msgprint(_(si_msgprint))
+
+
+@frappe.whitelist()
+def get_tax_category(doc_type, company):
+    fetch_default_tax_category = frappe.db.get_value('CSF TZ Settings', None, 'fetch_default_tax_category') or 0
+    if int(fetch_default_tax_category) != 1:
+        return ""
+    sales_list_types = ["Sales Order","Sales Invoice","Delivery Note","Quotation"]
+    Puchase_list_types = ["Purchase Order","Purchase Invoice","Purchase Receipt"]
+    tax_category = []
+    if doc_type in sales_list_types:
+        tax_category = frappe.get_all(
+            "Sales Taxes and Charges Template",
+            filters = [
+                ["Sales Taxes and Charges Template","company","=",company],
+                ["Sales Taxes and Charges Template","is_default","=",1]
+            ],
+            fields = ["name","tax_category"]
+        )
+    elif doc_type in Puchase_list_types:
+        tax_category = frappe.get_all(
+            "Purchase Taxes and Charges Template",
+            filters = [
+                ["Purchase Taxes and Charges Template","company","=",company],
+                ["Purchase Taxes and Charges Template","is_default","=",1]
+            ],
+            fields = ["name","tax_category"]
+        )
+    return tax_category[0]["tax_category"] if len(tax_category) > 0 else [""]
