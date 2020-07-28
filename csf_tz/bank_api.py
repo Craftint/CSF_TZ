@@ -191,3 +191,13 @@ def receive_validate_reference(*args, **kwargs):
     else:
         frappe.response['status'] = 0
         frappe.response['description'] = "Not Exist"
+    
+def cancel_invoice(doc, method):
+    series = frappe.get_value("Company" ,doc.company ,"nmb_series") or ""
+    if not series:
+        frappe.throw(_("Please set User Series in Company {0}".format(doc.company)))
+    data = {
+    "reference" : str(series) + "-" + str(doc.name), 
+    }
+    message = send_nmb("invoice_cancel", data, doc.company)
+    frappe.msgprint(str(message))

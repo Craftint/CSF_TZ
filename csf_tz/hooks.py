@@ -221,6 +221,7 @@ doc_events = {
 	"Fees": {
 		"validate":"csf_tz.bank_api.set_callback_token",
 		"on_submit":"csf_tz.bank_api.invoice_submission",
+		"on_cancel":"csf_tz.bank_api.cancel_invoice",
 	},
 
 	"*": {
