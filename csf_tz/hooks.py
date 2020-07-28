@@ -82,6 +82,9 @@ fixtures = [
 		"Stock Reconciliation-sort_items",
 		"Student-bank",
 		"Fees-callback_token",
+		"Company-nmb_series",
+		"Company-nmb_password",
+		"ßCompany-nmb_username",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-pos_profile-in_standard_filter",

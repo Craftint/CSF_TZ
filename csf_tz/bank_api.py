@@ -31,36 +31,36 @@ def set_callback_token(doc, method):
 	    doc.callback_token = binascii.hexlify(os.urandom(14)).decode()
 
 
-def get_nmb_token(username=None, password=None):
-        if not username or not password:
-            username = "182M200J1JSR5T"
-            password = "H5Ba0Xcd1%7N*4&27JqG!eWguJq%tdm6j%H"
-        url = "https://wip.mpayafrica.co.tz/v2/auth"
-        data = {
-            "username": username,
-            "password": password,
-        }
-        for i in range(3):
-            try:
-                r = requests.post(url, data=json.dumps(data), timeout=5)
-                r.raise_for_status()
-                frappe.logger().debug({"webhook_success": r.text})
-                # print_out(r.text)
-                if json.loads(r.text)["status"] == 1:
-                    return json.loads(r.text)["token"]
-                else:
-                    frappe.throw(json.loads(r.text))
-            except Exception as e:
-                frappe.logger().debug({"webhook_error": e, "try": i + 1})
-                sleep(3 * i + 1)
-                if i != 2:
-                    continue
-                else:
-                    raise e
+def get_nmb_token(company):
+    username ,password = frappe.get_value("Company",company,["nmb_username","nmb_password"]) or "" ,""
+    if not username or not password:
+        frappe.throw(_("Please set User Name and Password in Company{0}".format(company)))
+    url = "https://wip.mpayafrica.co.tz/v2/auth"
+    data = {
+        "username": username,
+        "password": password,
+    }
+    for i in range(3):
+        try:
+            r = requests.post(url, data=json.dumps(data), timeout=5)
+            r.raise_for_status()
+            frappe.logger().debug({"webhook_success": r.text})
+            # print_out(r.text)
+            if json.loads(r.text)["status"] == 1:
+                return json.loads(r.text)["token"]
+            else:
+                frappe.throw(json.loads(r.text))
+        except Exception as e:
+            frappe.logger().debug({"webhook_error": e, "try": i + 1})
+            sleep(3 * i + 1)
+            if i != 2:
+                continue
+            else:
+                raise e
 
 
-def send_nmb(method, data):
-        data["token"] = get_nmb_token()
+def send_nmb(method, data, company):
+        data["token"] = get_nmb_token(company)
         url = "https://wip.mpayafrica.co.tz/v2/" + str(method)
         for i in range(3):
             try:
@@ -81,8 +81,11 @@ def send_nmb(method, data):
 
 
 def invoice_submission(doc, method):
+    series = frappe.get_value("Company",doc.company,"nmb_series") or ""
+    if not series:
+        frappe.throw(_("Please set User Series in Company{0}".format(doc.company)))
     data = {
-    "reference" : "SAS666-" + str(doc.name), 
+    "reference" : str(series) + "-" + str(doc.name), 
     "student_name" : doc.student_name, 
     "student_id" :  doc.student,
     "amount" : doc.grand_total,
@@ -91,9 +94,7 @@ def invoice_submission(doc, method):
     "allow_partial" :"TRUE",
     "callback_url" : "https://" + get_host_name() + "/api/method/csf_tz.bank_api.receive_callback?token=" + doc.callback_token,
     }
-    # print_out(data)
-    message = send_nmb("invoice_submission", data)
-    # print_out(message)
+    message = send_nmb("invoice_submission", data, doc.company)
     frappe.msgprint(str(message))
 
 
@@ -115,7 +116,6 @@ def receive_callback(*args, **kwargs):
                 message[atr] = getattr(msgs, atr)
     else:
         frappe.throw("This has no body!")
-        # print_out(message)
     parsed_url = urlparse.urlparse(uri)
     message["fees_token"] = parsed_url[4][6:]
     message["doctype"] = "NMB Callback"
