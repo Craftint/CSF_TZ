@@ -136,6 +136,7 @@ doctype_js = {
 	"Warehouse" : "csf_tz/warehouse.js",
 	"Company": "csf_tz/company.js",
 	"Stock Reconciliation": "csf_tz/stock_reconciliation.js",
+	"Fees": "csf_tz/fees.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}

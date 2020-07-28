@@ -32,9 +32,9 @@ def set_callback_token(doc, method):
 
 
 def get_nmb_token(company):
-    username ,password = frappe.get_value("Company",company,["nmb_username","nmb_password"]) or "" ,""
+    username ,password = frappe.get_value("Company",company,["nmb_username","nmb_password"])
     if not username or not password:
-        frappe.throw(_("Please set User Name and Password in Company{0}".format(company)))
+        frappe.throw(_("Please set User Name and Password in Company {0}".format(company)))
     url = "https://wip.mpayafrica.co.tz/v2/auth"
     data = {
         "username": username,
@@ -79,11 +79,13 @@ def send_nmb(method, data, company):
                 else:
                     raise e
 
-
-def invoice_submission(doc, method):
-    series = frappe.get_value("Company",doc.company,"nmb_series") or ""
+@frappe.whitelist()
+def invoice_submission(doc=None, method=None, fees_name=None):
+    if not doc and fees_name:
+        doc = frappe.get_doc("Fees", fees_name)
+    series = frappe.get_value("Company" ,doc.company ,"nmb_series") or ""
     if not series:
-        frappe.throw(_("Please set User Series in Company{0}".format(doc.company)))
+        frappe.throw(_("Please set User Series in Company {0}".format(doc.company)))
     data = {
     "reference" : str(series) + "-" + str(doc.name), 
     "student_name" : doc.student_name, 
@@ -96,6 +98,7 @@ def invoice_submission(doc, method):
     }
     message = send_nmb("invoice_submission", data, doc.company)
     frappe.msgprint(str(message))
+    return message
 
 
 
