@@ -153,3 +153,41 @@ def make_payment_entry(**kwargs):
             payment_entry.save()
             payment_entry.submit()
         return nmb_doc
+
+
+@frappe.whitelist(allow_guest=True)
+def receive_validate_reference(*args, **kwargs):
+    r = frappe.request
+    # uri = url_fix(r.url.replace("+"," "))
+    # http_method = r.method
+    body = r.get_data()
+    # headers = r.headers
+    message = {}
+    if body :
+        data = body.decode('utf-8')
+        msgs =  ToObject(data)
+        atr_list = list(msgs.__dict__)
+        for atr in atr_list:
+            if getattr(msgs, atr) :
+                message[atr] = getattr(msgs, atr)
+    else:
+        frappe.throw("This has no body!")
+    doc_exist = frappe.db.exists("Fees",message["reference"][7:])
+    if doc_exist:
+        doc = frappe.get_doc("Fees",message["reference"][7:])
+        response = dict(
+            status = 1,
+            reference = message["reference"],
+            student_name = doc.student_name,
+            student_id = doc.student,
+            amount =  doc.grand_total,
+            type = "Fees Invoice",
+            code = 10,
+            allow_partial = "TRUE",
+            callback_url = "https://" + get_host_name() + "/api/method/csf_tz.bank_api.receive_callback?token=" + doc.callback_token,
+            token = message["token"]
+        )
+        return response
+    else:
+        frappe.response['status'] = 0
+        frappe.response['description'] = "Not Exist"
