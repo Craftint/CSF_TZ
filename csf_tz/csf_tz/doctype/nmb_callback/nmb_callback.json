@@ -16,6 +16,7 @@
   "api_key",
   "api_secret",
   "fees_token",
+  "channel",
   "payment_entry"
  ],
  "fields": [
@@ -92,9 +93,15 @@
    "label": "Payment Entry",
    "options": "Payment Entry",
    "read_only": 1
+  },
+  {
+   "fieldname": "channel",
+   "fieldtype": "Data",
+   "label": "Channel",
+   "read_only": 1
   }
  ],
- "modified": "2020-07-21 22:27:41.636339",
+ "modified": "2020-07-29 22:56:45.805246",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "NMB Callback",
