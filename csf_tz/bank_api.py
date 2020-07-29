@@ -27,8 +27,7 @@ class ToObject(object):
 
 
 def set_callback_token(doc, method):
-    if not doc.callback_token:
-	    doc.callback_token = binascii.hexlify(os.urandom(14)).decode()
+    doc.callback_token = binascii.hexlify(os.urandom(14)).decode()
 
 
 def get_nmb_token(company):
