@@ -137,6 +137,7 @@ doctype_js = {
 	"Company": "csf_tz/company.js",
 	"Stock Reconciliation": "csf_tz/stock_reconciliation.js",
 	"Fees": "csf_tz/fees.js",
+	"Program Enrollment Tool": "csf_tz/program_enrollment_tool.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
