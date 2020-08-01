@@ -80,6 +80,11 @@ fixtures = [
 		"Purchase Invoice Item-withholding_tax_entry",
 		"Company-enabled_auto_create_delivery_notes",
 		"Stock Reconciliation-sort_items",
+		"Student-bank",
+		"Fees-callback_token",
+		"Company-nmb_series",
+		"Company-nmb_password",
+		"ßCompany-nmb_username",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-pos_profile-in_standard_filter",
@@ -131,6 +136,8 @@ doctype_js = {
 	"Warehouse" : "csf_tz/warehouse.js",
 	"Company": "csf_tz/company.js",
 	"Stock Reconciliation": "csf_tz/stock_reconciliation.js",
+	"Fees": "csf_tz/fees.js",
+	"Program Enrollment Tool": "csf_tz/program_enrollment_tool.js",
 	"Purchase Invoice": "csf_tz/purchase_invoice.js",
 	"Quotation": "csf_tz/quotation.js",
 	"Purchase Receipt": "csf_tz/purchase_receipt.js",
@@ -198,7 +205,7 @@ doc_events = {
 			"csf_tz.custom_api.create_delivery_note",
 			'csf_tz.custom_api.check_submit_delivery_note',
 			],
-		'validate': [
+		'Fees': [
 					'csf_tz.custom_api.check_validate_delivery_note',
 					'csf_tz.custom_api.validate_items_remaining_qty',
 					'csf_tz.custom_api.calculate_price_reduction',
@@ -215,6 +222,11 @@ doc_events = {
 	},
 	"Purchase Invoice": {
 		"on_submit":"csf_tz.custom_api.make_withholding_tax_gl_entries",
+	},
+	"Fees": {
+		"after_insert":"csf_tz.bank_api.set_callback_token",
+		"on_submit":"csf_tz.bank_api.invoice_submission",
+		"on_cancel":"csf_tz.bank_api.cancel_invoice",
 	},
 
 	"*": {
