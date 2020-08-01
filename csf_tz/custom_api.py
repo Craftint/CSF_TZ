@@ -1043,3 +1043,7 @@ def make_withholding_tax_gl_entries(doc, method):
         jv_url = frappe.utils.get_url_to_form(jv_doc.doctype, jv_doc.name)
         si_msgprint = "Journal Entry Created for Withholding Tax <a href='{0}'>{1}</a>".format(jv_url,jv_doc.name)
         frappe.msgprint(_(si_msgprint))
+
+@frappe.whitelist()
+def set_fee_abbr(doc=None, method=None):
+    doc.abbr = frappe.get_value("Company", doc.company, "abbr")

@@ -83,22 +83,25 @@ def send_nmb(method, data, company):
 def invoice_submission(doc=None, method=None, fees_name=None):
     if not doc and fees_name:
         doc = frappe.get_doc("Fees", fees_name)
-    series = frappe.get_value("Company" ,doc.company ,"nmb_series") or ""
+    series = frappe.get_value("Company", doc.company, "nmb_series") or ""
+    abbr = frappe.get_value("Company", doc.company, "abbr") or ""
     if not series:
         frappe.throw(_("Please set User Series in Company {0}".format(doc.company)))
+    reference = str(series) + str(doc.name)
+    reference = reference.replace('-', '').replace('FEE'+abbr+'20','')
     data = {
-    "reference" : str(series) + "-" + str(doc.name), 
+    "reference" : reference,
     "student_name" : doc.student_name, 
     "student_id" :  doc.student,
     "amount" : doc.grand_total,
     "type" : "Fees Invoice",
-    "code" : doc.name,
+    "code" : 10,
     "allow_partial" :"TRUE",
     "callback_url" : "https://" + get_host_name() + "/api/method/csf_tz.bank_api.receive_callback?token=" + doc.callback_token,
     }
-    message = send_nmb("invoice_submission", data, doc.company)
-    frappe.msgprint(str(message))
-    return message
+    send_nmb("invoice_submission", data, doc.company)
+    # frappe.msgprint(str(message))
+    # return message
 
 
 

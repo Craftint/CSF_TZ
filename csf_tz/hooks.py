@@ -219,6 +219,7 @@ doc_events = {
 		"on_submit":"csf_tz.custom_api.make_withholding_tax_gl_entries",
 	},
 	"Fees": {
+		"before_insert":"csf_tz.custom_api.set_fee_abbr",
 		"after_insert":"csf_tz.bank_api.set_callback_token",
 		"on_submit":"csf_tz.bank_api.invoice_submission",
 		"on_cancel":"csf_tz.bank_api.cancel_invoice",
