@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "allow_copy": 1,
  "autoname": "NMBC-.YY.-.######",
  "creation": "2020-07-21 21:19:58.817941",
@@ -6,18 +7,25 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "reference",
   "timestamp",
+  "reference",
+  "column_break_3",
   "receipt",
-  "customer_name",
-  "account_number",
-  "token",
   "amount",
-  "api_key",
-  "api_secret",
+  "section_break_6",
+  "customer_name",
+  "column_break_8",
+  "account_number",
+  "section_break_10",
+  "token",
+  "column_break_12",
   "fees_token",
   "channel",
-  "payment_entry"
+  "section_break_13",
+  "payment_entry",
+  "section_break_16",
+  "api_key",
+  "api_secret"
  ],
  "fields": [
   {
@@ -70,12 +78,14 @@
   {
    "fieldname": "api_key",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Api Key",
    "read_only": 1
   },
   {
    "fieldname": "api_secret",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Api Secret",
    "read_only": 1
   },
@@ -102,6 +112,36 @@
   }
  ],
  "modified": "2020-07-29 22:56:45.805246",
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_6",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_8",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_10",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_13",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_12",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_16",
+   "fieldtype": "Section Break"
+  }
+ ],
+ "links": [],
+ "modified": "2020-07-29 18:09:06.415004",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "NMB Callback",

@@ -137,6 +137,11 @@ doctype_js = {
 	"Company": "csf_tz/company.js",
 	"Stock Reconciliation": "csf_tz/stock_reconciliation.js",
 	"Fees": "csf_tz/fees.js",
+	"Program Enrollment Tool": "csf_tz/program_enrollment_tool.js",
+	"Purchase Invoice": "csf_tz/purchase_invoice.js",
+	"Quotation": "csf_tz/quotation.js",
+	"Purchase Receipt": "csf_tz/purchase_receipt.js",
+	"Purchase Order": "csf_tz/purchase_order.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}

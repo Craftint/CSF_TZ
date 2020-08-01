@@ -89,6 +89,7 @@ def invoice_submission(doc=None, method=None, fees_name=None):
         frappe.throw(_("Please set User Series in Company {0}".format(doc.company)))
     reference = str(series) + str(doc.name)
     reference = reference.replace('-', '').replace('FEE'+abbr+'20','')
+        frappe.throw(_("Please set NMB User Series in Company {0}".format(doc.company)))
     data = {
     "reference" : reference,
     "student_name" : doc.student_name, 
@@ -198,7 +199,7 @@ def receive_validate_reference(*args, **kwargs):
 def cancel_invoice(doc, method):
     series = frappe.get_value("Company" ,doc.company ,"nmb_series") or ""
     if not series:
-        frappe.throw(_("Please set User Series in Company {0}".format(doc.company)))
+        frappe.throw(_("Please set NMB User Series in Company {0}".format(doc.company)))
     data = {
     "reference" : str(series) + "-" + str(doc.name), 
     }
