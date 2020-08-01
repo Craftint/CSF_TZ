@@ -6,6 +6,7 @@
  "field_order": [
   "unique_records",
   "validate_net_rate",
+  "fetch_default_tax_category",
   "column_break_3",
   "auto_pos_for_role"
  ],
@@ -31,10 +32,17 @@
   {
    "fieldname": "column_break_3",
    "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "description": "Fetch Tax Category from Default Tax Templates",
+   "fieldname": "fetch_default_tax_category",
+   "fieldtype": "Check",
+   "label": "Fetch Default Tax Category"
   }
  ],
  "issingle": 1,
- "modified": "2020-07-02 16:36:27.922374",
+ "modified": "2020-07-24 22:34:38.811578",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "CSF TZ Settings",
