@@ -1045,6 +1045,9 @@ def make_withholding_tax_gl_entries(doc, method):
         frappe.msgprint(_(si_msgprint))
 
 @frappe.whitelist()
+def set_fee_abbr(doc=None, method=None):
+    doc.abbr = frappe.get_value("Company", doc.company, "abbr")
+
 def enroll_all_students(self):
     """Enrolls students or applicants.
 

@@ -84,7 +84,7 @@ fixtures = [
 		"Fees-callback_token",
 		"Company-nmb_series",
 		"Company-nmb_password",
-		"ßCompany-nmb_username",
+		"Company-nmb_username",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-pos_profile-in_standard_filter",
@@ -205,7 +205,7 @@ doc_events = {
 			"csf_tz.custom_api.create_delivery_note",
 			'csf_tz.custom_api.check_submit_delivery_note',
 			],
-		'Fees': [
+		'validate': [
 					'csf_tz.custom_api.check_validate_delivery_note',
 					'csf_tz.custom_api.validate_items_remaining_qty',
 					'csf_tz.custom_api.calculate_price_reduction',
@@ -224,6 +224,7 @@ doc_events = {
 		"on_submit":"csf_tz.custom_api.make_withholding_tax_gl_entries",
 	},
 	"Fees": {
+		"before_insert":"csf_tz.custom_api.set_fee_abbr",
 		"after_insert":"csf_tz.bank_api.set_callback_token",
 		"on_submit":"csf_tz.bank_api.invoice_submission",
 		"on_cancel":"csf_tz.bank_api.cancel_invoice",
@@ -264,6 +265,7 @@ scheduler_events = {
 		"csf_tz.custom_api.create_delivery_note_for_all_pending_sales_invoice",
 		"csf_tz.csf_tz.doctype.visibility.visibility.trigger_daily_alerts",
 		"csf_tz.csf_tz.doctype.vehicle_fine_record.vehicle_fine_record.check_fine_all_vehicles",
+		"csf_tz.bank_api.reconciliation",
 	],
 	# "hourly": [
 	# 	"csf_tz.tasks.hourly"

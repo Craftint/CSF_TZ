@@ -19,6 +19,7 @@ import urllib.parse as urlparse
 from urllib.parse import parse_qs
 from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
 from frappe.utils.background_jobs import enqueue
+from datetime import datetime
 
 
 class ToObject(object):
@@ -82,22 +83,26 @@ def send_nmb(method, data, company):
 def invoice_submission(doc=None, method=None, fees_name=None):
     if not doc and fees_name:
         doc = frappe.get_doc("Fees", fees_name)
-    series = frappe.get_value("Company" ,doc.company ,"nmb_series") or ""
+    series = frappe.get_value("Company", doc.company, "nmb_series") or ""
+    abbr = frappe.get_value("Company", doc.company, "abbr") or ""
     if not series:
+        frappe.throw(_("Please set User Series in Company {0}".format(doc.company)))
+    reference = str(series) + str(doc.name)
+    reference = reference.replace('-', '').replace('FEE'+abbr+'20','')
         frappe.throw(_("Please set NMB User Series in Company {0}".format(doc.company)))
     data = {
-    "reference" : str(series) + "-" + str(doc.name), 
+    "reference" : reference,
     "student_name" : doc.student_name, 
     "student_id" :  doc.student,
     "amount" : doc.grand_total,
     "type" : "Fees Invoice",
-    "code" : doc.name,
+    "code" : 10,
     "allow_partial" :"TRUE",
     "callback_url" : "https://" + get_host_name() + "/api/method/csf_tz.bank_api.receive_callback?token=" + doc.callback_token,
     }
-    message = send_nmb("invoice_submission", data, doc.company)
-    frappe.msgprint(str(message))
-    return message
+    send_nmb("invoice_submission", data, doc.company)
+    # frappe.msgprint(str(message))
+    # return message
 
 
 
@@ -200,3 +205,23 @@ def cancel_invoice(doc, method):
     }
     message = send_nmb("invoice_cancel", data, doc.company)
     frappe.msgprint(str(message))
+
+
+def reconciliation(doc=None, method=None):
+    companys = frappe.get_all("Company")
+    for company in companys:
+        if not frappe.get_value("Company", company["name"], "nmb_username"):
+            continue
+        data = {"reconcile_date" : datetime.today().strftime('%d-%m-%Y')}
+        frappe.msgprint(str(data))
+        message = send_nmb("reconcilliation", data, company["name"])
+        if message["status"] == 1 and len(message["transactions"]) > 0:
+            for i in message["transactions"]:
+                if len(frappe.get_all("NMB Callback",filters = [["NMB Callback","reference","=",i.reference],["NMB Callback","receipt","=",i.receipt]],fields = ["name"])) == 1:
+                    doc_exist = frappe.db.exists("Fees",message["reference"][7:])
+                    if doc_exist:
+                        message["fees_token"] = frappe.get_value("Fees",message["reference"][7:],"callback_token")
+                        message["doctype"] = "NMB Callback"
+                        nmb_doc = frappe.get_doc(message)
+                        enqueue(method=make_payment_entry, queue='short', timeout=10000, is_async=True , kwargs =nmb_doc)
+        
