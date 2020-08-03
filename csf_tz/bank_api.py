@@ -29,6 +29,12 @@ class ToObject(object):
 
 def set_callback_token(doc, method):
     doc.callback_token = binascii.hexlify(os.urandom(14)).decode()
+    abbr = frappe.get_value("Company", doc.company, "abbr") or ""
+    series = frappe.get_value("Company", doc.company, "nmb_series") or ""
+    if not series:
+        frappe.throw(_("Please set NMB User Series in Company {0}".format(doc.company)))
+    reference = str(series) + str(doc.name)
+    doc.bank_reference = reference.replace('-', '').replace('FEE'+abbr,'')
 
 
 def get_nmb_token(company):
@@ -86,12 +92,9 @@ def invoice_submission(doc=None, method=None, fees_name=None):
     series = frappe.get_value("Company", doc.company, "nmb_series") or ""
     abbr = frappe.get_value("Company", doc.company, "abbr") or ""
     if not series:
-        frappe.throw(_("Please set User Series in Company {0}".format(doc.company)))
-    reference = str(series) + str(doc.name)
-    reference = reference.replace('-', '').replace('FEE'+abbr+'20','')
         frappe.throw(_("Please set NMB User Series in Company {0}".format(doc.company)))
     data = {
-    "reference" : reference,
+    "reference" : doc.bank_reference,
     "student_name" : doc.student_name, 
     "student_id" :  doc.student,
     "amount" : doc.grand_total,
@@ -142,7 +145,7 @@ def make_payment_entry(**kwargs):
     for key, value in kwargs.items(): 
         nmb_doc = value
         frappe.set_user("Administrator")
-        fees_name = str(nmb_doc.reference)[7:]
+        fees_name = frappe.get_all("Fees", filters={"bank_reference": nmb_doc.reference})[0]["name"]
         fees_token = frappe.get_value("Fees", fees_name, "callback_token")
         if fees_token == nmb_doc.fees_token:
             payment_entry = get_payment_entry("Fees", fees_name)
@@ -176,12 +179,14 @@ def receive_validate_reference(*args, **kwargs):
                 message[atr] = getattr(msgs, atr)
     else:
         frappe.throw("This has no body!")
-    doc_exist = frappe.db.exists("Fees",message["reference"][7:])
+    fees_name = frappe.get_all("Fees", filters={"bank_reference": nmb_doc.reference})[0]["name"]
+
+    doc_exist = frappe.db.exists("Fees", fees_name)
     if doc_exist:
-        doc = frappe.get_doc("Fees",message["reference"][7:])
+        doc = frappe.get_doc("Fees", fees_name)
         response = dict(
             status = 1,
-            reference = message["reference"],
+            reference = doc.bank_reference,
             student_name = doc.student_name,
             student_id = doc.student,
             amount =  doc.grand_total,
