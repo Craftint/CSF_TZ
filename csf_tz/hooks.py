@@ -90,7 +90,6 @@ fixtures = [
 		"Company-column_break_55",
 		"Company-default_withholding_receivable_account",
 		"Company-auto_submit_for_sales_withholding",
-		"Sales Invoice Item-withholding_tax_rate",
 		"Item-withholding_tax_rate_on_sales",
 		"Sales Invoice Item-withholding_tax_entry",
 	)]]},
