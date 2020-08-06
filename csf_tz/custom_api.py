@@ -1143,14 +1143,6 @@ def make_withholding_tax_gl_entries_for_sales(doc, method):
         creditor_amount = wtax_base_amount if doc.party_account_currency == default_currency else item.net_rate* item.qty * item.withholding_tax_rate / 100
         jl_rows = []
         
-        debit_row = dict(
-            account = withholding_receivable_account,
-            debit_in_account_currency = item.base_net_rate * item.qty * item.withholding_tax_rate / 100,
-            cost_center =  item.cost_center,
-            account_curremcy = default_currency,
-        )
-        jl_rows.append(debit_row)
-
         credit_row = dict(
             account = doc.debit_to,
             party_type = "customer",
@@ -1163,6 +1155,15 @@ def make_withholding_tax_gl_entries_for_sales(doc, method):
             reference_name = doc.name
         )
         jl_rows.append(credit_row)
+
+        debit_row = dict(
+            account = withholding_receivable_account,
+            debit_in_account_currency = item.base_net_rate * item.qty * item.withholding_tax_rate / 100,
+            cost_center =  item.cost_center,
+            account_curremcy = default_currency,
+        )
+        jl_rows.append(debit_row)
+
         user_remark = "Withholding Tax Payable Against Item " + item.item_code + " in " + doc.doctype + " " + doc.name + " of amount " + str(item.net_amount) + " " + doc.currency + " with exchange rate of " + str(doc.conversion_rate)
         jv_doc = frappe.get_doc(dict(
             doctype = "Journal Entry",
