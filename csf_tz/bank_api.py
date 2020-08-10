@@ -48,6 +48,7 @@ def get_nmb_token(company):
     url = frappe.get_value("Company",company,"nmb_url")
     if not url:
         frappe.throw(_("Please set NMB URL in Company {0}".format(company)))
+    url = url + str("auth")
     data = {
         "username": username,
         "password": password,
