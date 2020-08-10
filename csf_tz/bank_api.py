@@ -31,12 +31,11 @@ class ToObject(object):
 
 def set_callback_token(doc, method):
     doc.callback_token = binascii.hexlify(os.urandom(14)).decode()
-    abbr = frappe.get_value("Company", doc.company, "abbr") or ""
     series = frappe.get_value("Company", doc.company, "nmb_series") or ""
     if not series:
         frappe.throw(_("Please set NMB User Series in Company {0}".format(doc.company)))
     reference = str(series) + str(doc.name)
-    doc.bank_reference = reference.replace('-', '').replace('FEE'+abbr,'')
+    doc.bank_reference = reference.replace('-', '').replace('FEE'+doc.abbr,'')
 
 
 def get_nmb_token(company):
