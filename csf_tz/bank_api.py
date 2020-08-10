@@ -43,7 +43,7 @@ def get_nmb_token(company):
     username = frappe.get_value("Company",company,"nmb_username")
     if not username:
         frappe.throw(_("Please set NMB User Name in Company {0}".format(company)))
-    password = frappe.get_decrypted_password("Company",company,"nmb_password")
+    password = get_decrypted_password("Company",company,"nmb_password")
     if not password:
         frappe.throw(_("Please set NMB Password in Company {0}".format(company)))
     url = "https://wip.mpayafrica.co.tz/v2/auth"
