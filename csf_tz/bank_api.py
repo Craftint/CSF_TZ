@@ -20,6 +20,8 @@ from urllib.parse import parse_qs
 from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
 from frappe.utils.background_jobs import enqueue
 from datetime import datetime
+from frappe.utils.password import get_decrypted_password
+
 
 
 class ToObject(object):
@@ -38,9 +40,12 @@ def set_callback_token(doc, method):
 
 
 def get_nmb_token(company):
-    username ,password = frappe.get_value("Company",company,["nmb_username","nmb_password"])
-    if not username or not password:
-        frappe.throw(_("Please set User Name and Password in Company {0}".format(company)))
+    username = frappe.get_value("Company",company,"nmb_username")
+    if not username:
+        frappe.throw(_("Please set NMB User Name in Company {0}".format(company)))
+    password = frappe.get_decrypted_password("Company",company,"nmb_password")
+    if not password:
+        frappe.throw(_("Please set NMB Password in Company {0}".format(company)))
     url = "https://wip.mpayafrica.co.tz/v2/auth"
     data = {
         "username": username,
@@ -66,24 +71,27 @@ def get_nmb_token(company):
 
 
 def send_nmb(method, data, company):
-        data["token"] = get_nmb_token(company)
-        url = "https://wip.mpayafrica.co.tz/v2/" + str(method)
-        for i in range(3):
-            try:
-                r = requests.post(url, data=json.dumps(data), timeout=5)
-                r.raise_for_status()
-                frappe.logger().debug({"webhook_success": r.text})
-                if json.loads(r.text)["status"] == 1:
-                    return json.loads(r.text)
-                else:
-                    frappe.throw(json.loads(r.text))
-            except Exception as e:
-                frappe.logger().debug({"webhook_error": e, "try": i + 1})
-                sleep(3 * i + 1)
-                if i != 2:
-                    continue
-                else:
-                    raise e
+    url = frappe.get_value("Company",company,"nmb_url")
+    if not url:
+        frappe.throw(_("Please set NMB URL in Company {0}".format(company)))
+    data["token"] = get_nmb_token(company)
+    url = "https://wip.mpayafrica.co.tz/v2/" + str(method)
+    for i in range(3):
+        try:
+            r = requests.post(url, data=json.dumps(data), timeout=5)
+            r.raise_for_status()
+            frappe.logger().debug({"webhook_success": r.text})
+            if json.loads(r.text)["status"] == 1:
+                return json.loads(r.text)
+            else:
+                frappe.throw(json.loads(r.text))
+        except Exception as e:
+            frappe.logger().debug({"webhook_error": e, "try": i + 1})
+            sleep(3 * i + 1)
+            if i != 2:
+                continue
+            else:
+                raise e
 
 @frappe.whitelist()
 def invoice_submission(doc=None, method=None, fees_name=None):

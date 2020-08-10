@@ -85,6 +85,7 @@ fixtures = [
 		"Company-nmb_series",
 		"Company-nmb_password",
 		"Company-nmb_username",
+		"Company-nmb_url",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-pos_profile-in_standard_filter",
