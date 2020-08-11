@@ -92,6 +92,9 @@ fixtures = [
 		"Company-auto_submit_for_sales_withholding",
 		"Item-withholding_tax_rate_on_sales",
 		"Sales Invoice Item-withholding_tax_entry",
+		"Company-nmb_url",
+		"Fees-bank_reference",
+		"Fees-abbr",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-pos_profile-in_standard_filter",
