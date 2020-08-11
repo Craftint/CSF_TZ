@@ -1026,7 +1026,7 @@ def make_withholding_tax_gl_entries_for_purchase(doc, method):
             account_curremcy = default_currency,
         )
         jl_rows.append(credit_row)
-        user_remark = "Withholding Tax Payable Against Item " + item.item_code + " in " + doc.doctype + " " + doc.name + " of amount " + str(item.net_amount) + " " + doc.currency + " with exchange rate of " + str(doc.conversion_rate)
+        user_remark = "Withholding Tax Payable Against Item " + item.item_code + " in " + doc.doctype + " " + doc.name + " of amount " + str(flt(item.net_amount)) + " " + doc.currency + " with exchange rate of " + str(doc.conversion_rate)
         jv_doc = frappe.get_doc(dict(
             doctype = "Journal Entry",
             posting_date = doc.posting_date,
@@ -1166,7 +1166,7 @@ def make_withholding_tax_gl_entries_for_sales(doc, method):
         user_remark = "Withholding Tax Payable Against Item " + item.item_code + " in " + doc.doctype + " " + doc.name + " of amount " + str(flt(item.net_amount,2)) + " " + doc.currency + " with exchange rate of " + str(doc.conversion_rate)
         jv_doc = frappe.get_doc(dict(
             doctype = "Journal Entry",
-            posting_date = nowdate(),
+            posting_date = doc.posting_date,
             accounts = jl_rows,
             company = doc.company,
             multi_currency = 0 if doc.party_account_currency == default_currency else 1,
