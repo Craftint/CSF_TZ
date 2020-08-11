@@ -4123,7 +4123,7 @@
   "fetch_from": null,
   "fetch_if_empty": 0,
   "fieldname": "nmb_password",
-  "fieldtype": "Data",
+  "fieldtype": "Password",
   "hidden": 0,
   "hide_border": 0,
   "hide_days": 0,
