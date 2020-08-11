@@ -57,14 +57,14 @@ def get_nmb_token(company):
         try:
             r = requests.post(url, data=json.dumps(data), timeout=5)
             r.raise_for_status()
-            frappe.logger().debug({"webhook_success": r.text})
+            frappe.logger().debug({"get_nmb_token webhook_success": r.text})
             # print_out(r.text)
             if json.loads(r.text)["status"] == 1:
                 return json.loads(r.text)["token"]
             else:
                 frappe.throw(json.loads(r.text))
         except Exception as e:
-            frappe.logger().debug({"webhook_error": e, "try": i + 1})
+            frappe.logger().debug({"get_nmb_token webhook_error": e, "try": i + 1})
             sleep(3 * i + 1)
             if i != 2:
                 continue
@@ -82,13 +82,13 @@ def send_nmb(method, data, company):
         try:
             r = requests.post(url, data=json.dumps(data), timeout=5)
             r.raise_for_status()
-            frappe.logger().debug({"webhook_success": r.text})
+            frappe.logger().debug({"send_nmb webhook_success": r.text})
             if json.loads(r.text)["status"] == 1:
                 return json.loads(r.text)
             else:
                 frappe.throw(json.loads(r.text))
         except Exception as e:
-            frappe.logger().debug({"webhook_error": e, "try": i + 1})
+            frappe.logger().debug({"send_nmb webhook_error": e, "try": i + 1})
             sleep(3 * i + 1)
             if i != 2:
                 continue
