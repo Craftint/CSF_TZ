@@ -85,6 +85,13 @@ fixtures = [
 		"Company-nmb_series",
 		"Company-nmb_password",
 		"Company-nmb_username",
+		"Company-withholding_section",
+		"Company-auto_submit_for_purchase_withholding",
+		"Company-column_break_55",
+		"Company-default_withholding_receivable_account",
+		"Company-auto_submit_for_sales_withholding",
+		"Item-withholding_tax_rate_on_sales",
+		"Sales Invoice Item-withholding_tax_entry",
 		"Company-nmb_url",
 		"Fees-bank_reference",
 		"Fees-abbr",
@@ -207,6 +214,7 @@ doc_events = {
 			'csf_tz.custom_api.validate_net_rate',
 			"csf_tz.custom_api.create_delivery_note",
 			'csf_tz.custom_api.check_submit_delivery_note',
+			'csf_tz.custom_api.make_withholding_tax_gl_entries_for_sales',
 			],
 		'validate': [
 					'csf_tz.custom_api.check_validate_delivery_note',
@@ -224,7 +232,7 @@ doc_events = {
 		"after_insert":"csf_tz.custom_api.create_indirect_expense_item",
 	},
 	"Purchase Invoice": {
-		"on_submit":"csf_tz.custom_api.make_withholding_tax_gl_entries",
+		"on_submit":"csf_tz.custom_api.make_withholding_tax_gl_entries_for_purchase",
 	},
 	"Fees": {
 		"before_insert":"csf_tz.custom_api.set_fee_abbr",
