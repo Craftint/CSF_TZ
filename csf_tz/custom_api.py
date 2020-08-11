@@ -1047,6 +1047,7 @@ def make_withholding_tax_gl_entries_for_purchase(doc, method):
 
 @frappe.whitelist()
 def set_fee_abbr(doc=None, method=None):
+    doc.company = frappe.get_value("Fee Structure", doc.fee_structure, "company")
     doc.abbr = frappe.get_value("Company", doc.company, "abbr")
 
 def enroll_all_students(self):
