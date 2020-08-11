@@ -32,6 +32,10 @@ frappe.ui.form.on("Payment Entry", {
 	},
 
 	get_outstanding_documents: function(frm, filters) {
+		if (frappe.route_history[frappe.route_history.length-2][1]==="Sales Invoice") {
+			return;
+		}
+
 		frm.clear_table("references");
 
 		if(!frm.doc.party) {
