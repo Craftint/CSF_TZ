@@ -49,6 +49,7 @@ class ExpenseRecord(Document):
 			"cost_center": frappe.get_value("Section",self.section,"cost_center"),
 			"supplier": self.supplier,
 			"posting_date": self.date,
+			"set_posting_time": 1,
 			"bill_no": self.bill_no,
 			"bill_date": self.date,
 			"document_type": self.doctype,

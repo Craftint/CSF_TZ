@@ -1,5 +1,4 @@
 from __future__ import unicode_literals
-from frappe.utils import flt
 from erpnext.setup.utils import get_exchange_rate
 import frappe
 from frappe import _
@@ -1027,7 +1026,7 @@ def make_withholding_tax_gl_entries_for_purchase(doc, method):
             account_curremcy = default_currency,
         )
         jl_rows.append(credit_row)
-        user_remark = "Withholding Tax Payable Against Item " + item.item_code + " in " + doc.doctype + " " + doc.name + " of amount " + str(item.net_amount) + " " + doc.currency + " with exchange rate of " + str(doc.conversion_rate)
+        user_remark = "Withholding Tax Payable Against Item " + item.item_code + " in " + doc.doctype + " " + doc.name + " of amount " + str(flt(item.net_amount,2)) + " " + doc.currency + " with exchange rate of " + str(doc.conversion_rate)
         jv_doc = frappe.get_doc(dict(
             doctype = "Journal Entry",
             posting_date = doc.posting_date,
@@ -1048,6 +1047,7 @@ def make_withholding_tax_gl_entries_for_purchase(doc, method):
 
 @frappe.whitelist()
 def set_fee_abbr(doc=None, method=None):
+    doc.company = frappe.get_value("Fee Structure", doc.fee_structure, "company")
     doc.abbr = frappe.get_value("Company", doc.company, "abbr")
 
 def enroll_all_students(self):
@@ -1164,7 +1164,7 @@ def make_withholding_tax_gl_entries_for_sales(doc, method):
         )
         jl_rows.append(debit_row)
 
-        user_remark = "Withholding Tax Payable Against Item " + item.item_code + " in " + doc.doctype + " " + doc.name + " of amount " + str(item.net_amount) + " " + doc.currency + " with exchange rate of " + str(doc.conversion_rate)
+        user_remark = "Withholding Tax Payable Against Item " + item.item_code + " in " + doc.doctype + " " + doc.name + " of amount " + str(flt(item.net_amount,2)) + " " + doc.currency + " with exchange rate of " + str(doc.conversion_rate)
         jv_doc = frappe.get_doc(dict(
             doctype = "Journal Entry",
             posting_date = doc.posting_date,
