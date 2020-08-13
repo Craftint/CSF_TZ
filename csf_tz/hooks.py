@@ -95,6 +95,7 @@ fixtures = [
 		"Company-nmb_url",
 		"Fees-bank_reference",
 		"Fees-abbr",
+		"Sales Invoice-enabled_auto_create_delivery_notes"
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-pos_profile-in_standard_filter",
