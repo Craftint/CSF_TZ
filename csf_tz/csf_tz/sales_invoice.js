@@ -60,7 +60,7 @@ frappe.ui.form.on("Sales Invoice", {
     //     }
     // },
     make_sales_invoice_btn: function(frm){
-        if (frm.doc.docstatus == 1){
+        if (frm.doc.docstatus == 1 && frm.doc.enabled_auto_create_delivery_notes == 1){
             frm.add_custom_button(__('Create Delivery Note'),
                     
             function() {

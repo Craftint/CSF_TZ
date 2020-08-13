@@ -301,8 +301,10 @@ def create_delivery_note(doc=None, method=None, doc_name=None):
     if not doc and doc_name:
         doc = frappe.get_doc("Sales Invoice", doc_name)
     elif doc:
-        if not frappe.get_value("Company",doc.company,"enabled_auto_create_delivery_notes") or doc.enabled_auto_create_delivery_notes != 1:
+        if not frappe.get_value("Company",doc.company,"enabled_auto_create_delivery_notes"):
             return
+    if not doc.enabled_auto_create_delivery_notes:
+        return
     if doc.update_stock:
         return
     from_delivery_note = False
