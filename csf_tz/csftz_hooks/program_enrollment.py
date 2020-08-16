@@ -3,7 +3,6 @@ import frappe
 from erpnext.education.doctype.program_enrollment.program_enrollment import ProgramEnrollment
 
 def create_course_enrollments(self):
-    frappe.msgprint("Hello overriding world!")
     student = frappe.get_doc("Student", self.student)
     program = frappe.get_doc("Program", self.program)
     course_list = [course.course for course in program.courses]
