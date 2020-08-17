@@ -14,7 +14,7 @@ frappe.ui.form.on('Loan', {
 var redo_repayment_schedule = function(frm){
 	var doc = frm.doc;
 	frappe.call({
-		method: "payware.payware.utils.redo_repayment_schedule",
+		method: "csf_tz.payware.utils.redo_repayment_schedule",
 		args: {
 			loan_name: doc.name
 		},
