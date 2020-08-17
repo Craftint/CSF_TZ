@@ -62,4 +62,19 @@ def get_data():
 			"icon": "octicon octicon-bookmark",
 			"type": "module",
 		},
+		{
+			"module_name": "Payware",
+			"color": "grey",
+			"icon": "octicon octicon-file-directory",
+			"type": "module",
+			"label": _("Payware")
+		},
+		{
+			"module_name": "Tanzania Statutory Reports",
+			"color": "red",
+			"icon": "octicon octicon-file-directory",
+			"type": "page",
+			"link": "tzpayware",
+			"label": _("TZ Statutory Reports")
+		}
 	]

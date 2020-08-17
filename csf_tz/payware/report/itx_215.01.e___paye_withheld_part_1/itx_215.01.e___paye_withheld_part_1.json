@@ -1,0 +1,28 @@
+{
+ "add_total_row": 0,
+ "creation": "2020-03-04 10:07:03.918859",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "idx": 0,
+ "is_standard": "Yes",
+ "modified": "2020-07-16 11:43:17.076144",
+ "modified_by": "Administrator",
+ "module": "Payware",
+ "name": "ITX 215.01.E - PAYE Withheld Part 1",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "query": "SELECT          MIN(ss.start_date)  AS \"Start Date::100\", \n                MAX(ss.end_date) AS \"End Date::100\", \n                ss.employee_name AS \"Employee Name:Data:0\",\n                SUM(IF (sd.salary_component = 'Basic', sd.amount, 0)) AS \"Basic Salary:Currency:0\",\n                SUM(IF (sd.salary_component = 'Housing', sd.amount, 0)) AS \"Housing:Currency:0\",\n                SUM(IF (sd.salary_component = 'TI', sd.amount, 0)) AS \"Other Allw and Benefits:Currency:0\",\n                SUM(IF (sd.salary_component = 'Basic', ss.gross_pay, 0)) AS \"Gross Pay:Currency:0\",\n                SUM(IF (sd.salary_component = 'NSSF', sd.amount, 0)) AS \"NSSF:Currency:0\", \n                SUM(IF (sd.salary_component = 'PAYE', sd.amount, 0)) AS \"PAYE:Currency:0\", \n                ss.company AS \"Company:Data:0\", \n                cmp.tax_id AS \"TIN:Data:0\", \n                cmp.email AS \"Email:Data:0\", \n                cmp.phone_no AS \"Phone:Data:0\", \n                cmp.fax AS \"Fax Number:Data:0\", \n                pwspob.value AS \"P O Box:Data:0\", \n                pwsst.value AS \"Street:Data:0\", \n                pwspn.value AS \"Plot Number:Data:0\",\n                pwsbn.value AS \"Block Number:Data:0\",\n                pwscty.value AS \"City:Data:0\"\nFROM            `tabSalary Slip` ss LEFT OUTER JOIN `tabSalary Detail` sd ON ss.name = sd.parent\n                                    LEFT OUTER JOIN `tabCompany` cmp ON ss.company = cmp.name \n                                    JOIN            `tabSingles` pwspob ON pwspob.doctype = \"Payware Settings\" AND pwspob.field = \"p_o_box\" \n                                    JOIN            `tabSingles` pwsst ON pwsst.doctype = \"Payware Settings\" AND pwsst.field = \"street\" \n                                    JOIN            `tabSingles` pwspn ON pwspn.doctype = \"Payware Settings\" AND pwspn.field = \"plot_number\" \n                                    JOIN            `tabSingles` pwsbn ON pwsbn.doctype = \"Payware Settings\" AND pwsbn.field = \"block_number\" \n                                    JOIN            `tabSingles` pwscty ON  pwscty.doctype = \"Payware Settings\" AND pwscty.field = \"city\" \nWHERE           ss.start_date >= %(from_date)s \nAND             ss.end_date <= %(to_date)s \nAND             ss.docstatus = 1 \nGROUP BY        ss.employee_name ",
+ "ref_doctype": "Payware Settings",
+ "report_name": "ITX 215.01.E - PAYE Withheld Part 1",
+ "report_type": "Query Report",
+ "roles": [
+  {
+   "role": "HR User"
+  },
+  {
+   "role": "HR Manager"
+  }
+ ]
+}

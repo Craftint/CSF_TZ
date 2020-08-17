@@ -1,0 +1,31 @@
+{
+ "add_total_row": 1,
+ "creation": "2020-01-14 06:37:53.756184",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "idx": 0,
+ "is_standard": "Yes",
+ "modified": "2020-01-24 17:03:45.543771",
+ "modified_by": "Administrator",
+ "module": "Payware",
+ "name": "ITX 215.01.E - PAYE Withheld Part 2",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "query": "SELECT          MIN(ss.start_date)                                      AS \"Start Date::100\", \n                MAX(ss.end_date)                                        AS \"End Date::100\", \n                ss.employee                                             AS \"Employee No:Data:0\",\n                ss.employee_name                                        AS \"Employee Name:Data:0\",\n                SUM(IF (sd.salary_component = 'Basic', sd.amount, 0))   AS \"Basic Salary:Currency:0\",\n                SUM(IF (sd.salary_component = 'Housing', sd.amount, 0)) AS \"Housing:Currency:0\",\n                SUM(IF (sd.salary_component = 'TI', sd.amount, 0))      AS \"Other Allw and Benefits:Currency:0\",\n                SUM(IF (sd.salary_component = 'Basic', ss.gross_pay, 0))AS \"Gross Pay:Currency:0\",\n                SUM(IF (sd.salary_component = 'NSSF', sd.amount, 0))    AS \"NSSF:Currency:0\", \n                SUM(IF (sd.salary_component = 'PAYE', sd.amount, 0))    AS \"PAYE:Currency:0\", \n                ss.company                                              AS \"Company:Data:0\", \n                cmp.tax_id                                              AS \"TIN:Data:0\"\nFROM            `tabSalary Slip` ss\tLEFT OUTER JOIN `tabSalary Detail` sd \tON sd.parent = ss.name \n\t\t\t\t\tLEFT OUTER JOIN `tabCompany` cmp \tON ss.company = cmp.name \nWHERE           ss.start_date >= %(from_date)s \nAND             ss.end_date <= %(to_date)s \nAND             ss.docstatus = 1 \nGROUP BY        ss.employee_name \nHAVING          SUM(ss.gross_pay) > 0",
+ "ref_doctype": "Salary Slip",
+ "report_name": "ITX 215.01.E - PAYE Withheld Part 2",
+ "report_type": "Query Report",
+ "roles": [
+  {
+   "role": "HR User"
+  },
+  {
+   "role": "HR Manager"
+  },
+  {
+   "role": "Employee"
+  }
+ ]
+}

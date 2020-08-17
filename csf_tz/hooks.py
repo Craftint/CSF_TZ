@@ -95,7 +95,51 @@ fixtures = [
 		"Company-nmb_url",
 		"Fees-bank_reference",
 		"Fees-abbr",
-		"Sales Invoice-enabled_auto_create_delivery_notes"
+		"Sales Invoice-enabled_auto_create_delivery_notes",
+		"Payroll Entry-bank_payment_details",
+		"Payroll Entry-cheque_number",
+		"Payroll Entry-column_break_34",
+		"Payroll Entry-cheque_date",
+		"Employee-national_identity",
+		"Employee-bank_code",
+		"Employee-wcf_number",
+		"Employee-column_break_50",
+		"Employee-pension_fund_number",
+		"Employee-pension_fund",
+		"Employee-statutory_details",
+		"Employee-employee_ot_component",
+		"Employee-overtime_components",
+		"Loan-total_nsf_repayments",
+		"Repayment Schedule-changed_interest_amount",
+		"Repayment Schedule-changed_principal_amount",
+		"Repayment Schedule-change_amount",
+		"Salary Component-column_break_16",
+		"Salary Component-payware_specifics",
+		"Additional Salary-column_break_19",
+		"Additional Salary-last_transaction_amount",
+		"Additional Salary-last_transaction_details",
+		"Additional Salary-auto_created_based_on",
+		"Additional Salary-last_transaction_date",
+		"Additional Salary-section_break_17",
+		"Additional Salary-column_break_15",
+		"Additional Salary-auto_repeat_details",
+		"Additional Salary-auto_repeat_end_date",
+		"Additional Salary-auto_repeat_frequency",
+		"Salary Component-create_cash_journal",
+		"Loan-loan_repayments_not_from_salary",
+		"Salary Component-hourly_rate",
+		"Salary Component-based_on_hourly_rate",
+		"Salary Slip-salary_slip_ot_component",
+		"Salary Slip-overtime_components",
+		"Employee-biometric_id",
+		"Employee-biometric_code",
+		"Employee-area",
+		"Additional Salary-based_on_hourly_rate",
+		"Additional Salary-no_of_hours",
+		"Additional Salary-hourly_rate",
+		"Loan-not_from_salary_loan_repayments",
+		"Employee-enable_biometric",
+		"Salary Component-sdl_emolument_category"
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-pos_profile-in_standard_filter",
@@ -115,6 +159,19 @@ fixtures = [
 		"Payment Entry-section_break_12-collapsible",
 		"Payment Entry-payment_accounts_section-collapsible",
 		"Stock Entry-from_warehouse-fetch_from",
+		"Loan-posting_date-in_list_view",
+		"Loan-status-in_standard_filter",
+		"Loan-search_fields",
+		"Loan-loan_amount-in_list_view",
+		"Payroll Entry-posting_date-in_list_view",
+		"Loan-loan_type-in_list_view",
+		"Loan-loan_type-in_standard_filter",
+		"Loan-applicant_name-in_list_view",
+		"Loan-applicant_name-in_standard_filter",
+		"Loan-repayment_method-options",
+		"Payroll Entry-end_date-in_list_view",
+		"Salary Structure Assignment-employee-in_list_view",
+		"Salary Structure Assignment-base-in_list_view"
 	)]]},
 ]
 
@@ -153,6 +210,8 @@ doctype_js = {
 	"Quotation": "csf_tz/quotation.js",
 	"Purchase Receipt": "csf_tz/purchase_receipt.js",
 	"Purchase Order": "csf_tz/purchase_order.js",
+	"Loan" : "payware/loan.js",
+	"Additional Salary" : "payware/additional_salary.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -268,6 +327,29 @@ doc_events = {
 	"Stock Entry": {
 		"validate": "csf_tz.custom_api.calculate_total_net_weight"
 	},
+	"Loan": {
+		"validate": "csf_tz.payware.utils.validate_loan"
+	},
+	"Salary Slip": {
+		"on_submit": "csf_tz.payware.utils.set_loan_paid",
+		"on_cancel": "csf_tz.payware.utils.set_loan_paid",
+		"before_insert": "csf_tz.payware.salary_slip_hook.generate_component_in_salary_slip_insert",
+		"before_save": "csf_tz.payware.salary_slip_hook.generate_component_in_salary_slip_update"
+	},
+	"Loan Repayment Not From Salary": {
+		"on_submit": "csf_tz.payware.utils.create_loan_repayment_jv",
+		"validate": "csf_tz.payware.utils.validate_loan_repayment_nfs",
+		"on_cancel": "csf_tz.payware.utils.create_loan_repayment_jv"
+	},
+	"Additional Salary": {
+		"on_submit": "csf_tz.payware.utils.create_additional_salary_journal",
+		"on_cancel": "csf_tz.payware.utils.create_additional_salary_journal",
+		"before_validate": "csf_tz.payware.utils.set_employee_base_salary_in_hours"
+	},
+	"Employee": {
+		"validate": "csf_tz.payware.doctype.biometric_settings.biometric_settings.check_employee_bio_info"
+	},
+
 }
 
 # Scheduled Tasks

@@ -1,0 +1,37 @@
+{
+ "add_total_row": 0,
+ "creation": "2020-02-17 17:35:48.735318",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "idx": 0,
+ "is_standard": "Yes",
+ "modified": "2020-02-19 13:29:01.983548",
+ "modified_by": "Administrator",
+ "module": "Payware",
+ "name": "NSSF-CON.05",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "query": "SELECT ss.company AS \"Company::\", \r\n       CONCAT_WS(' ', 'P O Box', pobox.value) AS \"Company Address::\", \r\n       ss.employee AS \"Emp ID::\", \r\n       ss.employee_name AS \"Employee Name::\", \r\n       SUM(ss.gross_pay) AS \"Gross Pay:Currency:\", \r\n       SUM(sd.amount * 2) AS \"Contribution:Currency:\",  \r\n       emp.pension_fund_number AS \"Membership No::\", \r\n       emp.national_identity AS \"National ID::\", \r\n       np.payment_date AS \"Payment Date::\", \r\n       np.payment_method  AS \"Payment Method::\", \r\n       np.payment_reference_number AS \"Ref No.::\",\r\n       social.value AS \"NSSF Employer No:Data:0\",\r\n       social_office.value AS \"NSSF Office:Data:0\",\r\n       pobox.value AS \"P O Box:Data:0\",\r\n       city.value AS \"City:Data:0\",\r\n       date_format(ss.start_date, '%%M') AS \"Contribution Month:Data:0\",\r\n       date_format(ss.start_date, '%%Y') AS \"Contribution Year:Data:0\"\r\nFROM `tabSalary Slip` ss LEFT OUTER JOIN `tabSalary Detail` sd ON sd.parent = ss.name \r\n                         LEFT OUTER JOIN `tabEmployee` emp ON ss.employee = emp.name AND emp.pension_fund = 'NSSF' \r\n\t\t\t\t         INNER JOIN `tabCompany` cp ON ss.company = cp.company_name \r\n                         LEFT OUTER JOIN `tabNSSF Payments` np ON np.payroll_month BETWEEN %(from_date)s AND %(to_date)s \r\n                         JOIN `tabSingles` social ON   social.doctype = \"Payware Settings\" AND social.field = \"social_security_fund_registration_number\"\r\n                         JOIN `tabSingles` social_office ON   social_office.doctype = \"Payware Settings\" AND social_office.field = \"social_security_fund_registration_district\"\r\n                         JOIN `tabSingles` pobox ON   pobox.doctype = \"Payware Settings\" AND pobox.field = \"p_o_box\"\r\n                         JOIN `tabSingles` city ON   city.doctype = \"Payware Settings\" AND city.field = \"city\"\r\nWHERE sd.salary_component = 'NSSF' \r\nAND   ss.docstatus = 1 \r\nAND   ss.start_date >= %(from_date)s\r\nAND   ss.end_date <= %(to_date)s\r\nGROUP BY ss.employee_name, ss.designation, emp.gender, emp.date_of_birth \r\nHAVING  SUM(ss.gross_pay) > 0",
+ "ref_doctype": "Salary Slip",
+ "report_name": "NSSF-CON.05",
+ "report_type": "Query Report",
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Accounts Manager"
+  },
+  {
+   "role": "Accounts User"
+  },
+  {
+   "role": "HR User"
+  },
+  {
+   "role": "HR Manager"
+  }
+ ]
+}
