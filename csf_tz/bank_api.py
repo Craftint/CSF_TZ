@@ -216,7 +216,7 @@ def cancel_invoice(doc, method):
     if not series:
         frappe.throw(_("Please set NMB User Series in Company {0}".format(doc.company)))
     data = {
-    "reference" : str(series) + "-" + str(doc.name), 
+    "reference" : str(doc.bank_reference), 
     }
     message = send_nmb("invoice_cancel", data, doc.company)
     frappe.msgprint(str(message))

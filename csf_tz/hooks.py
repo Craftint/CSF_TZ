@@ -241,7 +241,11 @@ doc_events = {
 		"on_submit":"csf_tz.bank_api.invoice_submission",
 		"on_cancel":"csf_tz.bank_api.cancel_invoice",
 	},
-
+	"Fees": {
+		"onload":"csf_tz.csftz_hooks.program_enrollment.create_course_enrollments_override",
+		"refresh":"csf_tz.csftz_hooks.program_enrollment.create_course_enrollments_override",
+		"reload":"csf_tz.csftz_hooks.program_enrollment.create_course_enrollments_override",
+	},
 	"*": {
 		"validate"                      :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
 		"onload"                        :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
