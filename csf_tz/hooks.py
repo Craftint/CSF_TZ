@@ -95,7 +95,10 @@ fixtures = [
 		"Company-nmb_url",
 		"Fees-bank_reference",
 		"Fees-abbr",
-		"Sales Invoice-enabled_auto_create_delivery_notes"
+		"Sales Invoice-enabled_auto_create_delivery_notes",
+		"Company-education_section",
+		"Company-send_fee_details_to_bank",
+		"Company-column_break_60",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-pos_profile-in_standard_filter",
@@ -241,7 +244,7 @@ doc_events = {
 		"on_submit":"csf_tz.bank_api.invoice_submission",
 		"on_cancel":"csf_tz.bank_api.cancel_invoice",
 	},
-	"Fees": {
+	"Program Enrollment": {
 		"onload":"csf_tz.csftz_hooks.program_enrollment.create_course_enrollments_override",
 		"refresh":"csf_tz.csftz_hooks.program_enrollment.create_course_enrollments_override",
 		"reload":"csf_tz.csftz_hooks.program_enrollment.create_course_enrollments_override",
