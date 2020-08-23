@@ -12,8 +12,10 @@
   "fee_schedule",
   "include_payment",
   "send_payment_request",
+  "bank_reference",
   "column_break_4",
   "company",
+  "abbr",
   "posting_date",
   "posting_time",
   "set_posting_time",
@@ -44,6 +46,7 @@
   "column_break_39",
   "income_account",
   "accounting_dimensions_section",
+  "callback_token",
   "cost_center",
   "dimension_col_break",
   "amended_from"
@@ -225,8 +228,7 @@
    "default": "0",
    "fieldname": "grand_total",
    "fieldtype": "Currency",
-   "label": "Grand Total",
-   "read_only": 1
+   "label": "Grand Total"
   },
   {
    "fieldname": "grand_total_in_words",
@@ -325,10 +327,31 @@
    "options": "Student Applicant Fees",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "bank_reference",
+   "fieldtype": "Data",
+   "label": "Bank Reference",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fetch_from": "company.abbr",
+   "fieldname": "abbr",
+   "fieldtype": "Data",
+   "label": "Abbr",
+   "read_only": 1
+  },
+  {
+   "fieldname": "callback_token",
+   "fieldtype": "Data",
+   "label": "Callback Token",
+   "no_copy": 1,
+   "read_only": 1
   }
  ],
  "is_submittable": 1,
- "modified": "2020-08-22 23:57:34.330223",
+ "modified": "2020-08-23 04:05:13.152348",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Student Applicant Fees",
