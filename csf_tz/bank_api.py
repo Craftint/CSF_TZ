@@ -38,7 +38,7 @@ def set_callback_token(doc, method):
     if not doc.abbr:
         doc.abbr = frappe.get_value("Company", doc.company, "abbr") or ""
     doc.bank_reference = reference.replace('-', '').replace('FEE'+doc.abbr,'')
-
+    frappe.msgprint(get_fee_type_doctype(doc.bank_reference))
 
 def get_nmb_token(company):
     username = frappe.get_value("Company",company,"nmb_username")
@@ -157,6 +157,8 @@ def receive_callback(*args, **kwargs):
 def make_payment_entry(**kwargs):
     for key, value in kwargs.items(): 
         nmb_doc = value
+        if not get_fee_type_doctype(nmb_doc.reference) == "Fees":
+            return
         frappe.set_user("Administrator")
         fees_name = frappe.get_all("Fees", filters={"bank_reference": nmb_doc.reference})[0]["name"]
         fees_token = frappe.get_value("Fees", fees_name, "callback_token")
@@ -243,3 +245,18 @@ def reconciliation(doc=None, method=None):
                         nmb_doc = frappe.get_doc(message)
                         enqueue(method=make_payment_entry, queue='short', timeout=10000, is_async=True , kwargs =nmb_doc)
         
+
+def get_fee_type_doctype(bank_reference):
+    if frappe.db.exists({'doctype': 'Fees','bank_reference': bank_reference}):
+        return "Fees"
+    elif frappe.db.exists({'doctype': 'Student Applicant Fees','bank_reference': bank_reference}):
+        return "Student Applicant Fees"
+    else:
+        return ""
+    
+# def get_fee_company(bank_reference, fee_doctype=None):
+#     if not fee_doctype:
+#         fee_doctype = get_fee_type_doctype(bank_reference)
+#     if not fee_doctype:
+#         return ""
+#     return frappe.get_all(fee_doctype, filters={"bank_reference": bank_reference},fields=['name', 'company'])[0]["company"]
