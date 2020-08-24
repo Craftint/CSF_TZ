@@ -16,10 +16,10 @@ class StudentApplicantFees(Document):
 		series = frappe.get_value("Company", self.company, "nmb_series") or ""
 		if not series:
 			frappe.throw(_("Please set NMB User Series in Company {0}".format(self.company)))
-		reference = str(series) + str(self.name)
+		reference = str(series) + 'R' + str(self.name)
 		if not self.abbr:
 			self.abbr = frappe.get_value("Company", self.company, "abbr") or ""
-		self.bank_reference = reference.replace('-', '').replace('FEE'+self.abbr,'')
+		self.bank_reference = reference.replace('-', '').replace('RFEE'+self.abbr,'')
 
 
 	def on_submit(self):
