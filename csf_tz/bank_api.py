@@ -34,7 +34,7 @@ def set_callback_token(doc, method):
     series = frappe.get_value("Company", doc.company, "nmb_series") or ""
     if not series:
         frappe.throw(_("Please set NMB User Series in Company {0}".format(doc.company)))
-    reference = str(series) + str(doc.name)
+    reference = str(series) + 'F' + str(doc.name)
     if not doc.abbr:
         doc.abbr = frappe.get_value("Company", doc.company, "abbr") or ""
     doc.bank_reference = reference.replace('-', '').replace('FEE'+doc.abbr,'')
