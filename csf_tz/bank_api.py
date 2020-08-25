@@ -157,7 +157,7 @@ def receive_callback(*args, **kwargs):
 def make_payment_entry(**kwargs):
     for key, value in kwargs.items(): 
         nmb_doc = value
-        if not get_fee_type_doctype(nmb_doc.reference) == "Fees":
+        if not get_fee_info(nmb_doc.reference)["doctype"] == "Fees":
             return
         frappe.set_user("Administrator")
         fees_name = frappe.get_all("Fees", filters={"bank_reference": nmb_doc.reference})[0]["name"]
@@ -194,7 +194,7 @@ def receive_validate_reference(*args, **kwargs):
                 message[atr] = getattr(msgs, atr)
     else:
         frappe.throw("This has no body!")
-        
+
     doc_info = get_fee_info(message["reference"])               
     if doc_info["name"]:
         doc = frappe.get_doc(doc_info["doctype"], doc_info["name"])
