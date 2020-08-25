@@ -243,15 +243,6 @@ def reconciliation(doc=None, method=None):
                         message["doctype"] = "NMB Callback"
                         nmb_doc = frappe.get_doc(message)
                         enqueue(method=make_payment_entry, queue='short', timeout=10000, is_async=True , kwargs =nmb_doc)
-        
-
-def get_fee_type_doctype(bank_reference):
-    if frappe.db.exists({'doctype': 'Fees','bank_reference': bank_reference}):
-        return "Fees"
-    elif frappe.db.exists({'doctype': 'Student Applicant Fees','bank_reference': bank_reference}):
-        return "Student Applicant Fees"
-    else:
-        return ""
 
 
 def get_fee_info(bank_reference):
@@ -267,11 +258,3 @@ def get_fee_info(bank_reference):
             data["name"] = doc_list[0]["name"]
             data["doctype"] = "Student Applicant Fees"
         return data
-    
-
-# def get_fee_company(bank_reference, fee_doctype=None):
-#     if not fee_doctype:
-#         fee_doctype = get_fee_type_doctype(bank_reference)
-#     if not fee_doctype:
-#         return ""
-#     return frappe.get_all(fee_doctype, filters={"bank_reference": bank_reference},fields=['name', 'company'])[0]["company"]
