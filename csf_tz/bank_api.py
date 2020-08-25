@@ -238,9 +238,9 @@ def reconciliation(doc=None, method=None):
         if message["status"] == 1 and len(message["transactions"]) > 0:
             for i in message["transactions"]:
                 if len(frappe.get_all("NMB Callback",filters = [["NMB Callback","reference","=",i.reference],["NMB Callback","receipt","=",i.receipt]],fields = ["name"])) == 1:
-                    doc_exist = frappe.db.exists("Fees",message["reference"][7:])
-                    if doc_exist:
-                        message["fees_token"] = frappe.get_value("Fees",message["reference"][7:],"callback_token")
+                    doc_info = get_fee_info(message["reference"])
+                    if doc_info["name"]:
+                        message["fees_token"] = frappe.get_value(doc_info["doctype"],doc_info["name"],"callback_token")
                         message["doctype"] = "NMB Callback"
                         nmb_doc = frappe.get_doc(message)
                         enqueue(method=make_payment_entry, queue='short', timeout=10000, is_async=True , kwargs =nmb_doc)
@@ -253,7 +253,23 @@ def get_fee_type_doctype(bank_reference):
         return "Student Applicant Fees"
     else:
         return ""
+
+
+def get_fee_info(bank_reference):
+    data = {"name":"", "doctype":""}
+    doc_list =frappe.get_all("Fees",filters = [["Fees","bank_reference","=",bank_reference],["Fees","docstatus","=",1]])
+    if len(doc_list):
+        data["name"] = doc_list[0]["name"]
+        data["doctype"] = "Fees"
+        return data
+    else:
+        doc_list =frappe.get_all("Student Applicant Fees",filters = [["Student Applicant Fees","bank_reference","=",bank_reference],["Student Applicant Fees","docstatus","=",1]])
+        if len(doc_list):
+            data["name"] = doc_list[0]["name"]
+            data["doctype"] = "Student Applicant Fees"
+        return data
     
+
 # def get_fee_company(bank_reference, fee_doctype=None):
 #     if not fee_doctype:
 #         fee_doctype = get_fee_type_doctype(bank_reference)
