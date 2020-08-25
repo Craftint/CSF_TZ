@@ -194,11 +194,10 @@ def receive_validate_reference(*args, **kwargs):
                 message[atr] = getattr(msgs, atr)
     else:
         frappe.throw("This has no body!")
-    fees_name = frappe.get_all("Fees", filters={"bank_reference": nmb_doc.reference})[0]["name"]
-
-    doc_exist = frappe.db.exists("Fees", fees_name)
-    if doc_exist:
-        doc = frappe.get_doc("Fees", fees_name)
+        
+    doc_info = get_fee_info(message["reference"])               
+    if doc_info["name"]:
+        doc = frappe.get_doc(doc_info["doctype"], doc_info["name"])
         response = dict(
             status = 1,
             reference = doc.bank_reference,
