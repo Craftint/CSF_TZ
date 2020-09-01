@@ -18,4 +18,13 @@ frappe.ui.form.on("Purchase Invoice", {
         }
           }, 1000);   
     },
+    setup: function(frm) {
+        frm.set_query("taxes_and_charges", function() {
+			return {
+				"filters": {
+                    "company": frm.doc.company,
+				}
+			};
+        });
+    },
 });
