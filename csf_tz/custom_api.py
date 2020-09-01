@@ -1000,7 +1000,9 @@ def validate_net_rate(doc, method):
 
 
 def make_withholding_tax_gl_entries_for_purchase(doc, method):
-    withholding_payable_account, default_currency = frappe.get_value("Company", doc.company, ["default_withholding_payable_account","default_currency"])
+    withholding_payable_account, default_currency, auto_create_for_purchase_withholding = frappe.get_value("Company", doc.company, ["default_withholding_payable_account","default_currency","auto_create_for_purchase_withholding"])
+    if not auto_create_for_purchase_withholding:
+        return
     if not withholding_payable_account:
         frappe.throw(_("Please Setup Withholding Payable Account in Company " + str(doc.company)))
     for item in doc.items:
@@ -1135,7 +1137,9 @@ def get_tax_category(doc_type, company):
 
 
 def make_withholding_tax_gl_entries_for_sales(doc, method):
-    withholding_receivable_account, default_currency = frappe.get_value("Company", doc.company, ["default_withholding_receivable_account","default_currency"])
+    withholding_receivable_account, default_currency, auto_create_for_sales_withholding = frappe.get_value("Company", doc.company, ["default_withholding_receivable_account","default_currency", "auto_create_for_sales_withholding"])
+    if not auto_create_for_sales_withholding:
+        return
     if not withholding_receivable_account:
         frappe.throw(_("Please Setup Withholding Receivable Account in Company " + str(doc.company)))
     for item in doc.items:
