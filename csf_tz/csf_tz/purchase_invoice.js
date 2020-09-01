@@ -26,5 +26,28 @@ frappe.ui.form.on("Purchase Invoice", {
 				}
 			};
         });
+        frappe.call({
+            method: "erpnext.accounts.doctype.accounting_dimension.accounting_dimension.get_dimension_filters",
+            callback: function(r) {
+                if(!r.exc) {
+                    const dimensions = [];
+                    r.message[0].forEach(element => {
+                        dimensions.push(element.fieldname);
+                    });
+                    frm.dimensions = dimensions;
+                    console.log(frm.dimensions);
+                }
+            }
+        });  
     },
+
+});
+frappe.ui.form.on("Purchase Invoice Item", {
+    items_add: function(frm, cdt, cdn) {
+        var row = frappe.get_doc(cdt, cdn);
+        frm.dimensions.forEach(i => {
+            row[i]=frm.doc[i]
+        });
+        frm.refresh_field("items");
+	},
 });
