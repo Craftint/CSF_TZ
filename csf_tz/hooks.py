@@ -99,6 +99,8 @@ fixtures = [
 		"Company-education_section",
 		"Company-send_fee_details_to_bank",
 		"Company-column_break_60",
+		"Company-auto_create_for_sales_withholding",
+		"Company-auto_create_for_purchase_withholding",
 		"Company-fee_bank_account",
 		"Company-student_applicant_fees_revenue_account",
 	)]]},
