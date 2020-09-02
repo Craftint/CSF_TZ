@@ -1,7 +1,7 @@
 // Copyright (c) 2018, Agricom Africa and contributors
 // For license information, please see license.txt
 
-frappe.ui.form.on('Job Card', {
+frappe.ui.form.on('Service Job Card', {
 	refresh: function(frm) {
 		console.log(frm);
 		frm.events.show_hide_sections(frm);
@@ -41,7 +41,7 @@ frappe.ui.form.on('Job Card', {
 	},
 	make_sales_invoice: function() {
 		frappe.model.open_mapped_doc({
-			method: "erpnext.after_sales_services.doctype.job_card.job_card.make_sales_invoice",
+			method: "erpnext.after_sales_services.doctype.service_job_card.service_job_card.make_sales_invoice",
 			frm: cur_frm
 		})
 	},
@@ -79,7 +79,7 @@ frappe.ui.form.on('Job Card', {
 				frappe.call({
 					method: "erpnext.maintenance.doctype.requested_items.requested_items.request_items",
 					args: {
-						reference_doctype: "Job Card",
+						reference_doctype: "Service Job Card",
 						reference_docname: cur_frm.doc.name
 					},
 					freeze: true,

@@ -2,7 +2,7 @@ from frappe import _
 
 def get_data():
 	return {
-		'fieldname': 'job_card',
+		'fieldname': 'service_job_card',
 		'internal_links': {
 			'Maintenance Request': ['items', 'maintenance_request']
 		},

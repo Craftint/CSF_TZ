@@ -11,7 +11,7 @@ from frappe.model.mapper import get_mapped_doc
 from csf_tz.after_sales_services.doctype.requested_payments.requested_payments import validate_requested_funds
 from frappe.model.document import Document
 
-class JobCard(Document):
+class ServiceJobCard(Document):
 	from csf_tz.after_sales_services.doctype.reference_payment_table.reference_payment_table import update_child_table
 	def before_save(self):
 		validate_requested_funds(self)
@@ -28,7 +28,7 @@ class JobCard(Document):
 			self.set('end_date', today)
 		
 	def on_submit(self):		
-		msgprint("This job card is now closed, please return any funds or items that were issued but not used.")
+		msgprint("This Service Job Card is now closed, please return any funds or items that were issued but not used.")
 		
 	def on_cancel(self):
 		self.set_status(status="Open")
@@ -39,7 +39,7 @@ class JobCard(Document):
 		
 	def validate_services(self):
 		if not self.services_table:
-			frappe.throw(_("Please enter the services performed on this job card."))
+			frappe.throw(_("Please enter the services performed on this Service Job Card."))
 		
 		idx = ""
 		error = False
@@ -109,10 +109,10 @@ class JobCard(Document):
 			
 	
 @frappe.whitelist()
-def make_job_card(source_name, target_doc=None, ignore_permissions=False):
+def make_service_job_card(source_name, target_doc=None, ignore_permissions=False):
 	doclist = get_mapped_doc("Workshop Request", source_name, {
 		"Workshop Request": {
-			"doctype": "Job Card",
+			"doctype": "Service Job Card",
 			"field_map": {
 				"requested_for": "job_done_on",
 				"requested_for_docname": "job_done_on_docname",
@@ -127,11 +127,11 @@ def make_job_card(source_name, target_doc=None, ignore_permissions=False):
 
 @frappe.whitelist()
 def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):
-	doclist = get_mapped_doc("Job Card", source_name, {
-		"Job Card": {
+	doclist = get_mapped_doc("Service Job Card", source_name, {
+		"Service Job Card": {
 			"doctype": "Sales Invoice",
 			"field_map": {
-				"name": "job_card",
+				"name": "service_job_card",
 			}
 		}
 	})
