@@ -99,6 +99,8 @@ fixtures = [
 		"Company-education_section",
 		"Company-send_fee_details_to_bank",
 		"Company-column_break_60",
+		"Company-fee_bank_account",
+		"Company-student_applicant_fees_revenue_account",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-pos_profile-in_standard_filter",

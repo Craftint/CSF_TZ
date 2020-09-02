@@ -34,7 +34,7 @@ def set_callback_token(doc, method):
     series = frappe.get_value("Company", doc.company, "nmb_series") or ""
     if not series:
         frappe.throw(_("Please set NMB User Series in Company {0}".format(doc.company)))
-    reference = str(series) + str(doc.name)
+    reference = str(series) + 'F' + str(doc.name)
     if not doc.abbr:
         doc.abbr = frappe.get_value("Company", doc.company, "abbr") or ""
     doc.bank_reference = reference.replace('-', '').replace('FEE'+doc.abbr,'')
@@ -157,22 +157,65 @@ def receive_callback(*args, **kwargs):
 def make_payment_entry(**kwargs):
     for key, value in kwargs.items(): 
         nmb_doc = value
-        frappe.set_user("Administrator")
-        fees_name = frappe.get_all("Fees", filters={"bank_reference": nmb_doc.reference})[0]["name"]
-        fees_token = frappe.get_value("Fees", fees_name, "callback_token")
-        if fees_token == nmb_doc.fees_token:
-            payment_entry = get_payment_entry("Fees", fees_name)
-            payment_entry.update({
-                "reference_no": nmb_doc.reference,
-                "reference_date": nmb_doc.timestamp,
-                "remarks": "Payment Entry against {0} {1} via NMB Bank Payment {2}".format("Fees",
-                    fees_name, nmb_doc.reference),
-            })
-            payment_entry.flags.ignore_permissions=True
+        doc_info = get_fee_info(nmb_doc.reference)
+
+        if doc_info["doctype"] == "Fees":
+            frappe.set_user("Administrator")
+            fees_name = doc_info["name"]
+            fees_token = frappe.get_value("Fees", fees_name, "callback_token")
+            if fees_token == nmb_doc.fees_token:
+                payment_entry = get_payment_entry("Fees", fees_name)
+                payment_entry.update({
+                    "reference_no": nmb_doc.reference,
+                    "reference_date": nmb_doc.timestamp,
+                    "remarks": "Payment Entry against {0} {1} via NMB Bank Payment {2}".format("Fees",fees_name, nmb_doc.reference),
+                })
+                payment_entry.flags.ignore_permissions=True
+                frappe.flags.ignore_account_permission = True
+                payment_entry.save()
+                payment_entry.submit()
+            return nmb_doc
+
+        elif doc_info["doctype"] == "Student Applicant Fees":
+            doc = frappe.get_doc("Student Applicant Fees",doc_info["name"])
+            acounts = get_fees_default_accounts(doc.company)
+            if not doc.callback_token == nmb_doc.fees_token:
+                return
+            jl_rows = []
+            debit_row = dict(
+                account = acounts["bank"],
+                debit_in_account_currency = nmb_doc.amount,
+                account_currency = acounts["currency"],
+                cost_center =  doc.cost_center,
+            )
+            jl_rows.append(debit_row)
+
+            credit_row_1 = dict(
+                account = acounts["income"],
+                credit_in_account_currency = nmb_doc.amount,
+                account_currency = acounts["currency"],
+                cost_center =  doc.cost_center,
+            )
+            jl_rows.append(credit_row_1)
+
+            user_remark = "Journal Entry against {0} {1} via NMB Bank Payment {2}".format("Student Applicant Fees",doc_info["name"], nmb_doc.reference)
+            jv_doc = frappe.get_doc(dict(
+                doctype = "Journal Entry",
+                posting_date = nmb_doc.timestamp,
+                accounts = jl_rows,
+                company = doc.company,
+                multi_currency = 0,
+                user_remark = user_remark,
+            ))
+
+            jv_doc.flags.ignore_permissions = True
             frappe.flags.ignore_account_permission = True
-            payment_entry.save()
-            payment_entry.submit()
-        return nmb_doc
+            jv_doc.save()
+            jv_doc.submit()
+            jv_url = frappe.utils.get_url_to_form(jv_doc.doctype, jv_doc.name)
+            si_msgprint = "Journal Entry Created <a href='{0}'>{1}</a>".format(jv_url,jv_doc.name)
+            frappe.msgprint(_(si_msgprint))
+            return nmb_doc
 
 
 @frappe.whitelist(allow_guest=True)
@@ -192,11 +235,10 @@ def receive_validate_reference(*args, **kwargs):
                 message[atr] = getattr(msgs, atr)
     else:
         frappe.throw("This has no body!")
-    fees_name = frappe.get_all("Fees", filters={"bank_reference": nmb_doc.reference})[0]["name"]
 
-    doc_exist = frappe.db.exists("Fees", fees_name)
-    if doc_exist:
-        doc = frappe.get_doc("Fees", fees_name)
+    doc_info = get_fee_info(message["reference"])               
+    if doc_info["name"]:
+        doc = frappe.get_doc(doc_info["doctype"], doc_info["name"])
         response = dict(
             status = 1,
             reference = doc.bank_reference,
@@ -236,10 +278,40 @@ def reconciliation(doc=None, method=None):
         if message["status"] == 1 and len(message["transactions"]) > 0:
             for i in message["transactions"]:
                 if len(frappe.get_all("NMB Callback",filters = [["NMB Callback","reference","=",i.reference],["NMB Callback","receipt","=",i.receipt]],fields = ["name"])) == 1:
-                    doc_exist = frappe.db.exists("Fees",message["reference"][7:])
-                    if doc_exist:
-                        message["fees_token"] = frappe.get_value("Fees",message["reference"][7:],"callback_token")
+                    doc_info = get_fee_info(message["reference"])
+                    if doc_info["name"]:
+                        message["fees_token"] = frappe.get_value(doc_info["doctype"],doc_info["name"],"callback_token")
                         message["doctype"] = "NMB Callback"
                         nmb_doc = frappe.get_doc(message)
                         enqueue(method=make_payment_entry, queue='short', timeout=10000, is_async=True , kwargs =nmb_doc)
-        
+
+
+def get_fee_info(bank_reference):
+    data = {"name":"", "doctype":""}
+    doc_list =frappe.get_all("Fees",filters = [["Fees","bank_reference","=",bank_reference],["Fees","docstatus","=",1]])
+    if len(doc_list):
+        data["name"] = doc_list[0]["name"]
+        data["doctype"] = "Fees"
+        return data
+    else:
+        doc_list =frappe.get_all("Student Applicant Fees",filters = [["Student Applicant Fees","bank_reference","=",bank_reference],["Student Applicant Fees","docstatus","=",1]])
+        if len(doc_list):
+            data["name"] = doc_list[0]["name"]
+            data["doctype"] = "Student Applicant Fees"
+        return data
+
+
+def get_fees_default_accounts(company):
+    data = {"bank":"", "income":"", "currency":""}
+    data["currency"] = frappe.get_value("Company", company, "default_currency") or ""
+    data["bank"] = frappe.get_value("Company", company, "fee_bank_account") or ""
+    if not data["bank"]:
+        data["bank"] = frappe.get_value("Company", company, "default_bank_account") or ""
+    data["income"] = frappe.get_value("Company", company, "student_applicant_fees_revenue_account") or ""
+    if not data["income"]:
+        data["bank"] = frappe.get_value("Company", company, "default_income_account") or ""
+    if not data["bank"]:
+        frappe.throw(_("Please set Fee Bank Account in Company {0}".format(company)))
+    if not data["income"]:
+        frappe.throw(_("Please set Student Applicant Fees Revenue Account in Company {0}".format(company)))
+    return data
