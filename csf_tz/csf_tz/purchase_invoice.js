@@ -35,10 +35,24 @@ frappe.ui.form.on("Purchase Invoice", {
                         dimensions.push(element.fieldname);
                     });
                     frm.dimensions = dimensions;
-                    console.log(frm.dimensions);
+                    // console.log(frm.dimensions);
+                    
                 }
             }
         });  
+        // const dimensions_fields = $("div.frappe-control[data-fieldname='expense_type']")
+        // console.log(dimensions_fields);
+    },
+    onload: function(frm){
+        frm.dimensions.forEach(i => {
+            let dimension_field = $(`div.frappe-control[data-fieldname='${i}']`).find("input");
+            dimension_field.on("focusout",function() {
+                frm.doc.items.forEach(row => {
+                    row[i]=frm.doc[i];
+                });
+                frm.refresh_field("items");
+            });
+        });
     },
 
 });
@@ -46,7 +60,7 @@ frappe.ui.form.on("Purchase Invoice Item", {
     items_add: function(frm, cdt, cdn) {
         var row = frappe.get_doc(cdt, cdn);
         frm.dimensions.forEach(i => {
-            row[i]=frm.doc[i]
+            row[i]=frm.doc[i];
         });
         frm.refresh_field("items");
 	},
