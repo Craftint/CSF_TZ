@@ -101,6 +101,8 @@ fixtures = [
 		"Company-column_break_60",
 		"Company-auto_create_for_sales_withholding",
 		"Company-auto_create_for_purchase_withholding",
+		"Company-fee_bank_account",
+		"Company-student_applicant_fees_revenue_account",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-pos_profile-in_standard_filter",

@@ -1003,13 +1003,15 @@ def make_withholding_tax_gl_entries_for_purchase(doc, method):
     withholding_payable_account, default_currency, auto_create_for_purchase_withholding = frappe.get_value("Company", doc.company, ["default_withholding_payable_account","default_currency","auto_create_for_purchase_withholding"])
     if not auto_create_for_purchase_withholding:
         return
+    float_precision = cint(frappe.db.get_default("float_precision")) or 3
+    withholding_payable_account, default_currency = frappe.get_value("Company", doc.company, ["default_withholding_payable_account","default_currency"])
     if not withholding_payable_account:
         frappe.throw(_("Please Setup Withholding Payable Account in Company " + str(doc.company)))
     for item in doc.items:
         if not item.withholding_tax_rate > 0:
             continue
-        wtax_base_amount = item.base_net_rate * item.qty * item.withholding_tax_rate / 100
-        creditor_amount = wtax_base_amount if doc.party_account_currency == default_currency else item.net_rate* item.qty * item.withholding_tax_rate / 100
+        wtax_base_amount = flt(item.base_net_rate * item.qty * item.withholding_tax_rate / 100, float_precision)
+        creditor_amount = wtax_base_amount if doc.party_account_currency == default_currency else flt(item.net_rate* item.qty * item.withholding_tax_rate / 100, float_precision)
         jl_rows = []
         debit_row = dict(
             account = doc.credit_to,
@@ -1025,7 +1027,7 @@ def make_withholding_tax_gl_entries_for_purchase(doc, method):
         jl_rows.append(debit_row)
         credit_row = dict(
             account = withholding_payable_account,
-            credit_in_account_currency = item.base_net_rate * item.qty * item.withholding_tax_rate / 100,
+            credit_in_account_currency = wtax_base_amount,
             cost_center =  item.cost_center,
             account_curremcy = default_currency,
         )
