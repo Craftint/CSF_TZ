@@ -1190,3 +1190,11 @@ def make_withholding_tax_gl_entries_for_sales(doc, method):
         jv_url = frappe.utils.get_url_to_form(jv_doc.doctype, jv_doc.name)
         si_msgprint = "Journal Entry Created for Withholding Tax <a href='{0}'>{1}</a>".format(jv_url,jv_doc.name)
         frappe.msgprint(_(si_msgprint))
+
+
+def calculate_loan_balance(doc, method):
+    loan = frappe.get_doc("Loan", doc.against_loan)
+
+    frappe.db.sql(""" UPDATE `tabLoan` SET loan_balance = %s
+        WHERE name = %s """, (loan.total_payment - loan.total_amount_paid, doc.against_loan))
+

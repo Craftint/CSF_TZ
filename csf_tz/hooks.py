@@ -103,6 +103,7 @@ fixtures = [
 		"Company-auto_create_for_purchase_withholding",
 		"Company-fee_bank_account",
 		"Company-student_applicant_fees_revenue_account",
+		"Loan-loan_balance",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-pos_profile-in_standard_filter",
@@ -274,6 +275,9 @@ doc_events = {
 	},
 	"Stock Entry": {
 		"validate": "csf_tz.custom_api.calculate_total_net_weight"
+	},
+	"Loan Repayment": {
+		"on_submit": "csf_tz.custom_api.calculate_loan_balance"
 	},
 }
 
