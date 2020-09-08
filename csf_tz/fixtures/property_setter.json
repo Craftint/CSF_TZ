@@ -294,7 +294,7 @@
   "doctype": "Property Setter",
   "doctype_or_field": "DocField",
   "field_name": "application_status",
-  "modified": "2020-09-08 19:24:02.369508",
+  "modified": "2020-09-08 19:26:19.746716",
   "name": "Student Applicant-application_status-read_only",
   "parent": null,
   "parentfield": null,
