@@ -215,6 +215,7 @@ def make_payment_entry(**kwargs):
             jv_url = frappe.utils.get_url_to_form(jv_doc.doctype, jv_doc.name)
             si_msgprint = "Journal Entry Created <a href='{0}'>{1}</a>".format(jv_url,jv_doc.name)
             frappe.msgprint(_(si_msgprint))
+            frappe.set_value("Student Applicant", doc.student, "application_status", "Approved")
             return nmb_doc
 
 
