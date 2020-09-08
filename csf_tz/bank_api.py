@@ -257,9 +257,6 @@ def receive_validate_reference(*args, **kwargs):
         frappe.response['description'] = "Not Exist"
     
 def cancel_invoice(doc, method):
-    series = frappe.get_value("Company" ,doc.company ,"nmb_series") or ""
-    if not series:
-        frappe.throw(_("Please set NMB User Series in Company {0}".format(doc.company)))
     data = {
     "reference" : str(doc.bank_reference), 
     }

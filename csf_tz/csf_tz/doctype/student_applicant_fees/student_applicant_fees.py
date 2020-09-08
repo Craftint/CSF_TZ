@@ -8,7 +8,7 @@ from frappe.model.document import Document
 from frappe import _
 import binascii
 import os
-from csf_tz.bank_api import invoice_submission
+from csf_tz.bank_api import invoice_submission, cancel_invoice
 
 class StudentApplicantFees(Document):
 	def after_insert(self):
@@ -24,3 +24,12 @@ class StudentApplicantFees(Document):
 
 	def on_submit(self):
 		invoice_submission(self)
+	
+
+	def on_cancel(self):
+		cancel_invoice(self, "on_cancel")
+		doc = frappe.get_doc("Student Applicant", self.student)
+		doc.bank_reference = None
+		doc.student_applicant_fee = None
+		doc.application_status = "Applied"
+		doc.db_update()
