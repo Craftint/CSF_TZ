@@ -247,7 +247,7 @@ def receive_validate_reference(*args, **kwargs):
             amount =  doc.grand_total,
             type = "Fees Invoice",
             code = 10,
-            allow_partial = "TRUE",
+            allow_partial = "FALSE",
             callback_url = "https://" + get_host_name() + "/api/method/csf_tz.bank_api.receive_callback?token=" + doc.callback_token,
             token = message["token"]
         )
