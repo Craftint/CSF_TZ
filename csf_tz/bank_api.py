@@ -215,6 +215,7 @@ def make_payment_entry(**kwargs):
             jv_url = frappe.utils.get_url_to_form(jv_doc.doctype, jv_doc.name)
             si_msgprint = "Journal Entry Created <a href='{0}'>{1}</a>".format(jv_url,jv_doc.name)
             frappe.msgprint(_(si_msgprint))
+            frappe.set_value("Student Applicant", doc.student, "application_status", "Approved")
             return nmb_doc
 
 
@@ -247,7 +248,7 @@ def receive_validate_reference(*args, **kwargs):
             amount =  doc.grand_total,
             type = "Fees Invoice",
             code = 10,
-            allow_partial = "TRUE",
+            allow_partial = "FALSE",
             callback_url = "https://" + get_host_name() + "/api/method/csf_tz.bank_api.receive_callback?token=" + doc.callback_token,
             token = message["token"]
         )
@@ -257,9 +258,6 @@ def receive_validate_reference(*args, **kwargs):
         frappe.response['description'] = "Not Exist"
     
 def cancel_invoice(doc, method):
-    series = frappe.get_value("Company" ,doc.company ,"nmb_series") or ""
-    if not series:
-        frappe.throw(_("Please set NMB User Series in Company {0}".format(doc.company)))
     data = {
     "reference" : str(doc.bank_reference), 
     }

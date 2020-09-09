@@ -103,6 +103,10 @@ fixtures = [
 		"Company-auto_create_for_purchase_withholding",
 		"Company-fee_bank_account",
 		"Company-student_applicant_fees_revenue_account",
+		"Student Applicant-fee_structure",
+		"Student Applicant-student_applicant_fee",
+		"Student Applicant-bank_reference",
+		"Student Applicant-program_enrollment",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-pos_profile-in_standard_filter",
@@ -122,6 +126,8 @@ fixtures = [
 		"Payment Entry-section_break_12-collapsible",
 		"Payment Entry-payment_accounts_section-collapsible",
 		"Stock Entry-from_warehouse-fetch_from",
+		"Student Applicant-application_status-options",
+		"Student Applicant-application_status-read_only",
 	)]]},
 ]
 
@@ -160,6 +166,7 @@ doctype_js = {
 	"Quotation": "csf_tz/quotation.js",
 	"Purchase Receipt": "csf_tz/purchase_receipt.js",
 	"Purchase Order": "csf_tz/purchase_order.js",
+	"Student Applicant": "csf_tz/student_applicant.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -274,6 +281,9 @@ doc_events = {
 	},
 	"Stock Entry": {
 		"validate": "csf_tz.custom_api.calculate_total_net_weight"
+	},
+	"Student Applicant": {
+		"on_update_after_submit":"csf_tz.csftz_hooks.student_applicant.make_student_applicant_fees",
 	},
 }
 
