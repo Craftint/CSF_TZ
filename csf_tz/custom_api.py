@@ -1056,6 +1056,7 @@ def set_fee_abbr(doc=None, method=None):
     doc.company = frappe.get_value("Fee Structure", doc.fee_structure, "company")
     doc.abbr = frappe.get_value("Company", doc.company, "abbr")
 
+@frappe.whitelist()
 def enroll_all_students(self):
     """Enrolls students or applicants.
 
