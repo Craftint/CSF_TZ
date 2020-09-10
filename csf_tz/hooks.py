@@ -107,6 +107,7 @@ fixtures = [
 		"Student Applicant-student_applicant_fee",
 		"Student Applicant-bank_reference",
 		"Student Applicant-program_enrollment",
+		"Company-bypass_material_request_validation",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-pos_profile-in_standard_filter",
@@ -280,7 +281,10 @@ doc_events = {
 		"on_change"                     :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
 	},
 	"Stock Entry": {
-		"validate": "csf_tz.custom_api.calculate_total_net_weight"
+		"validate": "csf_tz.custom_api.calculate_total_net_weight",
+		"onload": "csf_tz.csftz_hooks.stock.validate_with_material_request_override",
+		"refresh": "csf_tz.csftz_hooks.stock.validate_with_material_request_override",
+		"reload":" csf_tz.csftz_hooks.stock.validate_with_material_request_override",
 	},
 	"Student Applicant": {
 		"on_update_after_submit":"csf_tz.csftz_hooks.student_applicant.make_student_applicant_fees",
