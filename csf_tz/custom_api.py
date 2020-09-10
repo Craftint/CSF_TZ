@@ -1054,6 +1054,9 @@ def make_withholding_tax_gl_entries_for_purchase(doc, method):
 @frappe.whitelist()
 def set_fee_abbr(doc=None, method=None):
     doc.company = frappe.get_value("Fee Structure", doc.fee_structure, "company")
+    send_fee_details_to_bank = frappe.get_value("Company", doc.company, "send_fee_details_to_bank") or 0
+    if not send_fee_details_to_bank:
+        return
     doc.abbr = frappe.get_value("Company", doc.company, "abbr")
 
 @frappe.whitelist()
