@@ -1,5 +1,8 @@
 {
     "js/select_dialog.min.js": [
         "public/js/select_dialog.js"
+    ],
+    "js/to_console.min.js": [
+        "public/js/to_console.js"
     ]
 }
