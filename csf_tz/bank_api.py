@@ -30,6 +30,9 @@ class ToObject(object):
 
 
 def set_callback_token(doc, method):
+    send_fee_details_to_bank = frappe.get_value("Company", doc.company, "send_fee_details_to_bank") or 0
+    if not send_fee_details_to_bank:
+        return
     doc.callback_token = binascii.hexlify(os.urandom(14)).decode()
     series = frappe.get_value("Company", doc.company, "nmb_series") or ""
     if not series:
@@ -101,7 +104,7 @@ def send_nmb(method, data, company):
 def invoice_submission(doc=None, method=None, fees_name=None):
     if not doc and fees_name:
         doc = frappe.get_doc("Fees", fees_name)
-    send_fee_details_to_bank = frappe.get_value("Company", doc.company, "send_fee_details_to_bank") or ""
+    send_fee_details_to_bank = frappe.get_value("Company", doc.company, "send_fee_details_to_bank") or 0
     if not send_fee_details_to_bank:
         return
     series = frappe.get_value("Company", doc.company, "nmb_series") or ""
@@ -258,6 +261,9 @@ def receive_validate_reference(*args, **kwargs):
         frappe.response['description'] = "Not Exist"
     
 def cancel_invoice(doc, method):
+    send_fee_details_to_bank = frappe.get_value("Company", doc.company, "send_fee_details_to_bank") or 0
+    if not send_fee_details_to_bank:
+        return
     data = {
     "reference" : str(doc.bank_reference), 
     }
