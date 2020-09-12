@@ -5,7 +5,7 @@ from erpnext.stock.doctype.stock_entry.stock_entry import StockEntry
 
 def validate_with_material_request(self):
     bypass_material_request_validation = frappe.get_value("Company", self.company,"bypass_material_request_validation") or 0
-    if not bypass_material_request_validation:
+    if bypass_material_request_validation:
         return
     for item in self.get("items"):
         if item.material_request:
