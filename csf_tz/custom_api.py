@@ -1012,8 +1012,14 @@ def make_withholding_tax_gl_entries_for_purchase(doc, method):
     for item in doc.items:
         if not item.withholding_tax_rate > 0:
             continue
-        wtax_base_amount = flt(item.base_net_rate * item.qty * item.withholding_tax_rate / 100, float_precision)
-        creditor_amount = wtax_base_amount if doc.party_account_currency == default_currency else flt(item.net_rate* item.qty * item.withholding_tax_rate / 100, float_precision)
+        if doc.party_account_currency == default_currency:
+            exchange_rate = 1
+        else:
+            exchange_rate = doc.conversion_rate
+
+        creditor_amount = flt(item.net_rate * item.qty * item.withholding_tax_rate / 100, float_precision)
+        wtax_base_amount = creditor_amount * exchange_rate
+
         jl_rows = []
         debit_row = dict(
             account = doc.credit_to,
@@ -1021,7 +1027,7 @@ def make_withholding_tax_gl_entries_for_purchase(doc, method):
             party = doc.supplier,
             debit_in_account_currency = creditor_amount,
             account_curremcy = default_currency if doc.party_account_currency == default_currency else doc.currency,
-            exchange_rate = 1 if doc.party_account_currency == default_currency else doc.conversion_rate,
+            exchange_rate = exchange_rate,
             cost_center =  item.cost_center,
             reference_type = "Purchase Invoice",
             reference_name = doc.name
