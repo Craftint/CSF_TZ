@@ -6,6 +6,9 @@ frappe.ui.form.on('Student Applicant', {
 		frm.trigger("setup_btns");
 	},
 	setup_btns: function(frm) {
+		if (!frm.send_fee_details_to_bank) {
+			return;
+		}
 		if(frm.doc.docstatus== 1 ) {
 			frm.clear_custom_buttons();
 			if(["Applied"].includes(frm.doc.application_status)) {
@@ -22,5 +25,13 @@ frappe.ui.form.on('Student Applicant', {
 			}
 		}
 	},
+	setup: function(frm) {
+		frappe.db.get_value('Fee Structure', frm.doc.fee_structure, ["company"], function(value1) {
+			frappe.db.get_value('Company', value1.company, ["send_fee_details_to_bank"], function(value2) {
+				frm.send_fee_details_to_bank = value2.send_fee_details_to_bank || 0;
+				
+			});
+		});
+    },
 	
 });
