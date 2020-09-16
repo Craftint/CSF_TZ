@@ -143,6 +143,8 @@ app_include_js = [
 	"/assets/js/to_console.min.js"
 	]
 
+app_include_css = "/assets/csf_tz/css/theme.css"
+web_include_css = "/assets/csf_tz/css/theme.css"
 # include js, css files in header of web template
 # web_include_css = "/assets/csf_tz/css/csf_tz.css"
 # web_include_js = "/assets/csf_tz/js/csf_tz.js"
