@@ -1009,6 +1009,9 @@ def make_withholding_tax_gl_entries_for_purchase(doc, method):
     withholding_payable_account, default_currency = frappe.get_value("Company", doc.company, ["default_withholding_payable_account","default_currency"])
     if not withholding_payable_account:
         frappe.throw(_("Please Setup Withholding Payable Account in Company " + str(doc.company)))
+    withholding_payable_account_type = frappe.get_value("Account", withholding_payable_account, "account_type") or ""
+    if withholding_payable_account_type != "Payable":
+        frappe.msgprint( _("Withholding Payable Account type not 'Payable'"))
     for item in doc.items:
         if not item.withholding_tax_rate > 0:
             continue
@@ -1034,6 +1037,8 @@ def make_withholding_tax_gl_entries_for_purchase(doc, method):
         jl_rows.append(debit_row)
         credit_row = dict(
             account = withholding_payable_account,
+            party_type = "Supplier" if withholding_payable_account_type == "Payable" else "",
+            party = doc.supplier if withholding_payable_account_type == "Payable" else "", 
             credit_in_account_currency = wtax_base_amount,
             cost_center =  item.cost_center,
             account_curremcy = default_currency,
@@ -1153,8 +1158,12 @@ def make_withholding_tax_gl_entries_for_sales(doc, method):
     withholding_receivable_account, default_currency, auto_create_for_sales_withholding = frappe.get_value("Company", doc.company, ["default_withholding_receivable_account","default_currency", "auto_create_for_sales_withholding"])
     if not auto_create_for_sales_withholding:
         return
+    float_precision = cint(frappe.db.get_default("float_precision")) or 3
     if not withholding_receivable_account:
         frappe.throw(_("Please Setup Withholding Receivable Account in Company " + str(doc.company)))
+    withholding_receivable_account_type = frappe.get_value("Account", withholding_receivable_account, "account_type") or ""
+    if withholding_receivable_account_type != "Receivable":
+        frappe.msgprint(_("Withholding Payable Account type not 'Receivable'"))
     for item in doc.items:
         if not item.withholding_tax_rate > 0:
             continue
@@ -1164,7 +1173,6 @@ def make_withholding_tax_gl_entries_for_sales(doc, method):
         else:
             exchange_rate = doc.conversion_rate
         debtor_amount = flt(item.net_rate * item.qty * item.withholding_tax_rate / 100, float_precision)
-        wtax_base_amount = debtor_amount * exchange_rate
 
         jl_rows = []
         credit_row = dict(
@@ -1182,6 +1190,8 @@ def make_withholding_tax_gl_entries_for_sales(doc, method):
 
         debit_row = dict(
             account = withholding_receivable_account,
+            party_type = "customer" if withholding_receivable_account_type == "Receivable" else "",
+            party = doc.customer if withholding_receivable_account_type == "Receivable" else "",
             debit_in_account_currency = item.base_net_rate * item.qty * item.withholding_tax_rate / 100,
             cost_center =  item.cost_center,
             account_curremcy = default_currency,

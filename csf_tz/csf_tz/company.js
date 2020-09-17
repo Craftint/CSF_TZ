@@ -5,7 +5,7 @@ frappe.ui.form.on("Company", {
 			return {
 				"filters": {
                     "company": frm.doc.name,
-                    "account_type": "Tax",
+                    "account_type": "Payable",
 				}
 			};
 		});
@@ -13,7 +13,7 @@ frappe.ui.form.on("Company", {
 			return {
 				"filters": {
                     "company": frm.doc.name,
-                    "account_type": "Tax",
+                    "account_type": "Receivable",
 				}
 			};
 		});
