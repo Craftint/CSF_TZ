@@ -8,7 +8,6 @@ from frappe.utils import getdate, nowdate, flt, cint, formatdate, cstr, now, tim
 from collections import OrderedDict
 from erpnext.accounts.utils import get_currency_precision
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions, get_dimension_with_children
-from csf_tz import console
 
 #  This report gives a summary of all Outstanding Invoices considering the following
 
