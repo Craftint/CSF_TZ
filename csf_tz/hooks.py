@@ -287,9 +287,6 @@ doc_events = {
 	},
 	"Stock Entry": {
 		"validate": "csf_tz.custom_api.calculate_total_net_weight",
-		"onload": "csf_tz.csftz_hooks.stock.validate_with_material_request_override",
-		"refresh": "csf_tz.csftz_hooks.stock.validate_with_material_request_override",
-		"reload":" csf_tz.csftz_hooks.stock.validate_with_material_request_override",
 	},
 	"Student Applicant": {
 		"on_update_after_submit":"csf_tz.csftz_hooks.student_applicant.make_student_applicant_fees",
