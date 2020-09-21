@@ -1,7 +1,7 @@
 // Copyright (c) 2016, Aakvatech Ltd. and Contributors
 // License: GNU General Public License v3. See license.txt
 
-frappe.query_reports["Accounts Receivable"] = {
+frappe.query_reports["Accounts Receivable Multi Currency"] = {
 	"filters": [
 		{
 			"fieldname":"company",
