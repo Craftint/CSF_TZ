@@ -1009,12 +1009,12 @@ def make_withholding_tax_gl_entries_for_purchase(doc, method):
     withholding_payable_account, default_currency = frappe.get_value("Company", doc.company, ["default_withholding_payable_account","default_currency"])
     if not withholding_payable_account:
         frappe.throw(_("Please Setup Withholding Payable Account in Company " + str(doc.company)))
-    withholding_payable_account_type = frappe.get_value("Account", withholding_payable_account, "account_type") or ""
-    if withholding_payable_account_type != "Payable":
-        frappe.msgprint( _("Withholding Payable Account type not 'Payable'"))
     for item in doc.items:
         if not item.withholding_tax_rate > 0:
             continue
+        withholding_payable_account_type = frappe.get_value("Account", withholding_payable_account, "account_type") or ""
+        if withholding_payable_account_type != "Payable":
+            frappe.msgprint( _("Withholding Payable Account type not 'Payable'"))
         if doc.party_account_currency == default_currency:
             exchange_rate = 1
         else:
@@ -1161,13 +1161,12 @@ def make_withholding_tax_gl_entries_for_sales(doc, method):
     float_precision = cint(frappe.db.get_default("float_precision")) or 3
     if not withholding_receivable_account:
         frappe.throw(_("Please Setup Withholding Receivable Account in Company " + str(doc.company)))
-    withholding_receivable_account_type = frappe.get_value("Account", withholding_receivable_account, "account_type") or ""
-    if withholding_receivable_account_type != "Receivable":
-        frappe.msgprint(_("Withholding Payable Account type not 'Receivable'"))
     for item in doc.items:
         if not item.withholding_tax_rate > 0:
             continue
-
+        withholding_receivable_account_type = frappe.get_value("Account", withholding_receivable_account, "account_type") or ""
+        if withholding_receivable_account_type != "Receivable":
+            frappe.msgprint(_("Withholding Payable Account type not 'Receivable'"))
         if doc.party_account_currency == default_currency:
             exchange_rate = 1
         else:
