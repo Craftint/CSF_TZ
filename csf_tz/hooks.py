@@ -173,6 +173,7 @@ doctype_js = {
 	"Purchase Receipt": "csf_tz/purchase_receipt.js",
 	"Purchase Order": "csf_tz/purchase_order.js",
 	"Student Applicant": "csf_tz/student_applicant.js",
+	"Program Enrollment": "csf_tz/program_enrollment.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -265,6 +266,7 @@ doc_events = {
 		"onload":"csf_tz.csftz_hooks.program_enrollment.create_course_enrollments_override",
 		"refresh":"csf_tz.csftz_hooks.program_enrollment.create_course_enrollments_override",
 		"reload":"csf_tz.csftz_hooks.program_enrollment.create_course_enrollments_override",
+		"before_submit":"csf_tz.csftz_hooks.program_enrollment.validate_submit_program_enrollment",
 	},
 	"*": {
 		"validate"                      :  ["csf_tz.csf_tz.doctype.visibility.visibility.run_visibility"],
