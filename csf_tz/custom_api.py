@@ -636,7 +636,7 @@ def validate_item_remaining_qty(item_code, company, warehouse = None, stock_qty 
         item_balance = get_item_balance(item_code, company, warehouse) or 0
         item_remaining_qty =  item_balance - pending_delivery_item_count
         if float(stock_qty) > item_remaining_qty:
-            frappe.throw(_("Remaining Qty for '{0}' Is: '{1}'".format(item_code, item_remaining_qty)))
+            frappe.throw(_("Item Balance: '{2}', Pending delivery: '{3}', Remaining Qty for '{0}' Is: '{1}'".format(item_code, item_remaining_qty, item_balance, pending_delivery_item_count)))
 
 
 def validate_items_remaining_qty(doc, methohd):
