@@ -12,7 +12,7 @@ from erpnext.accounts.report.financial_statements import get_cost_centers_with_c
 from six import iteritems
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions, get_dimension_with_children
 from collections import OrderedDict
-from csf_tz.custom_api import print_out
+# from csf_tz import console
 
 def execute(filters=None):
 	if not filters:
@@ -152,7 +152,7 @@ def get_gl_entries(filters):
 	for entry in gl_entries:
 		docktype = entry['voucher_type']
 		docname = entry['voucher_no']
-		entry_curremcy = entry['account_currency']
+		entry_currency = entry['account_currency']
 		doc_currency = company_currency
 		items_list = ""
 
@@ -240,7 +240,7 @@ def get_gl_entries(filters):
 					items_list += ") "
 
 		elif docktype == "Journal Entry":
-			doc_currency = entry_curremcy
+			doc_currency = entry_currency
 			if entry.get('credit'):
 				doc_amount = entry['credit_in_account_currency']
 			else:
@@ -262,7 +262,6 @@ def get_gl_entries(filters):
 		entry['items'] = str(items_list) if items_list else  ""
 		converted_gl_list.append(entry)
 
-	print_out(converted_gl_list)
 
 	if filters.get('presentation_currency'):
 		return convert_to_presentation_currency(converted_gl_list, currency_map)
@@ -445,6 +444,7 @@ def get_accountwise_gle(filters, gl_entries, gle_map):
 def get_result_as_list(data, filters):
 	balance = 0
 	inv_details = get_supplier_invoice_details()
+	updated_data = []
 
 	for d in data:
 		if not d.get('posting_date'):
@@ -456,7 +456,22 @@ def get_result_as_list(data, filters):
 		d['account_currency'] = filters.account_currency
 		d['bill_no'] = inv_details.get(d.get('against_voucher'), '')
 
-	return data
+		if not ((d.get("credit_foreign") and d.get("debit_foreign")) and (d.get("credit_foreign") == d.get("debit_foreign"))):
+			updated_data.append(d)
+
+			if d.get("voucher_type") == "Journal Entry" and filters.get("account"):
+				jv_doc = frappe.get_doc(d["voucher_type"],d["voucher_no"])
+				for row in jv_doc.accounts:
+					if row.account != d["account"]:
+						new_entry = {}
+						new_entry["posting_date"] = d["posting_date"]
+						new_entry["against_acount"] = row.account
+						new_entry["against_debit"] = row.debit_in_account_currency
+						new_entry["against_credit"] = row.credit_in_account_currency
+						new_entry["against_currency"] = row.account_currency
+						updated_data.append(new_entry)
+
+	return updated_data
 
 def get_supplier_invoice_details():
 	inv_details = {}
@@ -554,6 +569,29 @@ def get_columns(filters):
 			"label": _("Against Account"),
 			"fieldname": "against",
 			"width": 120
+		},
+		{
+			"label": _("Against AC Name"),
+			"fieldname": "against_acount",
+			"width": 120
+		},
+		{
+			"label": _("Against Debit"),
+			"fieldname": "against_debit",
+			"fieldtype": "Float",
+			"width": 100
+		},
+		{
+			"label": _("Against Credit"),
+			"fieldname": "against_credit",
+			"fieldtype": "Float",
+			"width": 100
+		},
+		{
+			"label": _("Against Currency"),
+			"fieldname": "against_currency",
+			# "fieldtype": "Float",
+			"width": 100
 		},
 		{
 			"label": _("Party Type"),
