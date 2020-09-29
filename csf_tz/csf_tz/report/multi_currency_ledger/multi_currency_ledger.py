@@ -459,17 +459,17 @@ def get_result_as_list(data, filters):
 		if not ((d.get("credit_foreign") and d.get("debit_foreign")) and (d.get("credit_foreign") == d.get("debit_foreign"))):
 			updated_data.append(d)
 
-		if d.get("voucher_type") == "Journal Entry" and filters.get("account"):
-			jv_doc = frappe.get_doc(d["voucher_type"],d["voucher_no"])
-			for row in jv_doc.accounts:
-				if row.account != d["account"]:
-					new_entry = {}
-					new_entry["posting_date"] = d["posting_date"]
-					new_entry["against_acount"] = row.account
-					new_entry["against_debit"] = row.debit_in_account_currency
-					new_entry["against_credit"] = row.credit_in_account_currency
-					new_entry["against_currency"] = row.account_currency
-					updated_data.append(new_entry)
+			if d.get("voucher_type") == "Journal Entry" and filters.get("account"):
+				jv_doc = frappe.get_doc(d["voucher_type"],d["voucher_no"])
+				for row in jv_doc.accounts:
+					if row.account != d["account"]:
+						new_entry = {}
+						new_entry["posting_date"] = d["posting_date"]
+						new_entry["against_acount"] = row.account
+						new_entry["against_debit"] = row.debit_in_account_currency
+						new_entry["against_credit"] = row.credit_in_account_currency
+						new_entry["against_currency"] = row.account_currency
+						updated_data.append(new_entry)
 
 	return updated_data
 
