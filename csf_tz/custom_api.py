@@ -578,8 +578,8 @@ def delete_doc(doctype,docname):
 
 def get_pending_delivery_item_count(item_code, company, warehouse):
     query = """ SELECT SUM(SIT.delivered_qty) as delivered_cont ,SUM(SIT.stock_qty) as sold_cont
-            FROM `tabSales Invoice` AS SI 
-            INNER JOIN `tabSales Invoice Item` AS SIT ON SIT.parent = SI.name 
+            FROM `tabSales Order` AS SI 
+            INNER JOIN `tabSales Order Item` AS SIT ON SIT.parent = SI.name 
             WHERE 
                 SIT.item_code = '%s' 
                 AND SIT.parent = SI.name 
