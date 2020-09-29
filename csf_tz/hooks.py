@@ -108,6 +108,8 @@ fixtures = [
 		"Student Applicant-bank_reference",
 		"Student Applicant-program_enrollment",
 		"Company-bypass_material_request_validation",
+		"Bank Reconciliation-opening_balance",
+		"Bank Reconciliation-closing_balance",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-pos_profile-in_standard_filter",
@@ -173,6 +175,7 @@ doctype_js = {
 	"Purchase Receipt": "csf_tz/purchase_receipt.js",
 	"Purchase Order": "csf_tz/purchase_order.js",
 	"Student Applicant": "csf_tz/student_applicant.js",
+	"Bank Reconciliation": "csf_tz/bank_reconciliation.js",
 	"Program Enrollment": "csf_tz/program_enrollment.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
