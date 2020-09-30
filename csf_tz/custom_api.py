@@ -584,7 +584,6 @@ def get_pending_delivery_item_count(item_code, company, warehouse):
                 SIT.item_code = '%s' 
                 AND SIT.parent = SI.name 
                 AND SI.docstatus= 1 
-                AND SI.update_stock != 1 
                 AND SI.company = '%s' 
                 AND SIT.warehouse = '%s' 
             """ %(item_code,company,warehouse)
