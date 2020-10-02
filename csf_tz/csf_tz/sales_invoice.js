@@ -23,6 +23,9 @@ frappe.ui.form.on("Sales Invoice", {
     },  
     customer: function(frm) {
         setTimeout(function() {
+            if (!frm.doc.customer) {
+                return
+            }
             if (!frm.doc.tax_category){
                 frappe.call({
                     method: "csf_tz.custom_api.get_tax_category",
