@@ -586,7 +586,7 @@ def get_pending_delivery_item_count(item_code, company, warehouse):
                 AND SI.docstatus= 1 
                 AND SI.company = '%s' 
                 AND SIT.warehouse = '%s' 
-                AND SI.status IN ('Closed', 'On Hold', 'Cancelled')
+                AND SI.status NOT IN ('Closed', 'On Hold', 'Cancelled')
             """ %(item_code,company,warehouse)
 
     counts = frappe.db.sql(query,as_dict=True)
@@ -635,7 +635,7 @@ def validate_item_remaining_qty(item_code, company, warehouse = None, stock_qty 
         pending_delivery_item_count = get_pending_delivery_item_count(item_code, company, warehouse) or 0
         item_balance = get_item_balance(item_code, company, warehouse) or 0
         # The float(stock_qty) is removed to allow ignore the item itself
-        item_remaining_qty =  item_balance - pending_delivery_item_count - float(stock_qty)
+        item_remaining_qty =  item_balance - (pending_delivery_item_count - float(stock_qty))
         if float(stock_qty) > item_remaining_qty:
             frappe.throw(_("Item Balance: '{2}', Pending delivery: '{3}', Remaining Qty for '{0}' Is: '{1}'".format(item_code, item_remaining_qty, item_balance, pending_delivery_item_count)))
 
