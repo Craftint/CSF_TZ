@@ -1,0 +1,27 @@
+frappe.ui.form.on("Payroll Entry", {
+    setup: function(frm) {
+        frm.trigger("create_update_slips_btn");
+        
+    },
+    refresh:function(frm) {
+        frm.trigger("create_update_slips_btn");
+    },
+    create_update_slips_btn: function (frm) {
+        if (frm.doc.docstatus != 1) {
+            return
+        }
+        frm.add_custom_button(__("Update Salary Slip"), function() {
+            frappe.call({
+                method: 'csf_tz.csftz_hooks.payroll.update_slips',
+                args: {
+                    payroll_entry: frm.doc.name,
+                },
+                callback: function(r) {
+                    if (r.message) {
+                        console.log(r.message);
+                    }
+                }
+            });
+        });
+    },
+});
