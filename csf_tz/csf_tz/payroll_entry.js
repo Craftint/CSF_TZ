@@ -10,7 +10,7 @@ frappe.ui.form.on("Payroll Entry", {
         if (frm.doc.docstatus != 1) {
             return
         }
-        frm.add_custom_button(__("Update Salary Slip"), function() {
+        frm.add_custom_button(__("Update Salary Slips"), function() {
             frappe.call({
                 method: 'csf_tz.csftz_hooks.payroll.update_slips',
                 args: {

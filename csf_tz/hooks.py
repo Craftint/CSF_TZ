@@ -176,6 +176,7 @@ doctype_js = {
 	"Bank Reconciliation": "csf_tz/bank_reconciliation.js",
 	"Program Enrollment": "csf_tz/program_enrollment.js",
 	"Payroll Entry": "csf_tz/payroll_entry.js",
+	"Salary Slip": "csf_tz/salary_slip.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
