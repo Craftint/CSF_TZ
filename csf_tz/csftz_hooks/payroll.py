@@ -3,7 +3,7 @@ import frappe
 from frappe import _
 import frappe
 import os
-# from frappe.utils.print_format import download_multi_pdf
+from frappe.utils.background_jobs import enqueue
 from frappe.utils.pdf import get_pdf, cleanup
 from PyPDF2 import PdfFileWriter
 from csf_tz import console
@@ -39,6 +39,12 @@ def update_slip(salary_slip):
 
 @frappe.whitelist()
 def print_slips(payroll_entry):
+    enqueue(method=enqueue_print_slips, queue='short', timeout=100000, is_async=True ,job_name="print_salary_slips", kwargs=payroll_entry )
+
+
+def enqueue_print_slips(kwargs):
+    console("Start Printing")
+    payroll_entry = kwargs
     ss_data = frappe.get_all("Salary Slip", filters={
                              "payroll_entry": payroll_entry})
     ss_list = []
@@ -47,9 +53,15 @@ def print_slips(payroll_entry):
     doctype = dict(
         {"Salary Slip": ss_list}
     )
+    print_format = ""
+    default_print_format = frappe.db.get_value('Property Setter', dict(property='default_print_format', doc_type="Salary Slip"), "value")
+    if default_print_format:
+        print_format = default_print_format
+    else:
+        print_format = "Standard"
 
     pdf = download_multi_pdf(doctype, payroll_entry,
-                             format="Standard", no_letterhead=1)
+                                format=print_format, no_letterhead=1)
     if pdf:
         ret = frappe.get_doc({
             "doctype": "File",
@@ -61,7 +73,7 @@ def print_slips(payroll_entry):
             "content": pdf
         })
         ret.save(ignore_permissions=1)
-        frappe.msgprint(_("The PDF file is ready in attatchments"))
+        console("Printing Finished", "The PDF file is ready in attatchments")
         return ret
 
 

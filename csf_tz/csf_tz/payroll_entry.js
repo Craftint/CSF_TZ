@@ -36,11 +36,11 @@ frappe.ui.form.on("Payroll Entry", {
                 args: {
                     payroll_entry: frm.doc.name,
                 },
-                callback: function(r) {
-                    if (r.message) {
-                        frm.reload_doc();
-                    }
-                }
+                // callback: function(r) {
+                //     if (r.message) {
+                //         frm.reload_doc();
+                //     }
+                // }
             });
         });
     },
