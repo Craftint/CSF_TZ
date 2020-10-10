@@ -8,7 +8,6 @@ frappe.JobCards.job_cards = class {
                 this.$parent = $(parent);
                 this.page = parent.page;
                 this.make_body();
-                
         }
         make_body() {
                 this.$EL = this.$parent.find('.layout-main');
@@ -19,9 +18,8 @@ frappe.JobCards.job_cards = class {
                         },
                         render: h => h(Job_Cards),
                 });
-                
-        }       
+        }
         setup_header() {
-                
+
         }
 };
