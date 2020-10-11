@@ -16,13 +16,7 @@ import csf_tz
 
 @frappe.whitelist()
 def app_error_log(title,error):
-    d = frappe.get_doc({
-            "doctype": "Custom Error Log",
-            "title":str("User:")+str(title),
-            "error":traceback.format_exc()
-        })
-    d = d.insert(ignore_permissions=True)
-    return d    
+    frappe.log(traceback.format_exc())
 
 @frappe.whitelist()
 def getInvoiceExchangeRate(date,currency):
