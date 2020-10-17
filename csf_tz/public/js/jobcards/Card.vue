@@ -7,7 +7,7 @@
             cardData.operation.name
           }}</span>
         </v-card-title>
-        <v-row class="ml-2">
+        <v-row class="mx-3">
           <v-col cols="5">
             <v-img
               max-height="600"
@@ -39,8 +39,8 @@
           </v-col>
           <v-col cols="3">
             <v-img
-              max-height="250"
-              max-width="250"
+              max-height="400"
+              max-width="400"
               :src="cardData.operation.image"
             >
             </v-img>
