@@ -12,17 +12,11 @@ from erpnext.stock.utils import get_stock_balance, get_latest_stock_qty
 from erpnext.stock.doctype.batch.batch import get_batch_qty
 from erpnext.accounts.utils import get_account_currency
 import csf_tz
-
+from csf_tz import console
 
 @frappe.whitelist()
 def app_error_log(title,error):
-    d = frappe.get_doc({
-            "doctype": "Custom Error Log",
-            "title":str("User:")+str(title),
-            "error":traceback.format_exc()
-        })
-    d = d.insert(ignore_permissions=True)
-    return d    
+    frappe.log(traceback.format_exc())
 
 @frappe.whitelist()
 def getInvoiceExchangeRate(date,currency):
@@ -37,9 +31,10 @@ def getInvoiceExchangeRate(date,currency):
 @frappe.whitelist()
 def getInvoice(currency,name):
     try:
-        sinv_details = frappe.get_all("Sales Invoice",filters = [["Sales Invoice","currency","=",str(currency)],["Sales Invoice","status","in",["Unpaid","Overdue"]]],fields = ["name","grand_total","conversion_rate","currency"])
-        pinv_details = frappe.get_all("Purchase Invoice",filters = [["Purchase Invoice","currency","=",str(currency)],["Purchase Invoice","status","in",["Unpaid","Overdue"]]],fields = ["name","grand_total","conversion_rate","currency"])
         doc = frappe.get_doc("Open Invoice Exchange Rate Revaluation",name)
+        company_currency = frappe.get_value("Company",doc.company,"default_currency")
+        sinv_details = frappe.get_all("Sales Invoice",filters = [["Sales Invoice","currency","=",str(currency)],["Sales Invoice","company","=",doc.company],["Sales Invoice","party_account_currency","=",company_currency],["Sales Invoice","status","in",["Unpaid","Overdue"]]],fields = ["name","grand_total","conversion_rate","currency"])
+        pinv_details = frappe.get_all("Purchase Invoice",filters = [["Purchase Invoice","currency","=",str(currency)],["Purchase Invoice","company","=",doc.company],["Purchase Invoice","party_account_currency","=",company_currency],["Purchase Invoice","status","in",["Unpaid","Overdue"]]],fields = ["name","grand_total","conversion_rate","currency"])
         doc.inv_err_detail = []
         doc.save()
         if sinv_details:
