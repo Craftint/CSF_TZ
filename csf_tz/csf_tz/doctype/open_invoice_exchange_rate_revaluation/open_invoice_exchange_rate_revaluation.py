@@ -80,16 +80,15 @@ def getSecondRow(invoice_gain_or_loss,invoice_type,invoice_number):
 
 @frappe.whitelist()
 def makeJournalEntry(date,je_item):
-	frappe.msgprint(str(je_item))
-	propm_setting=frappe.get_doc("Property Management Settings","Property Management Settings")
 	j_entry=frappe.get_doc(dict(
 		doctype="Journal Entry",
 		posting_date=date,
-		company=propm_setting.company,
+		company=frappe.db.get_single_value('Global Defaults', 'default_company'),
 		accounts=je_item,
 		voucher_type='Exchange Rate Revaluation',
 		multi_currency=1
-	)).insert()
+	))
+	j_entry.save()
 	j_entry.submit()
 	return j_entry.name
 

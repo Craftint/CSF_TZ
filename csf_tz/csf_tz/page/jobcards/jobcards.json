@@ -1,0 +1,30 @@
+{
+ "content": null,
+ "creation": "2020-10-10 02:21:11.479103",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2020-10-10 02:22:44.095512",
+ "modified_by": "Administrator",
+ "module": "CSF TZ",
+ "name": "jobcards",
+ "owner": "Administrator",
+ "page_name": "Job Cards",
+ "restrict_to_domain": "Manufacturing",
+ "roles": [
+  {
+   "role": "Manufacturing User"
+  },
+  {
+   "role": "Manufacturing Manager"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 1,
+ "title": "Job Cards"
+}
