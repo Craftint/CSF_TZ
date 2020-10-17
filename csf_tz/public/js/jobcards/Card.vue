@@ -12,7 +12,7 @@
             <v-img
               max-height="600"
               max-width="600"
-              :src="cardData.work_order_image"
+              :src="cardData.operation.image"
             >
             </v-img>
           </v-col>
@@ -21,9 +21,16 @@
               <v-list-item three-line>
                 <v-list-item-content>
                   <div class="overline mb-4">{{ cardData.name }}</div>
-                  <v-list-item-title class="headline mb-1">
-                    {{ cardData.operation.name }}
-                  </v-list-item-title>
+                  <v-textarea
+                    label="Operation Description"
+                    auto-grow
+                    outlined
+                    rows="3"
+                    row-height="25"
+                    disabled
+                    v-model="cardData.operation.description"
+                    shaped>
+                  </v-textarea>
                   <v-list-item-subtitle>
                     QTY: {{ cardData.for_quantity }}
                   </v-list-item-subtitle>
@@ -41,7 +48,7 @@
             <v-img
               max-height="400"
               max-width="400"
-              :src="cardData.operation.image"
+              :src="cardData.work_order_image"
             >
             </v-img>
           </v-col>
@@ -70,9 +77,9 @@ export default {
     },
   },
   created: function () {
-    evntBus.$on("open_card", (item) => {
+    evntBus.$on("open_card", (job_card) => {
       this.Dialog = true;
-      this.cardData = item;
+      this.cardData = job_card;
     });
   },
 };
