@@ -62,11 +62,43 @@
             </v-img>
             <v-divider></v-divider>
 
+            <v-autocomplete
+              dense
+              auto-select-first
+              outlined
+              color="indigo"
+              label="Employee"
+              v-model="cardData.employee"
+              :items="employees"
+              item-text="name"
+              background-color="white"
+              no-data-text="Customer not found"
+              hide-details
+              :filter="customFilter"
+            >
+              <template v-slot:item="data">
+                <template>
+                  <v-list-item-content>
+                    <v-list-item-title
+                      class="indigo--text subtitle-1"
+                      v-html="data.item.name"
+                    ></v-list-item-title>
+                    <v-list-item-subtitle
+                      v-html="`${data.item.employee_name}`"
+                    ></v-list-item-subtitle>
+                  </v-list-item-content>
+                </template>
+              </template>
+            </v-autocomplete>
           </v-col>
         </v-row>
         <v-card-actions class="mx-3">
-          <v-btn v-if="!start" @click="start_por" color="success" dark >Start</v-btn>
-          <v-btn v-if="start" @click="pause_por" color="warning" dark >Pause</v-btn>
+          <v-btn v-if="!start" @click="start_por" color="success" dark
+            >Start</v-btn
+          >
+          <v-btn v-if="start" @click="pause_por" color="warning" dark
+            >Pause</v-btn
+          >
           <v-btn color="primary" dark @click="close_dialog">Submit</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="error" dark @click="close_dialog">Close</v-btn>
@@ -88,7 +120,7 @@ export default {
   watch: {
     Dialog(value) {
       if (value) {
-        this.get_employees()
+        this.get_employees();
       }
     },
   },
@@ -98,11 +130,10 @@ export default {
     },
     start_por() {
       if (!this.cardData.employee) {
-          frappe.msgprint("Please set Employee")
-      
+        frappe.msgprint("Please set Employee");
       } else {
         this.start = true;
-        console.log(this.get_employees())
+        console.log(this.get_employees());
       }
     },
     pause_por() {
@@ -113,7 +144,7 @@ export default {
       let employees;
       frappe.call({
         method: "csf_tz.csf_tz.page.jobcards.jobcards.get_employees",
-        args: {company:this.cardData.company},
+        args: { company: this.cardData.company },
         async: false,
         callback: function (r) {
           if (r.message) {
@@ -121,7 +152,16 @@ export default {
           }
         },
       });
-      this.employees = employees
+      this.employees = employees;
+    },
+    customFilter(item, queryText, itemText) {
+      const searchText = queryText.toLowerCase()
+      const textOne = item.name.toLowerCase();
+      const textTwo = item.employee_name.toLowerCase();
+
+      return (
+        textOne.indexOf(searchText) > -1 || textTwo.indexOf(searchText) > -1
+      );
     },
   },
   created: function () {
