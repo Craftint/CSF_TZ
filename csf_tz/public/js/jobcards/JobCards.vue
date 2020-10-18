@@ -102,6 +102,9 @@ export default {
   },
   created: function () {
     this.get_data();
+    evntBus.$on("show_messag", (msg) => {
+      frappe.msgprint(msg);
+    });
   },
 };
 </script>

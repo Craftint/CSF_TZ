@@ -130,10 +130,9 @@ export default {
     },
     start_por() {
       if (!this.cardData.employee) {
-        frappe.msgprint("Please set Employee");
+        evntBus.$emit("show_messag", "Please set Employee");
       } else {
         this.start = true;
-        console.log(this.get_employees());
       }
     },
     pause_por() {
