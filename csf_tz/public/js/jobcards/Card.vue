@@ -7,6 +7,24 @@
             cardData.operation.name
           }}</span>
           <v-spacer></v-spacer>
+          <div
+            class="stopwatch"
+            style="
+              font-weight: bold;
+              margin: 0px 13px 0px 2px;
+              color: #545454;
+              font-size: 18px;
+              display: inline-block;
+              vertical-align: text-bottom;
+            "
+          >
+            <span class="hours">{{ timer.hours }}</span>
+            <span class="colon">:</span>
+            <span class="minutes">{{ timer.minutes }}</span>
+            <span class="colon">:</span>
+            <span class="seconds">{{ timer.seconds }}</span>
+          </div>
+          <v-spacer></v-spacer>
           <span class="overline">{{ cardData.name }}</span>
         </v-card-title>
         <v-row class="mx-3">
@@ -74,6 +92,7 @@
               background-color="white"
               no-data-text="Customer not found"
               hide-details
+              :readonly="cardData.employee ? true : false"
               :filter="customFilter"
             >
               <template v-slot:item="data">
@@ -116,6 +135,11 @@ export default {
     cardData: "",
     start: false,
     employees: "",
+    timer: {
+      hours: 0,
+      minutes: 0,
+      seconds: 0,
+    },
   }),
   watch: {
     Dialog(value) {
@@ -133,6 +157,18 @@ export default {
         evntBus.$emit("show_messag", "Please set Employee");
       } else {
         this.start = true;
+        let row = frappe.model.add_child(
+          this.cardData,
+          "Job Card Time Log",
+          "time_logs"
+        );
+        row.from_time = frappe.datetime.now_datetime();
+        row.job_started = 1;
+        row.started_time = row.from_time;
+        row.status = "Work In Progress";
+        if (!frappe.flags.resume_job) {
+          this.cardData.current_time = 0;
+        }
       }
     },
     pause_por() {
@@ -154,7 +190,7 @@ export default {
       this.employees = employees;
     },
     customFilter(item, queryText, itemText) {
-      const searchText = queryText.toLowerCase()
+      const searchText = queryText.toLowerCase();
       const textOne = item.name.toLowerCase();
       const textTwo = item.employee_name.toLowerCase();
 
@@ -162,11 +198,62 @@ export default {
         textOne.indexOf(searchText) > -1 || textTwo.indexOf(searchText) > -1
       );
     },
+    set_timer() {
+      const vm = this;
+      let currentIncrement = this.cardData.current_time || 0;
+      if (this.cardData.started_time || this.cardData.current_time) {
+        if (this.cardData.status == "On Hold") {
+          updateStopwatch(currentIncrement);
+          console.log("currentIncrement",currentIncrement)
+        } else {
+          console.log("else")
+          currentIncrement += moment(frappe.datetime.now_datetime()).diff(
+            moment(this.cardData.started_time),
+            "seconds"
+          );
+          console.log("diff",currentIncrement)
+          initialiseTimer();
+        }
+
+        function initialiseTimer() {
+          const interval = setInterval(() => {
+            var current = setCurrentIncrement();
+            console.log("current",current)
+            updateStopwatch(current);
+          }, 1000);
+        }
+
+        function updateStopwatch(increment) {
+          // console.log(increment)
+          var hours = Math.floor(increment / 3600);
+          var minutes = Math.floor((increment - hours * 3600) / 60);
+          var seconds = increment - hours * 3600 - minutes * 60;
+
+          vm.timer.hours =
+            hours < 10 ? "0" + hours.toString() : hours.toString();
+          vm.timer.minutes =
+            minutes < 10 ? "0" + minutes.toString() : minutes.toString();
+          vm.timer.seconds =
+            seconds < 10 ? "0" + seconds.toString() : seconds.toString();
+        }
+
+        function setCurrentIncrement() {
+          currentIncrement += 1;
+          return currentIncrement;
+        }
+      }
+    },
   },
   created: function () {
     evntBus.$on("open_card", (job_card) => {
       this.Dialog = true;
       this.cardData = job_card;
+      this.timer = {
+      hours: 0,
+      minutes: 0,
+      seconds: 0,
+    },
+      this.set_timer();
     });
   },
 };
