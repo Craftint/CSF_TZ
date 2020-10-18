@@ -6,13 +6,19 @@
           <span class="headline indigo--text">{{
             cardData.operation.name
           }}</span>
+          <v-spacer></v-spacer>
+          <span class="overline">{{ cardData.name }}</span>
         </v-card-title>
         <v-row class="mx-3">
           <v-col cols="5">
             <v-img
               max-height="600"
               max-width="600"
-              :src="cardData.operation.image"
+              class="img-border"
+              :src="
+                cardData.operation.image ||
+                '/assets/csf_tz/js/jobcards/placeholder-image.png'
+              "
             >
             </v-img>
           </v-col>
@@ -20,24 +26,23 @@
             <v-card-text class="pa-0">
               <v-list-item three-line>
                 <v-list-item-content>
-                  <div class="overline mb-4">{{ cardData.name }}</div>
                   <v-textarea
                     label="Operation Description"
                     auto-grow
                     outlined
                     rows="3"
                     row-height="25"
-                    disabled
+                    readonly
                     v-model="cardData.operation.description"
-                    shaped>
+                  >
                   </v-textarea>
-                  <v-list-item-subtitle>
+                  <v-list-item-subtitle class="subtitle-1 mb-1">
                     QTY: {{ cardData.for_quantity }}
                   </v-list-item-subtitle>
-                  <v-list-item-subtitle>
+                  <v-list-item-subtitle class="subtitle-1 mb-1">
                     Production Item: {{ cardData.production_item }}
                   </v-list-item-subtitle>
-                  <v-list-item-subtitle>
+                  <v-list-item-subtitle class="subtitle-1 mb-1">
                     Satus: {{ cardData.status }}
                   </v-list-item-subtitle>
                 </v-list-item-content>
@@ -48,13 +53,21 @@
             <v-img
               max-height="400"
               max-width="400"
-              :src="cardData.work_order_image"
+              class="img-border"
+              :src="
+                cardData.work_order_image ||
+                '/assets/csf_tz/js/jobcards/placeholder-image.png'
+              "
             >
             </v-img>
+            <v-divider></v-divider>
+
           </v-col>
         </v-row>
         <v-card-actions class="mx-3">
-          <v-btn color="primary" dark @click="close_dialog">Start</v-btn>
+          <v-btn v-if="!start" @click="start_por" color="success" dark >Start</v-btn>
+          <v-btn v-if="start" @click="pause_por" color="warning" dark >Pause</v-btn>
+          <v-btn color="primary" dark @click="close_dialog">Submit</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="error" dark @click="close_dialog">Close</v-btn>
         </v-card-actions>
@@ -69,11 +82,46 @@ export default {
   data: () => ({
     Dialog: false,
     cardData: "",
+    start: false,
+    employees: "",
   }),
-  watch: {},
+  watch: {
+    Dialog(value) {
+      if (value) {
+        this.get_employees()
+      }
+    },
+  },
   methods: {
     close_dialog() {
       this.Dialog = false;
+    },
+    start_por() {
+      if (!this.cardData.employee) {
+          frappe.msgprint("Please set Employee")
+      
+      } else {
+        this.start = true;
+        console.log(this.get_employees())
+      }
+    },
+    pause_por() {
+      this.start = false;
+    },
+    get_employees() {
+      const vm = this;
+      let employees;
+      frappe.call({
+        method: "csf_tz.csf_tz.page.jobcards.jobcards.get_employees",
+        args: {company:this.cardData.company},
+        async: false,
+        callback: function (r) {
+          if (r.message) {
+            employees = r.message;
+          }
+        },
+      });
+      this.employees = employees
     },
   },
   created: function () {
@@ -84,3 +132,6 @@ export default {
   },
 };
 </script>
+
+<style>
+</style>

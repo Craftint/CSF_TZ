@@ -18,3 +18,20 @@ def get_job_cards():
         card["operation"] = frappe.get_doc("Operation", card.operation)
         card["work_order_image"] = frappe.get_value("Work Order", card.work_order, "image")
     return data
+
+
+@frappe.whitelist()
+def get_employees(company):
+    data = frappe.get_list(
+        "Employee", 
+        filters={
+            "status": "Active",
+            "company": company
+        }, 
+        fields=["name","employee_name"], 
+        limit_page_length=0, 
+        order_by='name'
+    )
+
+    return data
+

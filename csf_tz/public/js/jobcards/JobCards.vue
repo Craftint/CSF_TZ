@@ -21,14 +21,21 @@
                 <v-list-item-subtitle>
                   Satus: {{ item.status }}
                 </v-list-item-subtitle>
-                <v-card-subtitle v-if="item.current_time">Current Time: {{ item.current_time/60 }}</v-card-subtitle>
+                <v-card-subtitle v-if="item.current_time"
+                  >Current Time: {{ item.current_time / 60 }}</v-card-subtitle
+                >
               </v-list-item-content>
 
               <v-img
                 max-height="150"
                 max-width="250"
-                :src="item.operation.image"
+                class="img-border mt-5"
+                :src="
+                  item.operation.image ||
+                  '/assets/csf_tz/js/jobcards/placeholder-image.png'
+                "
               ></v-img>
+      
             </v-list-item>
 
             <v-card-actions>
@@ -75,23 +82,23 @@ export default {
     open_card(item) {
       evntBus.$emit("open_card", item);
     },
-    set_status_color(status){
+    set_status_color(status) {
       if (status == "Open") {
-        return "status-Open"
+        return "status-Open";
       }
       if (status == "Work In Progress") {
-        return "status-Work"
+        return "status-Work";
       }
       if (status == "Material Transferred") {
-        return "status-Material"
+        return "status-Material";
       }
       if (status == "On Hold") {
-        return "status-Hold"
+        return "status-Hold";
       }
       if (status == "Submitted") {
-        return "status-Submitted"
+        return "status-Submitted";
       }
-    }
+    },
   },
   created: function () {
     this.get_data();
@@ -115,9 +122,12 @@ div.navbar .container {
   border-left: 5px solid teal;
 }
 .status-Hold {
-  border-left: 5px solid #607D8B;
+  border-left: 5px solid #607d8b;
 }
 .status-Submitted {
-  border-left: 5px solid #FF5722;
+  border-left: 5px solid #ff5722;
+}
+.img-border {
+  border: 1px solid #BDBDBD;
 }
 </style>
