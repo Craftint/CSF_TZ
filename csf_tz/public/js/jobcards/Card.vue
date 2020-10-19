@@ -112,10 +112,13 @@
           </v-col>
         </v-row>
         <v-card-actions class="mx-3">
-          <v-btn v-if="!start" @click="start_por" color="success" dark
+          <v-btn v-if="!cardData.job_started" @click="start_por" color="success" dark
             >Start</v-btn
           >
-          <v-btn v-if="start" @click="pause_por" color="warning" dark
+          <v-btn v-if="cardData.status == 'On Hold'" @click="resume_por" color="warning" dark
+            >Resume</v-btn
+          >
+          <v-btn v-if="cardData.status == 'Work In Progress'" @click="pause_por" color="warning" dark
             >Pause</v-btn
           >
           <v-btn color="primary" dark @click="close_dialog">Submit</v-btn>
@@ -133,12 +136,12 @@ export default {
   data: () => ({
     Dialog: false,
     cardData: "",
-    start: false,
     employees: "",
     timer: {
-      hours: 0,
-      minutes: 0,
-      seconds: 0,
+      hours: '00',
+      minutes: '00',
+      seconds: '00',
+      interval: "",
     },
   }),
   watch: {
@@ -146,33 +149,52 @@ export default {
       if (value) {
         this.get_employees();
       }
+      else {
+        clearInterval(this.timer.interval);
+      }
     },
   },
   methods: {
     close_dialog() {
       this.Dialog = false;
+      clearInterval(this.timer.interval);
     },
-    start_por() {
-      if (!this.cardData.employee) {
-        evntBus.$emit("show_messag", "Please set Employee");
-      } else {
-        this.start = true;
+    start_job() {
         let row = frappe.model.add_child(
           this.cardData,
           "Job Card Time Log",
           "time_logs"
         );
         row.from_time = frappe.datetime.now_datetime();
-        row.job_started = 1;
-        row.started_time = row.from_time;
-        row.status = "Work In Progress";
+        this.cardData.job_started = 1;
+        this.cardData.started_time = row.from_time;
+        this.cardData.status = "Work In Progress";
         if (!frappe.flags.resume_job) {
           this.cardData.current_time = 0;
         }
+        this.set_timer();
+        // frm.save("Save", () => {}, "", () => {
+        //   frm.doc.time_logs.pop(-1);
+        // });
+      
+    },
+    start_por() {
+      if (!this.cardData.employee) {
+        evntBus.$emit("show_messag", "Please set Employee");
+      } else {
+        this.start_job();
       }
+    },
+    resume_por() {
+      frappe.flags.resume_job = 1;
+      this.start_job();
     },
     pause_por() {
       this.start = false;
+      frappe.flags.pause_job = 1;
+      this.cardData.status = "On Hold";
+      clearInterval(this.timer.interval);
+      this.complete_job();
     },
     get_employees() {
       const vm = this;
@@ -205,6 +227,7 @@ export default {
         if (this.cardData.status == "On Hold") {
           updateStopwatch(currentIncrement);
           console.log("currentIncrement",currentIncrement)
+          clearInterval(this.timer.interval);
         } else {
           console.log("else")
           currentIncrement += moment(frappe.datetime.now_datetime()).diff(
@@ -216,7 +239,7 @@ export default {
         }
 
         function initialiseTimer() {
-          const interval = setInterval(() => {
+          vm.timer.interval = setInterval(() => {
             var current = setCurrentIncrement();
             console.log("current",current)
             updateStopwatch(current);
@@ -243,16 +266,40 @@ export default {
         }
       }
     },
+    complete_job(completed_time, completed_qty) {
+      console.log("complete_job")
+      this.cardData.time_logs.forEach(d => {
+			if (d.from_time && !d.to_time) {
+				d.to_time = completed_time || frappe.datetime.now_datetime();
+				d.completed_qty = completed_qty || 0;
+
+				if(frappe.flags.pause_job) {
+					let currentIncrement = moment(d.to_time).diff(moment(d.from_time),"seconds") || 0;
+          this.cardData.current_time = currentIncrement + (this.cardData.current_time || 0)
+				} else {
+          // frm.set_value('started_time' , '');
+          this.cardData.started_time = "";
+          // frm.set_value('job_started', 0);
+          this.cardData.job_started = 0;
+          // frm.set_value('current_time' , 0);
+          this.cardData.current_time = 0;
+				}
+
+				// frm.save();
+			}
+		});
+    },
   },
   created: function () {
     evntBus.$on("open_card", (job_card) => {
       this.Dialog = true;
       this.cardData = job_card;
       this.timer = {
-      hours: 0,
-      minutes: 0,
-      seconds: 0,
-    },
+        hours: '00',
+        minutes: '00',
+        seconds: '00',
+      },
+      clearInterval(this.timer.interval);
       this.set_timer();
     });
   },
