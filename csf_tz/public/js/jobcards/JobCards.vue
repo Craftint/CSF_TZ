@@ -9,19 +9,19 @@
             <v-list-item three-line>
               <v-list-item-content>
                 <div class="overline mb-4">{{ item.name }}</div>
-                <v-list-item-title class="headline mb-1">
+                <v-list-item-title class="headline mb-2">
                   {{ item.operation.name }}
                 </v-list-item-title>
-                <v-list-item-subtitle>
+                <v-list-item-subtitle class="mb-1">
                   Qty To Manufacture: {{ item.for_quantity }}
                 </v-list-item-subtitle>
-                <v-list-item-subtitle>
+                <v-list-item-subtitle class="mb-1">
                   Total Completed Qty: {{ item.total_completed_qty }}
                 </v-list-item-subtitle>
-                <v-list-item-subtitle>
+                <v-list-item-subtitle class="mb-1">
                   Production Item: {{ item.production_item }}
                 </v-list-item-subtitle>
-                <v-list-item-subtitle>
+                <v-list-item-subtitle class="mb-1">
                   Satus: {{ item.status }}
                 </v-list-item-subtitle>
                 <v-card-subtitle v-if="item.current_time">
