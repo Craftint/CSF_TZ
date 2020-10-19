@@ -118,7 +118,7 @@
         <v-row>
           <v-col cols="9">
             <v-textarea
-              class="mx-3"
+              class="mx-6"
               label="Remarks"
               auto-grow
               outlined
