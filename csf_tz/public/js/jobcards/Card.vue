@@ -157,7 +157,6 @@ export default {
   methods: {
     close_dialog() {
       this.Dialog = false;
-      clearInterval(this.timer.interval);
     },
     start_job() {
         let row = frappe.model.add_child(
@@ -226,31 +225,26 @@ export default {
       if (this.cardData.started_time || this.cardData.current_time) {
         if (this.cardData.status == "On Hold") {
           updateStopwatch(currentIncrement);
-          console.log("currentIncrement",currentIncrement)
           clearInterval(this.timer.interval);
         } else {
-          console.log("else")
           currentIncrement += moment(frappe.datetime.now_datetime()).diff(
             moment(this.cardData.started_time),
             "seconds"
           );
-          console.log("diff",currentIncrement)
           initialiseTimer();
         }
 
         function initialiseTimer() {
           vm.timer.interval = setInterval(() => {
             var current = setCurrentIncrement();
-            console.log("current",current)
             updateStopwatch(current);
           }, 1000);
         }
 
         function updateStopwatch(increment) {
-          // console.log(increment)
-          var hours = Math.floor(increment / 3600);
-          var minutes = Math.floor((increment - hours * 3600) / 60);
-          var seconds = increment - hours * 3600 - minutes * 60;
+          const hours = Math.floor(increment / 3600);
+          const minutes = Math.floor((increment - hours * 3600) / 60);
+          const seconds = increment - hours * 3600 - minutes * 60;
 
           vm.timer.hours =
             hours < 10 ? "0" + hours.toString() : hours.toString();
@@ -277,11 +271,8 @@ export default {
 					let currentIncrement = moment(d.to_time).diff(moment(d.from_time),"seconds") || 0;
           this.cardData.current_time = currentIncrement + (this.cardData.current_time || 0)
 				} else {
-          // frm.set_value('started_time' , '');
           this.cardData.started_time = "";
-          // frm.set_value('job_started', 0);
           this.cardData.job_started = 0;
-          // frm.set_value('current_time' , 0);
           this.cardData.current_time = 0;
 				}
 
@@ -299,7 +290,6 @@ export default {
         minutes: '00',
         seconds: '00',
       },
-      clearInterval(this.timer.interval);
       this.set_timer();
     });
   },

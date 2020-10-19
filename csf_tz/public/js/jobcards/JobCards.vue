@@ -21,9 +21,14 @@
                 <v-list-item-subtitle>
                   Satus: {{ item.status }}
                 </v-list-item-subtitle>
-                <v-card-subtitle v-if="item.current_time"
-                  >Current Time: {{ item.current_time / 60 }}</v-card-subtitle
-                >
+                <v-card-subtitle v-if="item.current_time">
+                  Current Time: 
+                  <span class="hours">{{ get_current(item.current_time).hours }}</span>
+                  <span class="colon">:</span>
+                  <span class="minutes">{{ get_current(item.current_time).minutes }}</span>
+                  <span class="colon">:</span>
+                  <span class="seconds">{{ get_current(item.current_time).seconds }}</span>
+                  </v-card-subtitle>
               </v-list-item-content>
 
               <v-img
@@ -78,6 +83,19 @@ export default {
           }
         },
       });
+    },
+    get_current(increment) {
+      const hours = Math.floor(increment / 3600);
+      const minutes = Math.floor((increment - hours * 3600) / 60);
+      const seconds = increment - hours * 3600 - minutes * 60;
+      return {
+      hours :
+        hours < 10 ? "0" + hours.toString() : hours.toString(),
+      minutes :
+        minutes < 10 ? "0" + minutes.toString() : minutes.toString(),
+      seconds :
+        seconds < 10 ? "0" + seconds.toString() : seconds.toString(),
+        }
     },
     open_card(item) {
       evntBus.$emit("open_card", item);
