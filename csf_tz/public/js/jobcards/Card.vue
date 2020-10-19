@@ -39,6 +39,9 @@
               "
             >
             </v-img>
+            <v-list-item-subtitle class="subtitle-1 mb-1">
+              Status: {{ cardData.status }}
+            </v-list-item-subtitle>
           </v-col>
           <v-col cols="4">
             <v-card-text class="pa-0">
@@ -54,23 +57,14 @@
                     v-model="cardData.operation.description"
                   >
                   </v-textarea>
-                  <v-list-item-subtitle class="subtitle-1 mb-1">
-                    Qty To Manufacture: {{ cardData.for_quantity }}
-                  </v-list-item-subtitle>
-                  <v-list-item-subtitle class="subtitle-1 mb-1">
-                    Total Completed Qty: {{ cardData.total_completed_qty }}
-                  </v-list-item-subtitle>
-                  <v-list-item-subtitle class="subtitle-1 mb-1">
-                    Production Item: {{ cardData.production_item }}
-                  </v-list-item-subtitle>
-                  <v-list-item-subtitle class="subtitle-1 mb-1">
-                    Satus: {{ cardData.status }}
-                  </v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
             </v-card-text>
           </v-col>
           <v-col cols="3">
+            <v-list-item-subtitle class="subtitle-1 mb-1">
+              Production Item: {{ cardData.production_item }}
+            </v-list-item-subtitle>
             <v-img
               max-height="400"
               max-width="400"
@@ -112,6 +106,27 @@
                 </template>
               </template>
             </v-autocomplete>
+            <v-divider></v-divider>
+            <v-list-item-subtitle class="subtitle-1 mb-1">
+              Qty To Manufacture: {{ cardData.for_quantity }}
+            </v-list-item-subtitle>
+            <v-list-item-subtitle class="subtitle-1 mb-1">
+              Qty Completed: {{ cardData.total_completed_qty }}
+            </v-list-item-subtitle>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="9">
+            <v-textarea
+              class="mx-3"
+              label="Remarks"
+              auto-grow
+              outlined
+              rows="2"
+              row-height="25"
+              v-model="cardData.remarks"
+            >
+            </v-textarea>
           </v-col>
         </v-row>
         <v-card-actions class="mx-3">
@@ -236,10 +251,16 @@ export default {
       this.start_job();
     },
     pause_por() {
-      if (this.cardData.for_quantity < this.cardData.total_completed_qty + flt(this.completed_qty)) {
-          evntBus.$emit("show_messag", "The completed quantity cannot be greater than the required quantity");
-          return;
-        }
+      if (
+        this.cardData.for_quantity <
+        this.cardData.total_completed_qty + flt(this.completed_qty)
+      ) {
+        evntBus.$emit(
+          "show_messag",
+          "The completed quantity cannot be greater than the required quantity"
+        );
+        return;
+      }
       frappe.flags.pause_job = 1;
       this.cardData.status = "On Hold";
       clearInterval(this.timer.interval);
@@ -270,6 +291,9 @@ export default {
       );
     },
     set_timer() {
+      if (this.cardData.status == "Completed") {
+        return;
+      }
       const vm = this;
       let currentIncrement = this.cardData.current_time || 0;
       if (this.cardData.started_time || this.cardData.current_time) {
