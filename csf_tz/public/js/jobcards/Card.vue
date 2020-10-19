@@ -55,7 +55,10 @@
                   >
                   </v-textarea>
                   <v-list-item-subtitle class="subtitle-1 mb-1">
-                    QTY: {{ cardData.for_quantity }}
+                    Qty To Manufacture: {{ cardData.for_quantity }}
+                  </v-list-item-subtitle>
+                  <v-list-item-subtitle class="subtitle-1 mb-1">
+                    Total Completed Qty: {{ cardData.total_completed_qty }}
                   </v-list-item-subtitle>
                   <v-list-item-subtitle class="subtitle-1 mb-1">
                     Production Item: {{ cardData.production_item }}
@@ -112,17 +115,62 @@
           </v-col>
         </v-row>
         <v-card-actions class="mx-3">
-          <v-btn v-if="!cardData.job_started" @click="start_por" color="success" dark
+          <v-btn
+            v-if="
+              !cardData.job_started &&
+              cardData.total_completed_qty != cardData.for_quantity
+            "
+            @click="start_por"
+            color="success"
+            dark
             >Start</v-btn
           >
-          <v-btn v-if="cardData.status == 'On Hold'" @click="resume_por" color="warning" dark
+          <v-btn
+            v-if="
+              cardData.status == 'On Hold' &&
+              cardData.total_completed_qty != cardData.for_quantity
+            "
+            @click="resume_por"
+            color="warning"
+            dark
             >Resume</v-btn
           >
-          <v-btn v-if="cardData.status == 'Work In Progress'" @click="pause_por" color="warning" dark
-            >Pause</v-btn
+          <v-btn
+            v-if="
+              cardData.status == 'Work In Progress' &&
+              cardData.total_completed_qty != cardData.for_quantity
+            "
+            @click="pause_por"
+            color="warning"
+            dark
+            >Stop</v-btn
           >
-          <v-btn color="primary" dark @click="close_dialog">Submit</v-btn>
           <v-spacer></v-spacer>
+          <v-text-field
+            v-if="
+              cardData.status == 'Work In Progress' &&
+              cardData.total_completed_qty != cardData.for_quantity
+            "
+            outlined
+            color="indigo"
+            label="Completed Qty"
+            background-color="white"
+            hide-details
+            v-model="completed_qty"
+            type="number"
+            dense
+          ></v-text-field>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            dark
+            @click="submit_dialog"
+            v-if="
+              cardData.total_completed_qty == cardData.for_quantity &&
+              cardData.status != 'Completed'
+            "
+            >Submit</v-btn
+          >
           <v-btn color="error" dark @click="close_dialog">Close</v-btn>
         </v-card-actions>
       </v-card>
@@ -137,10 +185,11 @@ export default {
     Dialog: false,
     cardData: "",
     employees: "",
+    completed_qty: 0,
     timer: {
-      hours: '00',
-      minutes: '00',
-      seconds: '00',
+      hours: "00",
+      minutes: "00",
+      seconds: "00",
       interval: "",
     },
   }),
@@ -148,8 +197,7 @@ export default {
     Dialog(value) {
       if (value) {
         this.get_employees();
-      }
-      else {
+      } else {
         clearInterval(this.timer.interval);
       }
     },
@@ -159,23 +207,22 @@ export default {
       this.Dialog = false;
     },
     start_job() {
-        let row = frappe.model.add_child(
-          this.cardData,
-          "Job Card Time Log",
-          "time_logs"
-        );
-        row.from_time = frappe.datetime.now_datetime();
-        this.cardData.job_started = 1;
-        this.cardData.started_time = row.from_time;
-        this.cardData.status = "Work In Progress";
-        if (!frappe.flags.resume_job) {
-          this.cardData.current_time = 0;
-        }
-        this.set_timer();
-        // frm.save("Save", () => {}, "", () => {
-        //   frm.doc.time_logs.pop(-1);
-        // });
-      
+      let row = frappe.model.add_child(
+        this.cardData,
+        "Job Card Time Log",
+        "time_logs"
+      );
+      row.from_time = frappe.datetime.now_datetime();
+      row.name = "";
+      row.completed_qty = 0;
+      this.cardData.job_started = 1;
+      this.cardData.started_time = row.from_time;
+      this.cardData.status = "Work In Progress";
+      if (!frappe.flags.resume_job) {
+        this.cardData.current_time = 0;
+      }
+      this.set_timer();
+      this.save();
     },
     start_por() {
       if (!this.cardData.employee) {
@@ -189,7 +236,10 @@ export default {
       this.start_job();
     },
     pause_por() {
-      this.start = false;
+      if (this.cardData.for_quantity < this.cardData.total_completed_qty + flt(this.completed_qty)) {
+          evntBus.$emit("show_messag", "The completed quantity cannot be greater than the required quantity");
+          return;
+        }
       frappe.flags.pause_job = 1;
       this.cardData.status = "On Hold";
       clearInterval(this.timer.interval);
@@ -260,37 +310,63 @@ export default {
         }
       }
     },
-    complete_job(completed_time, completed_qty) {
-      console.log("complete_job")
-      this.cardData.time_logs.forEach(d => {
-			if (d.from_time && !d.to_time) {
-				d.to_time = completed_time || frappe.datetime.now_datetime();
-				d.completed_qty = completed_qty || 0;
+    complete_job(completed_time) {
+      const idx = this.cardData.time_logs.length - 1;
+      this.cardData.time_logs[idx].completed_qty = flt(this.completed_qty);
+      this.completed_qty = 0;
+      this.cardData.time_logs.forEach((d) => {
+        if (d.from_time && !d.to_time) {
+          d.to_time = completed_time || frappe.datetime.now_datetime();
 
-				if(frappe.flags.pause_job) {
-					let currentIncrement = moment(d.to_time).diff(moment(d.from_time),"seconds") || 0;
-          this.cardData.current_time = currentIncrement + (this.cardData.current_time || 0)
-				} else {
-          this.cardData.started_time = "";
-          this.cardData.job_started = 0;
-          this.cardData.current_time = 0;
-				}
-
-				// frm.save();
-			}
-		});
+          if (frappe.flags.pause_job) {
+            let currentIncrement =
+              moment(d.to_time).diff(moment(d.from_time), "seconds") || 0;
+            this.cardData.current_time =
+              currentIncrement + (this.cardData.current_time || 0);
+          } else {
+            this.cardData.started_time = "";
+            this.cardData.job_started = 0;
+            this.cardData.current_time = 0;
+          }
+          this.save();
+        }
+      });
+    },
+    submit_dialog() {
+      this.cardData.status = "Completed";
+      this.save("Submit");
+      this.close_dialog();
+    },
+    save(action = "Save") {
+      const vm = this;
+      const doc = { ...this.cardData };
+      delete doc["operation"];
+      frappe.call({
+        method: "csf_tz.csf_tz.page.jobcards.jobcards.save_doc",
+        args: {
+          doc: doc,
+          action: action,
+        },
+        async: false,
+        callback: function (r) {
+          if (r.message) {
+            r.message.operation = vm.cardData.operation;
+            Object.assign(vm.cardData, r.message);
+          }
+        },
+      });
     },
   },
   created: function () {
     evntBus.$on("open_card", (job_card) => {
       this.Dialog = true;
       this.cardData = job_card;
-      this.timer = {
-        hours: '00',
-        minutes: '00',
-        seconds: '00',
-      },
-      this.set_timer();
+      (this.timer = {
+        hours: "00",
+        minutes: "00",
+        seconds: "00",
+      }),
+        this.set_timer();
     });
   },
 };

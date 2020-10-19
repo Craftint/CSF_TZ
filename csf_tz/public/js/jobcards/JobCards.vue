@@ -13,7 +13,10 @@
                   {{ item.operation.name }}
                 </v-list-item-title>
                 <v-list-item-subtitle>
-                  QTY: {{ item.for_quantity }}
+                  Qty To Manufacture: {{ item.for_quantity }}
+                </v-list-item-subtitle>
+                <v-list-item-subtitle>
+                  Total Completed Qty: {{ item.total_completed_qty }}
                 </v-list-item-subtitle>
                 <v-list-item-subtitle>
                   Production Item: {{ item.production_item }}
