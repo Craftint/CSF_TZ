@@ -7,7 +7,4 @@ import frappe
 from frappe.model.document import Document
 
 class VehicleDocumentsType(Document):
-	
-	def save(self, *args, **kwargs):
-		frappe.msgprint(kwargs)
-	#pass
+	pass
