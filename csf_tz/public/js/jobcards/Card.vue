@@ -28,7 +28,7 @@
           <span class="overline">{{ cardData.name }}</span>
         </v-card-title>
         <v-row class="mx-3">
-          <v-col cols="5">
+          <v-col lg="5" md="5" cols="12">
             <v-img
               max-height="600"
               max-width="600"
@@ -43,7 +43,7 @@
               Status: {{ cardData.status }}
             </v-list-item-subtitle>
           </v-col>
-          <v-col cols="4">
+          <v-col lg="4" md="4" cols="12">
             <v-card-text class="pa-0">
               <v-list-item three-line>
                 <v-list-item-content>
@@ -61,7 +61,7 @@
               </v-list-item>
             </v-card-text>
           </v-col>
-          <v-col cols="3">
+          <v-col lg="3" md="3" cols="12">
             <v-list-item-subtitle class="subtitle-1 mb-1">
               Production Item: {{ cardData.production_item }}
             </v-list-item-subtitle>
@@ -116,7 +116,7 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="9">
+          <v-col lg="9" md="9" cols="12">
             <v-textarea
               class="mx-6"
               label="Remarks"

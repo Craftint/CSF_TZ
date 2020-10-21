@@ -7,6 +7,8 @@
         <div :class="set_status_color(item.status)">
           <v-card class="mb-4">
             <v-list-item three-line>
+              <v-row>
+                <v-col lg="9" md="9" cols="12">
               <v-list-item-content>
                 <div class="overline mb-4">{{ item.name }}</div>
                 <v-list-item-title class="headline mb-2">
@@ -33,7 +35,8 @@
                   <span class="seconds">{{ get_current(item.current_time).seconds }}</span>
                   </v-card-subtitle>
               </v-list-item-content>
-
+              </v-col>
+              <v-col lg="3" md="3" cols="12">
               <v-img
                 max-height="150"
                 max-width="250"
@@ -43,9 +46,9 @@
                   '/assets/csf_tz/js/jobcards/placeholder-image.png'
                 "
               ></v-img>
-      
+              </v-col>
+            </v-row>
             </v-list-item>
-
             <v-card-actions>
               <!-- <v-spacer></v-spacer> -->
               <v-btn text color="primary" @click="open_card(item)">
