@@ -130,6 +130,7 @@ fixtures = [
 		"Stock Entry-from_warehouse-fetch_from",
 		"Student Applicant-application_status-options",
 		"Student Applicant-application_status-read_only",
+		"Operation-image_field",
 	)]]},
 ]
 
