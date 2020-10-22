@@ -33,8 +33,8 @@ def getInvoice(currency,name):
     try:
         doc = frappe.get_doc("Open Invoice Exchange Rate Revaluation",name)
         company_currency = frappe.get_value("Company",doc.company,"default_currency")
-        sinv_details = frappe.get_all("Sales Invoice",filters = [["Sales Invoice","currency","=",str(currency)],["Sales Invoice","company","=",doc.company],["Sales Invoice","party_account_currency","=",company_currency],["Sales Invoice","status","in",["Unpaid","Overdue"]]],fields = ["name","grand_total","conversion_rate","currency"])
-        pinv_details = frappe.get_all("Purchase Invoice",filters = [["Purchase Invoice","currency","=",str(currency)],["Purchase Invoice","company","=",doc.company],["Purchase Invoice","party_account_currency","=",company_currency],["Purchase Invoice","status","in",["Unpaid","Overdue"]]],fields = ["name","grand_total","conversion_rate","currency"])
+        sinv_details = frappe.get_all("Sales Invoice",filters = [["Sales Invoice","currency","=",str(currency)],["Sales Invoice","company","=",doc.company],["Sales Invoice","status","in",["Unpaid","Overdue"]]],fields = ["name","grand_total","conversion_rate","currency"])
+        pinv_details = frappe.get_all("Purchase Invoice",filters = [["Purchase Invoice","currency","=",str(currency)],["Purchase Invoice","company","=",doc.company],["Purchase Invoice","status","in",["Unpaid","Overdue"]]],fields = ["name","grand_total","conversion_rate","currency"])
         doc.inv_err_detail = []
         doc.save()
         if sinv_details:
@@ -51,7 +51,7 @@ def getInvoice(currency,name):
         return sinv_details
 
     except Exception as e:
-        error_log = app_error_log(frappe.session.user,str(e))
+        app_error_log(frappe.session.user,str(e))
 
 
 def addChildItem(name,inv_no,invoice_type,invoice_exchange_rate,invoice_currency,invoice_amount,current_exchange,idx):
