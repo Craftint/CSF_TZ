@@ -109,7 +109,7 @@ fixtures = [
 		"Student Applicant-program_enrollment",
 		"Company-bypass_material_request_validation",
 		"Operation-image",
-		"Loan Type-ristrict_to_date",
+		"Loan Type-restrict_to_date",
 		"Loan Type-loan_factor",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (

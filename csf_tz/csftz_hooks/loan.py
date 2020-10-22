@@ -12,7 +12,7 @@ def validate(doc, method):
         if doc.loan_amount > loan_type.loan_factor * base_salary:
             frappe.throw(_("Loan Amount should not be grater then {0}".format(
                 flt(loan_type.loan_factor * base_salary, 2))))
-    if loan_type.ristrict_to_date:
+    if loan_type.restrict_to_date:
         loan_last_date = doc.repayment_schedule[len(
             doc.repayment_schedule)-1].payment_date
         contract_end_date = frappe.get_value(
