@@ -1,8 +1,8 @@
 <template>
   <div justify="center" v-if="Dialog">
-    <v-dialog v-model="Dialog" max-width="1200px">
-      <v-card>
-        <v-card-title>
+    <v-dialog v-model="Dialog" max-width="900">
+      <v-card class="px-3">
+        <v-card-title class="mt-2">
           <span class="headline indigo--text">{{
             cardData.operation.name
           }}</span>
@@ -44,22 +44,17 @@
             </v-list-item-subtitle>
           </v-col>
           <v-col lg="4" md="4" cols="12">
-            <v-card-text class="pa-0">
-              <v-list-item three-line>
-                <v-list-item-content>
-                  <v-textarea
-                    label="Operation Description"
-                    auto-grow
-                    outlined
-                    rows="3"
-                    row-height="25"
-                    readonly
-                    v-model="cardData.operation.description"
-                  >
-                  </v-textarea>
-                </v-list-item-content>
-              </v-list-item>
-            </v-card-text>
+            <v-textarea
+              label="Operation Description"
+              auto-grow
+              outlined
+              rows="3"
+              row-height="25"
+              readonly
+              v-model="cardData.operation.description"
+              hide-details
+            >
+           </v-textarea>
           </v-col>
           <v-col lg="3" md="3" cols="12">
             <v-list-item-subtitle class="subtitle-1 mb-1">
@@ -76,7 +71,6 @@
             >
             </v-img>
             <v-divider></v-divider>
-
             <v-autocomplete
               dense
               auto-select-first
@@ -106,27 +100,29 @@
                 </template>
               </template>
             </v-autocomplete>
-            <v-divider></v-divider>
-            <v-list-item-subtitle class="subtitle-1 mb-1">
-              Qty To Manufacture: {{ cardData.for_quantity }}
-            </v-list-item-subtitle>
-            <v-list-item-subtitle class="subtitle-1 mb-1">
-              Qty Completed: {{ cardData.total_completed_qty }}
-            </v-list-item-subtitle>
           </v-col>
         </v-row>
-        <v-row>
+        <v-row class="mx-3">
           <v-col lg="9" md="9" cols="12">
             <v-textarea
-              class="mx-6"
+              class="my-2"
               label="Remarks"
               auto-grow
               outlined
               rows="2"
               row-height="25"
               v-model="cardData.remarks"
+              hide-details
             >
             </v-textarea>
+          </v-col>
+          <v-col lg="3" md="3" cols="12">
+            <v-list-item-subtitle class="subtitle-1 mb-1">
+              Qty To Manufacture: {{ cardData.for_quantity }}
+            </v-list-item-subtitle>
+            <v-list-item-subtitle class="subtitle-1 mb-1">
+              Qty Completed: {{ cardData.total_completed_qty }}
+            </v-list-item-subtitle>
           </v-col>
         </v-row>
         <v-card-actions class="mx-3">
