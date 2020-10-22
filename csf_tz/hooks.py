@@ -301,6 +301,9 @@ doc_events = {
 	"Student Applicant": {
 		"on_update_after_submit":"csf_tz.csftz_hooks.student_applicant.make_student_applicant_fees",
 	},
+	"Loan": {
+	"validate":"csf_tz.csftz_hooks.loan.validate",
+	},
 }
 
 # Scheduled Tasks
