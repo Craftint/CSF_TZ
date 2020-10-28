@@ -109,6 +109,8 @@ fixtures = [
 		"Student Applicant-program_enrollment",
 		"Company-bypass_material_request_validation",
 		"Operation-image",
+		"Employee-attachments",
+		"Employee-files",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-pos_profile-in_standard_filter",
@@ -131,6 +133,7 @@ fixtures = [
 		"Student Applicant-application_status-options",
 		"Student Applicant-application_status-read_only",
 		"Operation-image_field",
+		"Document Attachment-attachment-in_list_view",
 	)]]},
 ]
 
