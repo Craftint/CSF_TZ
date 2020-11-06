@@ -1168,8 +1168,8 @@ def make_withholding_tax_gl_entries_for_sales(doc, method):
             exchange_rate = 1
         else:
             exchange_rate = doc.conversion_rate
-        debtor_amount = flt(item.net_rate * item.qty * item.withholding_tax_rate / 100, float_precision)
-
+        debtor_amount = flt(item.base_net_rate * item.qty * item.withholding_tax_rate / 100 / exchange_rate, float_precision)
+        wtax_base_amount = debtor_amount * exchange_rate
         jl_rows = []
         credit_row = dict(
             account = doc.debit_to,
@@ -1188,7 +1188,7 @@ def make_withholding_tax_gl_entries_for_sales(doc, method):
             account = withholding_receivable_account,
             party_type = "customer" if withholding_receivable_account_type == "Receivable" else "",
             party = doc.customer if withholding_receivable_account_type == "Receivable" else "",
-            debit_in_account_currency = item.base_net_rate * item.qty * item.withholding_tax_rate / 100,
+            debit_in_account_currency = wtax_base_amount,
             cost_center =  item.cost_center,
             account_curremcy = default_currency,
         )
