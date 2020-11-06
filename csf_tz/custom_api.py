@@ -32,9 +32,35 @@ def getInvoiceExchangeRate(date,currency):
 def getInvoice(currency,name):
     try:
         doc = frappe.get_doc("Open Invoice Exchange Rate Revaluation",name)
-        company_currency = frappe.get_value("Company",doc.company,"default_currency")
-        sinv_details = frappe.get_all("Sales Invoice",filters = [["Sales Invoice","currency","=",str(currency)],["Sales Invoice","company","=",doc.company],["Sales Invoice","status","in",["Unpaid","Overdue"]]],fields = ["name","grand_total","conversion_rate","currency"])
-        pinv_details = frappe.get_all("Purchase Invoice",filters = [["Purchase Invoice","currency","=",str(currency)],["Purchase Invoice","company","=",doc.company],["Purchase Invoice","status","in",["Unpaid","Overdue"]]],fields = ["name","grand_total","conversion_rate","currency"])
+        # company_currency = frappe.get_value("Company",doc.company,"default_currency")
+        sinv_details = frappe.get_all("Sales Invoice",
+            filters = [
+                ["Sales Invoice","currency","=",str(currency)],
+                ["Sales Invoice","party_account_currency","=",str(currency)],
+                ["Sales Invoice","company","=",doc.company],
+                ["Sales Invoice","status","in",["Unpaid","Overdue"]]
+            ],
+            fields = [
+                "name",
+                "grand_total",
+                "conversion_rate",
+                "currency"
+            ]
+        )
+        pinv_details = frappe.get_all("Purchase Invoice",
+            filters = [
+                ["Purchase Invoice","currency","=",str(currency)],
+                ["Sales Invoice","party_account_currency","=",str(currency)],
+                ["Purchase Invoice","company","=",doc.company],
+                ["Purchase Invoice","status","in",["Unpaid","Overdue"]]
+            ],
+            fields = [
+                "name",
+                "grand_total",
+                "conversion_rate",
+                "currency"
+            ]
+        )
         doc.inv_err_detail = []
         doc.save()
         if sinv_details:
