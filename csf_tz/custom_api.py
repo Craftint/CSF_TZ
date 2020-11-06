@@ -1015,7 +1015,7 @@ def make_withholding_tax_gl_entries_for_purchase(doc, method):
             exchange_rate = 1
         else:
             exchange_rate = doc.conversion_rate
-        creditor_amount = flt(item.net_rate * item.qty * item.withholding_tax_rate / 100, float_precision)
+        creditor_amount = flt(item.base_net_rate * item.qty * item.withholding_tax_rate / 100 / exchange_rate, float_precision)
         wtax_base_amount = creditor_amount * exchange_rate
 
         jl_rows = []
@@ -1024,7 +1024,6 @@ def make_withholding_tax_gl_entries_for_purchase(doc, method):
             party_type = "Supplier",
             party = doc.supplier,
             debit_in_account_currency = creditor_amount,
-            account_curremcy = default_currency if doc.party_account_currency == default_currency else doc.currency,
             exchange_rate = exchange_rate,
             cost_center =  item.cost_center,
             reference_type = "Purchase Invoice",
@@ -1050,6 +1049,7 @@ def make_withholding_tax_gl_entries_for_purchase(doc, method):
             multi_currency = 0 if doc.party_account_currency == default_currency else 1,
             user_remark = user_remark
         ))
+        console(jl_rows)
         jv_doc.flags.ignore_permissions = True
         frappe.flags.ignore_account_permission = True
         jv_doc.save()
