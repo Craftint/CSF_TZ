@@ -36,7 +36,7 @@ def getInvoice(currency,name):
         sinv_details = frappe.get_all("Sales Invoice",
             filters = [
                 ["Sales Invoice","currency","=",str(currency)],
-                ["Sales Invoice","party_account_currency","=",str(currency)],
+                ["Sales Invoice","party_account_currency","!=",str(currency)],
                 ["Sales Invoice","company","=",doc.company],
                 ["Sales Invoice","status","in",["Unpaid","Overdue"]]
             ],
@@ -44,13 +44,15 @@ def getInvoice(currency,name):
                 "name",
                 "grand_total",
                 "conversion_rate",
-                "currency"
+                "currency",
+                "party_account_currency",
+                "customer"
             ]
         )
         pinv_details = frappe.get_all("Purchase Invoice",
             filters = [
                 ["Purchase Invoice","currency","=",str(currency)],
-                ["Sales Invoice","party_account_currency","=",str(currency)],
+                ["Purchase Invoice","party_account_currency","!=",str(currency)],
                 ["Purchase Invoice","company","=",doc.company],
                 ["Purchase Invoice","status","in",["Unpaid","Overdue"]]
             ],
@@ -58,7 +60,9 @@ def getInvoice(currency,name):
                 "name",
                 "grand_total",
                 "conversion_rate",
-                "currency"
+                "currency",
+                "party_account_currency",
+                "supplier"
             ]
         )
         doc.inv_err_detail = []

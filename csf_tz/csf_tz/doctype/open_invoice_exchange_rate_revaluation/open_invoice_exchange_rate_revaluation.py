@@ -17,7 +17,8 @@ class OpenInvoiceExchangeRateRevaluation(Document):
 		je_item = makeJEItem(self)
 		res = makeJournalEntry(self.revaluation_date,je_item)
 		frappe.db.set_value(self.doctype,self.name,"journal_entry",res)
-		frappe.msgprint("Journal Entry Created: "+str(res))
+		url = frappe.utils.get_url_to_form("Journal Entry", res)
+		frappe.msgprint("Journal Entry for Exchange Rate Revaluation Created at <a href='{0}'>{1}</a>".format(url,res))
 
 
 
