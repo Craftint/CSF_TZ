@@ -32,9 +32,35 @@ def getInvoiceExchangeRate(date,currency):
 def getInvoice(currency,name):
     try:
         doc = frappe.get_doc("Open Invoice Exchange Rate Revaluation",name)
-        company_currency = frappe.get_value("Company",doc.company,"default_currency")
-        sinv_details = frappe.get_all("Sales Invoice",filters = [["Sales Invoice","currency","=",str(currency)],["Sales Invoice","company","=",doc.company],["Sales Invoice","status","in",["Unpaid","Overdue"]]],fields = ["name","grand_total","conversion_rate","currency"])
-        pinv_details = frappe.get_all("Purchase Invoice",filters = [["Purchase Invoice","currency","=",str(currency)],["Purchase Invoice","company","=",doc.company],["Purchase Invoice","status","in",["Unpaid","Overdue"]]],fields = ["name","grand_total","conversion_rate","currency"])
+        # company_currency = frappe.get_value("Company",doc.company,"default_currency")
+        sinv_details = frappe.get_all("Sales Invoice",
+            filters = [
+                ["Sales Invoice","currency","=",str(currency)],
+                ["Sales Invoice","party_account_currency","=",str(currency)],
+                ["Sales Invoice","company","=",doc.company],
+                ["Sales Invoice","status","in",["Unpaid","Overdue"]]
+            ],
+            fields = [
+                "name",
+                "grand_total",
+                "conversion_rate",
+                "currency"
+            ]
+        )
+        pinv_details = frappe.get_all("Purchase Invoice",
+            filters = [
+                ["Purchase Invoice","currency","=",str(currency)],
+                ["Sales Invoice","party_account_currency","=",str(currency)],
+                ["Purchase Invoice","company","=",doc.company],
+                ["Purchase Invoice","status","in",["Unpaid","Overdue"]]
+            ],
+            fields = [
+                "name",
+                "grand_total",
+                "conversion_rate",
+                "currency"
+            ]
+        )
         doc.inv_err_detail = []
         doc.save()
         if sinv_details:
@@ -1015,7 +1041,7 @@ def make_withholding_tax_gl_entries_for_purchase(doc, method):
             exchange_rate = 1
         else:
             exchange_rate = doc.conversion_rate
-        creditor_amount = flt(item.net_rate * item.qty * item.withholding_tax_rate / 100, float_precision)
+        creditor_amount = flt(item.base_net_rate * item.qty * item.withholding_tax_rate / 100 / exchange_rate, float_precision)
         wtax_base_amount = creditor_amount * exchange_rate
 
         jl_rows = []
@@ -1024,7 +1050,6 @@ def make_withholding_tax_gl_entries_for_purchase(doc, method):
             party_type = "Supplier",
             party = doc.supplier,
             debit_in_account_currency = creditor_amount,
-            account_curremcy = default_currency if doc.party_account_currency == default_currency else doc.currency,
             exchange_rate = exchange_rate,
             cost_center =  item.cost_center,
             reference_type = "Purchase Invoice",
@@ -1050,6 +1075,7 @@ def make_withholding_tax_gl_entries_for_purchase(doc, method):
             multi_currency = 0 if doc.party_account_currency == default_currency else 1,
             user_remark = user_remark
         ))
+        console(jl_rows)
         jv_doc.flags.ignore_permissions = True
         frappe.flags.ignore_account_permission = True
         jv_doc.save()
@@ -1163,13 +1189,13 @@ def make_withholding_tax_gl_entries_for_sales(doc, method):
             continue
         withholding_receivable_account_type = frappe.get_value("Account", withholding_receivable_account, "account_type") or ""
         if withholding_receivable_account_type != "Receivable":
-            frappe.msgprint(_("Withholding Payable Account type not 'Receivable'"))
+            frappe.msgprint(_("Withholding Receivable Account type not 'Receivable'"))
         if doc.party_account_currency == default_currency:
             exchange_rate = 1
         else:
             exchange_rate = doc.conversion_rate
-        debtor_amount = flt(item.net_rate * item.qty * item.withholding_tax_rate / 100, float_precision)
-
+        debtor_amount = flt(item.base_net_rate * item.qty * item.withholding_tax_rate / 100 / exchange_rate, float_precision)
+        wtax_base_amount = debtor_amount * exchange_rate
         jl_rows = []
         credit_row = dict(
             account = doc.debit_to,
@@ -1188,13 +1214,13 @@ def make_withholding_tax_gl_entries_for_sales(doc, method):
             account = withholding_receivable_account,
             party_type = "customer" if withholding_receivable_account_type == "Receivable" else "",
             party = doc.customer if withholding_receivable_account_type == "Receivable" else "",
-            debit_in_account_currency = item.base_net_rate * item.qty * item.withholding_tax_rate / 100,
+            debit_in_account_currency = wtax_base_amount,
             cost_center =  item.cost_center,
             account_curremcy = default_currency,
         )
         jl_rows.append(debit_row)
 
-        user_remark = "Withholding Tax Payable Against Item " + item.item_code + " in " + doc.doctype + " " + doc.name + " of amount " + str(flt(item.net_amount,2)) + " " + doc.currency + " with exchange rate of " + str(doc.conversion_rate)
+        user_remark = "Withholding Tax Receivable Against Item " + item.item_code + " in " + doc.doctype + " " + doc.name + " of amount " + str(flt(item.net_amount,2)) + " " + doc.currency + " with exchange rate of " + str(doc.conversion_rate)
         jv_doc = frappe.get_doc(dict(
             doctype = "Journal Entry",
             posting_date = doc.posting_date,
