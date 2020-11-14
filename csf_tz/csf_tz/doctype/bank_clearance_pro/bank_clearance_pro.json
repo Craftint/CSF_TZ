@@ -12,13 +12,15 @@
   "to_date",
   "column_break_5",
   "bank_account",
+  "opening_balance",
   "include_reconciled_entries",
   "include_pos_transactions",
   "get_payment_entries",
   "section_break_10",
   "payment_entries",
   "update_clearance_date",
-  "total_amount"
+  "total_amount",
+  "closing_balance"
  ],
  "fields": [
   {
@@ -104,6 +106,18 @@
    "label": "Total Amount",
    "options": "account_currency",
    "read_only": 1
+  },
+  {
+   "fieldname": "opening_balance",
+   "fieldtype": "Float",
+   "label": "Opening Balance as per General Ledger",
+   "read_only": 1
+  },
+  {
+   "fieldname": "closing_balance",
+   "fieldtype": "Float",
+   "label": "Closing Balance as per General Ledger",
+   "read_only": 1
   }
  ],
  "hide_toolbar": 1,
@@ -111,7 +125,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2020-11-14 17:41:06.495619",
+ "modified": "2020-11-14 19:05:37.524293",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Bank Clearance Pro",
