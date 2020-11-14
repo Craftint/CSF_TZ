@@ -40,6 +40,10 @@ frappe.ui.form.on('Bank Clearance Pro', {
 		});
 	},
 	get_payment_entries: function(frm) {
+		if (!frm.doc.statement_opening_balance || !frm.doc.statement_closing_balance) {
+			frappe.throw("Statement Opening balance and Statement Closing Balance is Mandatory")
+			return
+		} 
 		frappe.call({
             method: 'erpnext.accounts.utils.get_balance_on',
             args: {
@@ -62,7 +66,6 @@ frappe.ui.form.on('Bank Clearance Pro', {
 			callback: function(r, rt) {
 				frm.refresh_field("payment_entries");
 				frm.refresh_fields();
-
 				$(frm.fields_dict.payment_entries.wrapper).find("[data-fieldname=amount]").each(function(i,v){
 					if (i !=0){
 						$(v).addClass("text-right")

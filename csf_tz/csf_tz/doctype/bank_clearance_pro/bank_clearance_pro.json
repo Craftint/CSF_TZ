@@ -142,7 +142,8 @@
   {
    "fieldname": "closing_difference",
    "fieldtype": "Float",
-   "label": "Closing Difference"
+   "label": "Closing Difference",
+   "read_only": 1
   }
  ],
  "hide_toolbar": 1,
@@ -150,7 +151,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2020-11-14 19:16:05.733594",
+ "modified": "2020-11-14 19:40:10.821031",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Bank Clearance Pro",
