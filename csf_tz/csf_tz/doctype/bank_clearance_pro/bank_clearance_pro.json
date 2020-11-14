@@ -13,6 +13,8 @@
   "column_break_5",
   "bank_account",
   "opening_balance",
+  "statement_opening_balance",
+  "opening_difference",
   "include_reconciled_entries",
   "include_pos_transactions",
   "get_payment_entries",
@@ -20,7 +22,9 @@
   "payment_entries",
   "update_clearance_date",
   "total_amount",
-  "closing_balance"
+  "closing_balance",
+  "statement_closing_balance",
+  "closing_difference"
  ],
  "fields": [
   {
@@ -118,6 +122,27 @@
    "fieldtype": "Float",
    "label": "Closing Balance as per General Ledger",
    "read_only": 1
+  },
+  {
+   "fieldname": "statement_opening_balance",
+   "fieldtype": "Float",
+   "label": "Statement Opening balance"
+  },
+  {
+   "fieldname": "opening_difference",
+   "fieldtype": "Float",
+   "label": "Opening Difference ",
+   "read_only": 1
+  },
+  {
+   "fieldname": "statement_closing_balance",
+   "fieldtype": "Float",
+   "label": "Statement Closing Balance"
+  },
+  {
+   "fieldname": "closing_difference",
+   "fieldtype": "Float",
+   "label": "Closing Difference"
   }
  ],
  "hide_toolbar": 1,
@@ -125,7 +150,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2020-11-14 19:05:37.524293",
+ "modified": "2020-11-14 19:16:05.733594",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Bank Clearance Pro",

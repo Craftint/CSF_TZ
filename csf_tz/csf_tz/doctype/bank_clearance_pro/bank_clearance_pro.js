@@ -55,8 +55,7 @@ frappe.ui.form.on('Bank Clearance Pro', {
                     frm.set_value("opening_balance", 0);
                 }
             }
-        });
-        frm.set_value("closing_balance", frm.doc.total_amount + frm.doc.opening_balance);
+		});
 		return frappe.call({
 			method: "get_payment_entries",
 			doc: frm.doc,
@@ -69,7 +68,19 @@ frappe.ui.form.on('Bank Clearance Pro', {
 						$(v).addClass("text-right")
 					}
 				})
+				frm.trigger('update_fields')
 			}
 		});
+	},
+	statement_opening_balance: function(frm) {
+		frm.trigger('update_fields')
+	},
+	statement_closing_balance: function(frm) {
+		frm.trigger('update_fields')
+	},
+	update_fields: function(frm) {
+		frm.set_value("closing_balance", frm.doc.total_amount + frm.doc.opening_balance);
+		frm.set_value("opening_difference", frm.doc.opening_balance - frm.doc.statement_opening_balance);
+		frm.set_value("closing_difference", frm.doc.closing_balance - frm.doc.statement_closing_balance);
 	},
 });
