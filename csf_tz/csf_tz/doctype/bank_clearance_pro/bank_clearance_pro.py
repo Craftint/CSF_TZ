@@ -99,6 +99,7 @@ class BankClearancePro(Document):
 			row = self.append('payment_entries', {})
 
 			amount = flt(d.get('debit', 0)) - flt(d.get('credit', 0))
+			d.flt_amount = amount
 
 			formatted_amount = fmt_money(abs(amount), 2, d.account_currency)
 			d.amount = formatted_amount + " " + (_("Dr") if amount > 0 else _("Cr"))

@@ -87,3 +87,15 @@ frappe.ui.form.on('Bank Clearance Pro', {
 		frm.set_value("closing_difference", frm.doc.closing_balance - frm.doc.statement_closing_balance);
 	},
 });
+
+frappe.ui.form.on('Bank Clearance Pro Detail', {
+	clearance_date: function(frm) {
+		let reconciled_amount = 0;
+		frm.doc.payment_entries.forEach(element => {
+			if (element.clearance_date) {
+				reconciled_amount += element.flt_amount;
+			}
+		});
+		frm.set_value("reconciled_amount", reconciled_amount);
+	}
+});

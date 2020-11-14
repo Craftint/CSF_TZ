@@ -21,10 +21,13 @@
   "section_break_10",
   "payment_entries",
   "update_clearance_date",
+  "section_break_16",
   "total_amount",
   "closing_balance",
   "statement_closing_balance",
-  "closing_difference"
+  "closing_difference",
+  "column_break_20",
+  "reconciled_amount"
  ],
  "fields": [
   {
@@ -144,6 +147,20 @@
    "fieldtype": "Float",
    "label": "Closing Difference",
    "read_only": 1
+  },
+  {
+   "fieldname": "column_break_20",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "reconciled_amount",
+   "fieldtype": "Float",
+   "label": "Reconciled Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_16",
+   "fieldtype": "Section Break"
   }
  ],
  "hide_toolbar": 1,
@@ -151,7 +168,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2020-11-14 19:40:10.821031",
+ "modified": "2020-11-14 19:51:34.103911",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Bank Clearance Pro",
