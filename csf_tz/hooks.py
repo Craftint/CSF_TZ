@@ -111,6 +111,8 @@ fixtures = [
 		"Operation-image",
 		"Employee-attachments",
 		"Employee-files",
+		"Fees-base_grand_total",
+		"Fees-advance_paid",
 	)]]},
 	{"doctype":"Property Setter", "filters": [["name", "in", (
 		"Sales Invoice-pos_profile-in_standard_filter",

@@ -16,5 +16,5 @@ bench --site dev-csf-tz.aakvatech.com export-fixtures
 cd apps/propms
 git add .
 git commit -m "$1"
-git push upstream HEAD
+git push upstream master
 
