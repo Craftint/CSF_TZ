@@ -8,7 +8,9 @@ frappe.ui.form.on("Payment Entry", {
 		if (frm.is_new()) {
 			if (frm.doc.payment_type == "Receive") {
 				frm.set_value("naming_series","RE-.YYYY.-");
-				frm.set_value("party_type", "Customer");
+				if (frm.doc.party_type != "Student") {
+					frm.set_value("party_type", "Customer");
+				}
 			}
 			else if (frm.doc.payment_type == "Pay") {
 				frm.set_value("naming_series","PE-.YYYY.-");
