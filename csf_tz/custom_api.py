@@ -1226,7 +1226,7 @@ def make_withholding_tax_gl_entries_for_sales(doc, method):
 
         user_remark = "Withholding Tax Receivable Against Item " + item.item_code + " in " + doc.doctype + " " + doc.name + " of amount " + str(flt(item.net_amount,2)) + " " + doc.currency + " with exchange rate of " + str(doc.conversion_rate)
         jv_doc = frappe.get_doc(dict(
-            doctype = "Journal Entry",
+            doctype = "Contra Entry",
             posting_date = doc.posting_date,
             accounts = jl_rows,
             company = doc.company,
