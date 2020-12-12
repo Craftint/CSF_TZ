@@ -118,6 +118,8 @@ class BankClearancePro(Document):
 					frappe.throw(_("Row #{0}: Payment document is required to complete the transaction"))
 
 				if d.cheque_date and getdate(d.clearance_date) < getdate(d.cheque_date):
+					frappe.msgprint(_("Row #{0}: Clearance date {1} cannot be before Cheque Date {2}")
+						.format(d.idx, d.clearance_date, d.cheque_date))
 					frappe.throw(_("Row #{0}: Clearance date {1} cannot be before Cheque Date {2}")
 						.format(d.idx, d.clearance_date, d.cheque_date))
 
