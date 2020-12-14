@@ -61,7 +61,7 @@ def enqueue_print_slips(kwargs):
         print_format = "Standard"
 
     pdf = download_multi_pdf(doctype, payroll_entry,
-                                format=print_format, no_letterhead=1)
+                                format=print_format, no_letterhead=0)
     if pdf:
         ret = frappe.get_doc({
             "doctype": "File",
