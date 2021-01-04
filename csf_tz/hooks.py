@@ -255,11 +255,11 @@ doc_events = {
 			'csf_tz.custom_api.validate_items_remaining_qty',
 			'csf_tz.custom_api.calculate_price_reduction',
 			],
-		'on_cancel': 'csf_tz.custom_api.check_cancel_delivery_note',
+		'before_cancel': 'csf_tz.custom_api.check_cancel_delivery_note',
 	},
 	'Delivery Note': {
 		'on_submit': 'csf_tz.custom_api.update_delivery_on_sales_invoice',
-		'on_cancel': 'csf_tz.custom_api.update_delivery_on_sales_invoice',
+		'before_cancel': 'csf_tz.custom_api.update_delivery_on_sales_invoice',
   },
 	"Account": {
 		"on_update":"csf_tz.custom_api.create_indirect_expense_item",
@@ -272,7 +272,7 @@ doc_events = {
 		"before_insert":"csf_tz.custom_api.set_fee_abbr",
 		"after_insert":"csf_tz.bank_api.set_callback_token",
 		"on_submit":"csf_tz.bank_api.invoice_submission",
-		"on_cancel":"csf_tz.bank_api.cancel_invoice",
+		"before_cancel":"csf_tz.bank_api.cancel_invoice",
 	},
 	"Program Enrollment": {
 		"onload":"csf_tz.csftz_hooks.program_enrollment.create_course_enrollments_override",
