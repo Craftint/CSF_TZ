@@ -1,0 +1,21 @@
+{
+ "add_total_row": 1,
+ "creation": "2021-01-07 11:27:07.803998",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "idx": 0,
+ "is_standard": "Yes",
+ "modified": "2021-01-07 11:27:13.787510",
+ "modified_by": "Administrator",
+ "module": "CSF TZ",
+ "name": "Withholding Tax Upload",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "query": "SELECT company AS COMPANY_CODE,\r\nREPLACE(tin, ' ', '') AS WITHHOLDER_TIN,\r\nREPLACE(pi.tax_id, '-', '') AS WITHHOLDEE_TIN,\r\nsupplier AS WITHHOLDEE_NAME,\r\nposting_date AS DATE_OF_DEDUCTION,\r\nbill_no AS INVOICE_NUMBER,\r\n'11122111' AS GFS_CODE,\r\ndescription AS DESCRIPTION,\r\n'TZS' AS CURRENCY,\r\nbase_net_amount AS GROSS,\r\nwithholding_tax_rate AS RATE,\r\nbase_net_amount * withholding_tax_rate / 100 AS TAX_WITHHELD\r\nFROM `tabPurchase Invoice` pi INNER JOIN `tabPurchase Invoice Item` pit ON pi.name = pit.parent\r\n   INNER JOIN `tabCompany` c ON pi.company = c.name\r\nWHERE pi.docstatus = 1 AND pit.withholding_tax_rate != 0",
+ "ref_doctype": "Purchase Invoice",
+ "report_name": "Withholding Tax Upload",
+ "report_type": "Query Report",
+ "roles": []
+}
