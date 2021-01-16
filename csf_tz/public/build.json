@@ -1,11 +1,5 @@
 {
-    "js/select_dialog.min.js": [
-        "public/js/select_dialog.js"
-    ],
-    "js/to_console.min.js": [
-        "public/js/to_console.js"
-    ],
-    "csf_tz/js/jobcards.min.js": [
-        "public/js/jobcards/jobcards.js"
-    ]
+  "js/select_dialog.min.js": ["public/js/select_dialog.js"],
+  "js/to_console.min.js": ["public/js/to_console.js"],
+  "js/jobcards.min.js": ["public/js/jobcards/jobcards.js"]
 }
