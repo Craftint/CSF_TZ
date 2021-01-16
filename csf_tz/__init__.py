@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 import frappe
 
-__version__ = '1.7.2'
+__version__ = '1.7.3'
 
 def console(*data):
 	frappe.publish_realtime('out_to_console', data, user=frappe.session.user)
