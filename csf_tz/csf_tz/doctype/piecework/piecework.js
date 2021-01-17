@@ -2,7 +2,15 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Piecework', {
-	// refresh: function(frm) {
-
-	// }
+	task: frm => setTotal(frm),
+	quantity: frm => setTotal(frm),
+	task_rate: frm => setTotal(frm)
 });
+
+const setTotal = (frm) => {
+	const total = frm.doc.task_rate * frm.doc.quantity || 0;
+	frm.set_value("total", total);
+	frm.doc.employees.forEach(row => {
+		frappe.model.set_value(row.doctype, row.name, 'amount', total);
+	});
+};
