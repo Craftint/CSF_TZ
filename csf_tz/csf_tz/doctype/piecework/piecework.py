@@ -3,8 +3,27 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
-# import frappe
+import frappe
+from frappe import _
 from frappe.model.document import Document
 
+
 class Piecework(Document):
-	pass
+    def before_submit(self):
+        create_additional_salarys(self)
+
+
+def create_additional_salarys(doc):
+    for row in doc.employees:
+        if row.employee and row.amount:
+            as_doc = frappe.new_doc("Additional Salary")
+            as_doc.employee = row.employee
+            as_doc.salary_component = 'Piecework'
+            as_doc.amount = row.amount
+            as_doc.payroll_date = doc.date
+            as_doc.company = doc.company
+            as_doc.insert(ignore_permissions=True)
+            row.additional_salary = as_doc.name
+            as_doc.submit()
+            frappe.msgprint(_("Additional Salary {0} created for employee {1}").format(
+                as_doc.name, row.employee), alert=True)
