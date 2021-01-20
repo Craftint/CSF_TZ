@@ -10,10 +10,10 @@ from frappe.model.document import Document
 
 class Piecework(Document):
     def before_submit(self):
-        create_additional_salarys(self)
+        create_additional_salaries(self)
 
 
-def create_additional_salarys(doc):
+def create_additional_salaries(doc):
     for row in doc.employees:
         if row.employee and row.amount:
             as_doc = frappe.new_doc("Additional Salary")
