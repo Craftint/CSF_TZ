@@ -10,7 +10,8 @@ frappe.ui.form.on('Piecework', {
 const setTotal = (frm) => {
 	const total = frm.doc.task_rate * frm.doc.quantity || 0;
 	frm.set_value("total", total);
+	const count = frm.doc.employees.length;
 	frm.doc.employees.forEach(row => {
-		frappe.model.set_value(row.doctype, row.name, 'amount', total);
+		frappe.model.set_value(row.doctype, row.name, 'amount', total / count);
 	});
 };
