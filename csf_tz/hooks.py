@@ -113,6 +113,9 @@ fixtures = [
         "Employee-files",
         "Fees-base_grand_total",
         "Fees-advance_paid",
+        "Journal Entry-import_file",
+        "Purchase Invoice-import_file",
+        "Purchase Invoice-reference",
     )]]},
     {"doctype": "Property Setter", "filters": [["name", "in", (
         "Sales Invoice-pos_profile-in_standard_filter",
@@ -186,6 +189,7 @@ doctype_js = {
     "Program Enrollment": "csf_tz/program_enrollment.js",
     "Payroll Entry": "csf_tz/payroll_entry.js",
     "Salary Slip": "csf_tz/salary_slip.js",
+    "Landed Cost Voucher": "csf_tz/landed_cost_voucher.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
