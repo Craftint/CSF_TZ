@@ -58,17 +58,7 @@ def get_columns():
 
 
 def get_data(filters):
-    default_currency = frappe.get_value(
-        "Company", filters.company, "default_currency")
-    data = [
-        {
-            "type": "Purchase",
-            "line": "Line 1",
-            "excl": 500,
-            "vat": 5,
-            "category": "Some Text"
-        }
-    ]
+
     imported = {
         "type": "Purchase",
         "line": "Line 3",
@@ -105,73 +95,17 @@ def get_data(filters):
     )
 
     for element in purchase_list:
-        currency = frappe.get_value(
-            "Supplier", element.supplier, "default_currency")
-        if currency and currency != default_currency:
+        country = frappe.get_value(
+            "Supplier", element.supplier, "country")
+        if country and country != "Tanzania":
             imported["excl"] += element.base_net_total
         elif not element.base_total_taxes_and_charges:
             non_creditable_purchases["excl"] += element.base_net_total
         else:
-            console(element)
-            vat = 0
-            amount = 0
             taxable_purchases["vat"] += element.base_total_taxes_and_charges
-            taxes = frappe.get_all("Purchase Taxes and Charges", filters={
-                "parent": element.name,
-                "parentfield": "taxes",
-            },
-                fields={"*"}
-            )
-            itemised_tax = get_itemised_tax(taxes)
-            console(itemised_tax)
-            items = frappe.get_all("Purchase Invoice Item", filters={
-                "parent": element.name,
-                "parentfield": "items",
-            },
-                fields={"*"}
-            )
-
-            itemised_taxable_amount = get_itemised_taxable_amount(items)
-            console(itemised_taxable_amount)
+            taxable = element.base_taxes_and_charges_added / 0.18
+            taxable_purchases["excl"] += taxable
+            non_creditable = element.base_net_total - taxable
+            non_creditable_purchases["excl"] += non_creditable
 
     return [taxable_purchases, non_creditable_purchases, imported]
-
-
-def get_itemised_tax(taxes, with_tax_account=False):
-    itemised_tax = {}
-    for tax in taxes:
-        if getattr(tax, "category", None) and tax.category == "Valuation":
-            continue
-
-        item_tax_map = json.loads(
-            tax.item_wise_tax_detail) if tax.item_wise_tax_detail else {}
-        if item_tax_map:
-            for item_code, tax_data in item_tax_map.items():
-                itemised_tax.setdefault(item_code, frappe._dict())
-
-                tax_rate = 0.0
-                tax_amount = 0.0
-
-                if isinstance(tax_data, list):
-                    tax_rate = flt(tax_data[0])
-                    tax_amount = flt(tax_data[1])
-                else:
-                    tax_rate = flt(tax_data)
-
-                itemised_tax[item_code][tax.description] = frappe._dict(dict(
-                    tax_rate=tax_rate,
-                    tax_amount=tax_amount
-                ))
-
-                if with_tax_account:
-                    itemised_tax[item_code][tax.description].tax_account = tax.account_head
-
-    return itemised_tax
-
-
-def get_rounded_tax_amount(itemised_tax, precision):
-    # Rounding based on tax_amount precision
-    for taxes in itemised_tax.values():
-        for tax_account in taxes:
-            taxes[tax_account]["tax_amount"] = flt(
-                taxes[tax_account]["tax_amount"], precision)
