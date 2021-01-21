@@ -117,6 +117,12 @@ fixtures = [
         "Purchase Invoice-import_file",
         "Purchase Invoice-reference",
         "Sales Invoice-default_item_discount",
+        "BOM-warehouses",
+        "BOM-wip_warehouse",
+        "BOM-fg_warehouse",
+        "BOM-scrap_warehouse",
+        "BOM-source_warehouse",
+        "BOM-column_break_15",
     )]]},
     {"doctype": "Property Setter", "filters": [["name", "in", (
         "Sales Invoice-pos_profile-in_standard_filter",
