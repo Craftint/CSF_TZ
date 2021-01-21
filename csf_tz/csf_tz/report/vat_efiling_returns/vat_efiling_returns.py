@@ -23,7 +23,7 @@ def get_columns():
             "label": _("Type"),
             "fieldtype": "Data",
             "options": "",
-            "width": 100
+            "width": 150
         },
         {
             "fieldname": "line",
@@ -37,14 +37,14 @@ def get_columns():
             "label": _("Excl Amount"),
             "fieldtype": "Float",
             "options": "",
-            "width": 100
+            "width": 150
         },
         {
             "fieldname": "vat",
             "label": _("VAT Amount"),
             "fieldtype": "Float",
             "options": "",
-            "width": 100
+            "width": 150
         },
         {
             "fieldname": "category",
@@ -60,7 +60,7 @@ def get_columns():
 def get_data(filters):
 
     imported = {
-        "type": "Purchase",
+        "type": "Foreign Purchase",
         "line": "Line 3",
         "excl": 0,
         "vat": 0,
@@ -103,9 +103,47 @@ def get_data(filters):
             non_creditable_purchases["excl"] += element.base_net_total
         else:
             taxable_purchases["vat"] += element.base_total_taxes_and_charges
-            taxable = element.base_taxes_and_charges_added / 0.18
+            taxable = element.base_total_taxes_and_charges / 0.18
             taxable_purchases["excl"] += taxable
             non_creditable = element.base_net_total - taxable
             non_creditable_purchases["excl"] += non_creditable
 
-    return [taxable_purchases, non_creditable_purchases, imported]
+    non_creditable_supplies = {
+        "type": "Sales",
+        "line": "Line 2",
+        "excl": 0,
+        "vat": 0,
+        "category": "Non-creditable supplies"
+    }
+    taxable_supplies = {
+        "type": "Sales",
+        "line": "Line 1",
+        "excl": 0,
+        "vat": 0,
+        "category": "Taxable supplies"
+    }
+
+    sales_list = frappe.get_all("Sales Invoice", filters={
+        "docstatus": 1,
+        "is_return": 0,
+        "company": filters.company,
+        "posting_date": ["between", [
+            filters.from_date,
+            filters.to_date
+        ]
+        ]
+    },
+        fields={"*"}
+    )
+
+    for element in sales_list:
+        if not element.base_total_taxes_and_charges:
+            non_creditable_supplies["excl"] += element.base_net_total
+        else:
+            taxable_supplies["vat"] += element.base_total_taxes_and_charges
+            taxable = element.base_total_taxes_and_charges / 0.18
+            taxable_supplies["excl"] += taxable
+            non_creditable = element.base_net_total - taxable
+            non_creditable_supplies["excl"] += non_creditable
+
+    return [taxable_purchases, non_creditable_purchases, taxable_supplies, non_creditable_supplies, imported]
