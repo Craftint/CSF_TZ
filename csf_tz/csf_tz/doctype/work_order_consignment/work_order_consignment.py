@@ -9,7 +9,7 @@ from frappe.model.document import Document
 from frappe.utils import now
 
 
-class VehicleConsignment(Document):
+class WorkOrderConsignment(Document):
     def before_submit(self):
         create_orders(self)
 
