@@ -671,6 +671,11 @@ def validate_items_remaining_qty(doc, methohd):
             validate_item_remaining_qty(item.item_code, doc.company, item.warehouse ,item.stock_qty)
 
 
+def on_cancel_fees(doc, method):
+    from erpnext.accounts.utils import unlink_ref_doc_from_payment_entries
+    unlink_ref_doc_from_payment_entries(doc)
+    from csf_tz.bank_api import cancel_invoice
+    cancel_invoice(doc, 'before_cancel')
 
 def check_validate_delivery_note(doc=None, method=None, doc_name=None):
     if not doc and doc_name:

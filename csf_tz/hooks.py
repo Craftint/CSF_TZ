@@ -278,7 +278,7 @@ doc_events = {
         "before_insert": "csf_tz.custom_api.set_fee_abbr",
         "after_insert": "csf_tz.bank_api.set_callback_token",
         "on_submit": "csf_tz.bank_api.invoice_submission",
-        "before_cancel": "csf_tz.bank_api.cancel_invoice",
+        "before_cancel": "csf_tz.custom_api.on_cancel_fees",
     },
     "Program Enrollment": {
         "onload": "csf_tz.csftz_hooks.program_enrollment.create_course_enrollments_override",
