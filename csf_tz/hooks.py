@@ -141,6 +141,7 @@ fixtures = [
         "Student Applicant-application_status-read_only",
         "Operation-image_field",
         "Document Attachment-attachment-in_list_view",
+        "Program-program_fee-allow_bulk_edit",
     )]]},
 ]
 
