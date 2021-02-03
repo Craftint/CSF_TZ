@@ -22,6 +22,14 @@ frappe.ui.form.on('Bank Clearance Pro', {
 			};
 		});
 
+		frm.set_query("bank_account", function () {
+			return {
+				"filters": {
+					"is_company_account": true
+				}
+			};
+		});
+
 		frm.set_value("from_date", frappe.datetime.month_start());
 		frm.set_value("to_date", frappe.datetime.month_end());
 	},
