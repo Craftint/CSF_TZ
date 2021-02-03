@@ -13,6 +13,7 @@
   "parenttype": null,
   "property": "in_list_view",
   "property_type": "Check",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -29,6 +30,7 @@
   "parenttype": null,
   "property": "image_field",
   "property_type": "Data",
+  "row_name": null,
   "value": "image"
  },
  {
@@ -45,6 +47,7 @@
   "parenttype": null,
   "property": "collapsible",
   "property_type": "Check",
+  "row_name": null,
   "value": "0"
  },
  {
@@ -61,6 +64,7 @@
   "parenttype": null,
   "property": "collapsible",
   "property_type": "Check",
+  "row_name": null,
   "value": "0"
  },
  {
@@ -77,6 +81,7 @@
   "parenttype": null,
   "property": "columns",
   "property_type": "Int",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -93,6 +98,7 @@
   "parenttype": null,
   "property": "columns",
   "property_type": "Int",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -109,6 +115,7 @@
   "parenttype": null,
   "property": "in_list_view",
   "property_type": "Check",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -125,6 +132,7 @@
   "parenttype": null,
   "property": "label",
   "property_type": "Data",
+  "row_name": null,
   "value": "TIN"
  },
  {
@@ -141,6 +149,7 @@
   "parenttype": null,
   "property": "width",
   "property_type": "Data",
+  "row_name": null,
   "value": "23"
  },
  {
@@ -157,6 +166,7 @@
   "parenttype": null,
   "property": "columns",
   "property_type": "Int",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -173,6 +183,7 @@
   "parenttype": null,
   "property": "columns",
   "property_type": "Int",
+  "row_name": null,
   "value": "0"
  },
  {
@@ -189,6 +200,7 @@
   "parenttype": null,
   "property": "columns",
   "property_type": "Int",
+  "row_name": null,
   "value": "3"
  },
  {
@@ -205,6 +217,7 @@
   "parenttype": null,
   "property": "in_list_view",
   "property_type": "Check",
+  "row_name": null,
   "value": "0"
  },
  {
@@ -221,6 +234,7 @@
   "parenttype": null,
   "property": "columns",
   "property_type": "Int",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -237,6 +251,7 @@
   "parenttype": null,
   "property": "in_list_view",
   "property_type": "Check",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -253,6 +268,7 @@
   "parenttype": null,
   "property": "in_standard_filter",
   "property_type": "Check",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -269,6 +285,7 @@
   "parenttype": null,
   "property": "in_list_view",
   "property_type": "Check",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -285,6 +302,7 @@
   "parenttype": null,
   "property": "in_standard_filter",
   "property_type": "Check",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -301,6 +319,7 @@
   "parenttype": null,
   "property": "fetch_from",
   "property_type": "Small Text",
+  "row_name": null,
   "value": "repack_template.default_warehouse"
  },
  {
@@ -317,6 +336,7 @@
   "parenttype": null,
   "property": "options",
   "property_type": "Text",
+  "row_name": null,
   "value": "Applied\nApproved\nRejected\nAdmitted\nAwaiting Registration Fees"
  },
  {
@@ -333,6 +353,24 @@
   "parenttype": null,
   "property": "read_only",
   "property_type": "Check",
+  "row_name": null,
+  "value": "1"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Program",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "program_fee",
+  "modified": "2021-01-28 18:27:54.254801",
+  "name": "Program-program_fee-allow_bulk_edit",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "allow_bulk_edit",
+  "property_type": "Check",
+  "row_name": null,
   "value": "1"
  }
 ]

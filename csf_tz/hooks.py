@@ -113,6 +113,11 @@ fixtures = [
         "Employee-files",
         "Fees-base_grand_total",
         "Fees-advance_paid",
+        "Journal Entry-import_file",
+        "Purchase Invoice-import_file",
+        "Purchase Invoice-reference",
+        "Sales Invoice-default_item_discount",
+        "Landed Cost Voucher-import_file",
     )]]},
     {"doctype": "Property Setter", "filters": [["name", "in", (
         "Sales Invoice-pos_profile-in_standard_filter",
@@ -136,6 +141,7 @@ fixtures = [
         "Student Applicant-application_status-read_only",
         "Operation-image_field",
         "Document Attachment-attachment-in_list_view",
+        "Program-program_fee-allow_bulk_edit",
     )]]},
 ]
 
@@ -186,6 +192,7 @@ doctype_js = {
     "Program Enrollment": "csf_tz/program_enrollment.js",
     "Payroll Entry": "csf_tz/payroll_entry.js",
     "Salary Slip": "csf_tz/salary_slip.js",
+    "Landed Cost Voucher": "csf_tz/landed_cost_voucher.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -272,7 +279,7 @@ doc_events = {
         "before_insert": "csf_tz.custom_api.set_fee_abbr",
         "after_insert": "csf_tz.bank_api.set_callback_token",
         "on_submit": "csf_tz.bank_api.invoice_submission",
-        "before_cancel": "csf_tz.bank_api.cancel_invoice",
+        "before_cancel": "csf_tz.custom_api.on_cancel_fees",
     },
     "Program Enrollment": {
         "onload": "csf_tz.csftz_hooks.program_enrollment.create_course_enrollments_override",

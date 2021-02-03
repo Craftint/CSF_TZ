@@ -18,7 +18,7 @@ def update_slips(payroll_entry):
         ss_doc = frappe.get_doc("Salary Slip", salary.name)
         if ss_doc.docstatus != 0:
             continue
-        ss_doc.validate()
+        ss_doc.earnings = []
         ss_doc.save()
         count += 1
 
@@ -31,7 +31,7 @@ def update_slip(salary_slip):
     ss_doc = frappe.get_doc("Salary Slip", salary_slip)
     if ss_doc.docstatus != 0:
         return
-    ss_doc.validate()
+    ss_doc.earnings = []
     ss_doc.save()
     frappe.msgprint(_("Salary Slips is updated"))
     return "True"
@@ -39,7 +39,8 @@ def update_slip(salary_slip):
 
 @frappe.whitelist()
 def print_slips(payroll_entry):
-    enqueue(method=enqueue_print_slips, queue='short', timeout=100000, is_async=True ,job_name="print_salary_slips", kwargs=payroll_entry )
+    enqueue(method=enqueue_print_slips, queue='short', timeout=100000,
+            is_async=True, job_name="print_salary_slips", kwargs=payroll_entry)
 
 
 def enqueue_print_slips(kwargs):
@@ -54,14 +55,15 @@ def enqueue_print_slips(kwargs):
         {"Salary Slip": ss_list}
     )
     print_format = ""
-    default_print_format = frappe.db.get_value('Property Setter', dict(property='default_print_format', doc_type="Salary Slip"), "value")
+    default_print_format = frappe.db.get_value('Property Setter', dict(
+        property='default_print_format', doc_type="Salary Slip"), "value")
     if default_print_format:
         print_format = default_print_format
     else:
         print_format = "Standard"
 
     pdf = download_multi_pdf(doctype, payroll_entry,
-                                format=print_format, no_letterhead=0)
+                             format=print_format, no_letterhead=0)
     if pdf:
         ret = frappe.get_doc({
             "doctype": "File",
