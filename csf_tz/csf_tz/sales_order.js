@@ -18,7 +18,11 @@ frappe.ui.form.on("Sales Order", {
         }
           }, 1000);   
     },
-});
+    default_item_discount: function (frm) {
+        frm.doc.items.forEach(item => {
+            frappe.model.set_value(item.doctype, item.name, 'discount_percentage', frm.doc.default_item_discount);
+        });
+    },});
 
 frappe.ui.keys.add_shortcut({
     shortcut: 'ctrl+q',

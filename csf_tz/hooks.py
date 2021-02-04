@@ -118,6 +118,7 @@ fixtures = [
         "Purchase Invoice-reference",
         "Sales Invoice-default_item_discount",
         "Landed Cost Voucher-import_file",
+        "Sales Order-default_item_discount",
     )]]},
     {"doctype": "Property Setter", "filters": [["name", "in", (
         "Sales Invoice-pos_profile-in_standard_filter",
