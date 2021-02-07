@@ -11,6 +11,11 @@ from frappe.model.document import Document
 class Piecework(Document):
     def before_submit(self):
         create_additional_salaries(self)
+       
+    def validate(self):
+        amount = self.total / len(self.employees)
+        for row in self.employees:
+            row.amount = amount
 
 
 def create_additional_salaries(doc):
@@ -27,3 +32,4 @@ def create_additional_salaries(doc):
             as_doc.submit()
             frappe.msgprint(_("Additional Salary {0} created for employee {1}").format(
                 as_doc.name, row.employee), alert=True)
+            
