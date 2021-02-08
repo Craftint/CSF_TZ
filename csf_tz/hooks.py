@@ -119,6 +119,9 @@ fixtures = [
         "Sales Invoice-default_item_discount",
         "Landed Cost Voucher-import_file",
         "Sales Order-default_item_discount",
+        "Sales Invoice-section_break_80",
+        "Sales Invoice-default_item_tax_template",
+        "Sales Invoice-column_break_178",
     )]]},
     {"doctype": "Property Setter", "filters": [["name", "in", (
         "Sales Invoice-pos_profile-in_standard_filter",
