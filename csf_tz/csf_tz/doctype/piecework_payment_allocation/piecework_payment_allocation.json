@@ -22,7 +22,7 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Amount",
-   "reqd": 1
+   "read_only": 1
   },
   {
    "fieldname": "additional_salary",
@@ -32,7 +32,7 @@
    "read_only": 1
   }
  ],
- "modified": "2021-01-17 04:23:28.633040",
+ "modified": "2021-02-08 12:24:23.121514",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Piecework Payment Allocation",

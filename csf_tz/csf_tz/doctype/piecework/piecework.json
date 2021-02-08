@@ -65,7 +65,7 @@
    "fieldname": "total",
    "fieldtype": "Currency",
    "label": "Total",
-   "reqd": 1
+   "read_only": 1
   },
   {
    "fieldname": "section_break_9",
@@ -96,7 +96,7 @@
   }
  ],
  "is_submittable": 1,
- "modified": "2021-01-17 04:18:00.673788",
+ "modified": "2021-02-08 12:23:50.802180",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Piecework",
