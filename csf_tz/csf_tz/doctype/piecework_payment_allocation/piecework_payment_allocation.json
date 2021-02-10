@@ -5,6 +5,7 @@
  "engine": "InnoDB",
  "field_order": [
   "employee",
+  "employee_name",
   "amount",
   "additional_salary"
  ],
@@ -30,9 +31,16 @@
    "label": "Additional Salary",
    "options": "Additional Salary",
    "read_only": 1
+  },
+  {
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Employee Name"
   }
  ],
- "modified": "2021-02-08 12:24:23.121514",
+ "modified": "2021-02-09 18:58:50.142940",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Piecework Payment Allocation",
