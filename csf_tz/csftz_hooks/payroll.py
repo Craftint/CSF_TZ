@@ -19,6 +19,7 @@ def update_slips(payroll_entry):
         if ss_doc.docstatus != 0:
             continue
         ss_doc.earnings = []
+        ss_doc.deductions = []
         ss_doc.save()
         count += 1
 
@@ -32,6 +33,7 @@ def update_slip(salary_slip):
     if ss_doc.docstatus != 0:
         return
     ss_doc.earnings = []
+    ss_doc.deductions = []
     ss_doc.save()
     frappe.msgprint(_("Salary Slips is updated"))
     return "True"
