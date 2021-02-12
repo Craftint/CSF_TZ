@@ -13,6 +13,7 @@ class Piecework(Document):
         create_additional_salaries(self)
 
     def validate(self):
+        self.total = self.quantity * frappe.db.get_value('Piecework Type', self.task, 'rate')
         employees = []
         amount = self.total / len(self.employees)
         for row in self.employees:
