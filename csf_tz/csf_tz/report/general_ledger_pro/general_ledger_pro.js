@@ -54,7 +54,7 @@ frappe.query_reports["General Ledger Pro"] = {
 			"label": __("Voucher No"),
 			"fieldtype": "Data",
 			on_change: function () {
-				frappe.query_report.set_filter_value('group_by', "");
+				frappe.query_report.set_filter_value('group_by', "Group by Voucher (Consolidated)");
 			}
 		},
 		{
@@ -148,6 +148,12 @@ frappe.query_reports["General Ledger Pro"] = {
 			}
 		},
 		{
+			"fieldname": "include_dimensions",
+			"label": __("Consider Accounting Dimensions"),
+			"fieldtype": "Check",
+			"default": 0
+		},
+		{
 			"fieldname": "show_opening_entries",
 			"label": __("Show Opening Entries"),
 			"fieldtype": "Check"
@@ -157,6 +163,11 @@ frappe.query_reports["General Ledger Pro"] = {
 			"label": __("Include Default Book Entries"),
 			"fieldtype": "Check",
 			"default": 1
+		},
+		{
+			"fieldname": "show_cancelled_entries",
+			"label": __("Show Cancelled Entries"),
+			"fieldtype": "Check"
 		}
 	]
 };
