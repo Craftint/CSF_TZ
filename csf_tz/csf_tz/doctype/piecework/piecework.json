@@ -44,7 +44,7 @@
   },
   {
    "fieldname": "quantity",
-   "fieldtype": "Int",
+   "fieldtype": "Float",
    "in_list_view": 1,
    "label": "Quantity",
    "reqd": 1
@@ -96,7 +96,7 @@
   }
  ],
  "is_submittable": 1,
- "modified": "2021-02-08 12:23:50.802180",
+ "modified": "2021-02-12 11:40:22.489778",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Piecework",
