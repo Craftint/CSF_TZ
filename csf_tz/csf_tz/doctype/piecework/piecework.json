@@ -59,7 +59,8 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Task Rate",
-   "reqd": 1
+   "precision": "2",
+   "read_only": 1
   },
   {
    "fieldname": "total",
@@ -96,7 +97,7 @@
   }
  ],
  "is_submittable": 1,
- "modified": "2021-02-12 11:40:22.489778",
+ "modified": "2021-02-12 12:17:45.527043",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Piecework",
