@@ -1,5 +1,5 @@
 {
- "autoname": "format:{task_code}-{task_name}",
+ "autoname": "format:{task_code}",
  "creation": "2021-01-17 00:02:10.540373",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -20,12 +20,15 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Task Code",
-   "reqd": 1
+   "reqd": 1,
+   "unique": 1
   },
   {
    "fieldname": "task_name",
    "fieldtype": "Data",
+   "in_global_search": 1,
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Task Name",
    "reqd": 1
   },
@@ -62,7 +65,7 @@
    "label": "Disabled"
   }
  ],
- "modified": "2021-02-10 11:41:34.414856",
+ "modified": "2021-02-12 12:58:32.138100",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Piecework Type",
