@@ -10,6 +10,7 @@
   "column_break_3",
   "rate",
   "uom",
+  "disabled",
   "section_break_6",
   "description"
  ],
@@ -53,9 +54,15 @@
    "fieldname": "description",
    "fieldtype": "Text",
    "label": "Description"
+  },
+  {
+   "default": "0",
+   "fieldname": "disabled",
+   "fieldtype": "Check",
+   "label": "Disabled"
   }
  ],
- "modified": "2021-01-17 03:48:39.510341",
+ "modified": "2021-02-10 11:41:34.414856",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Piecework Type",
