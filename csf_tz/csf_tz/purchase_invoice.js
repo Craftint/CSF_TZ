@@ -27,7 +27,7 @@ frappe.ui.form.on("Purchase Invoice", {
 			};
         });
         frappe.call({
-            method: "erpnext.accounts.doctype.accounting_dimension.accounting_dimension.get_dimension_filters",
+            method: "erpnext.accounts.doctype.accounting_dimension.accounting_dimension.get_dimensions",
             callback: function(r) {
                 if(!r.exc) {
                     const dimensions = [];
