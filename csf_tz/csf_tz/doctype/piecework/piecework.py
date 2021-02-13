@@ -34,6 +34,7 @@ def create_additional_salaries(doc):
             as_doc.amount = row.amount
             as_doc.payroll_date = doc.date
             as_doc.company = doc.company
+            as_doc.overwrite_salary_structure_amount = 0
             as_doc.insert(ignore_permissions=True)
             row.additional_salary = as_doc.name
             as_doc.submit()
