@@ -100,14 +100,9 @@ def get_columns(filters):
 		{"label": _("Item Group"), "fieldname": "item_group", "fieldtype": "Link", "options": "Item Group", "width": 100},
 		{"label": _("Stock UOM"), "fieldname": "stock_uom", "fieldtype": "Link", "options": "UOM", "width": 90},
 		{"label": _("Balance Qty"), "fieldname": "bal_qty", "fieldtype": "Float", "width": 100, "convertible": "qty"},
-		{"label": _("Balance Value"), "fieldname": "bal_val", "fieldtype": "Currency", "width": 100, "options": "currency"},
 		{"label": _("Opening Qty"), "fieldname": "opening_qty", "fieldtype": "Float", "width": 100, "convertible": "qty"},
-		{"label": _("Opening Value"), "fieldname": "opening_val", "fieldtype": "Currency", "width": 110, "options": "currency"},
 		{"label": _("In Qty"), "fieldname": "in_qty", "fieldtype": "Float", "width": 80, "convertible": "qty"},
-		{"label": _("In Value"), "fieldname": "in_val", "fieldtype": "Float", "width": 80},
 		{"label": _("Out Qty"), "fieldname": "out_qty", "fieldtype": "Float", "width": 80, "convertible": "qty"},
-		{"label": _("Out Value"), "fieldname": "out_val", "fieldtype": "Float", "width": 80},
-		{"label": _("Valuation Rate"), "fieldname": "val_rate", "fieldtype": "Currency", "width": 90, "convertible": "rate", "options": "currency"},
 		{"label": _("Reorder Level"), "fieldname": "reorder_level", "fieldtype": "Float", "width": 80, "convertible": "qty"},
 		{"label": _("Reorder Qty"), "fieldname": "reorder_qty", "fieldtype": "Float", "width": 80, "convertible": "qty"},
 		{"label": _("Company"), "fieldname": "company", "fieldtype": "Link", "options": "Company", "width": 100}
@@ -180,11 +175,10 @@ def get_item_warehouse_map(filters, sle):
 		key = (d.company, d.item_code)
 		if key not in iwb_map:
 			iwb_map[key] = frappe._dict({
-				"opening_qty": 0.0, "opening_val": 0.0,
-				"in_qty": 0.0, "in_val": 0.0,
-				"out_qty": 0.0, "out_val": 0.0,
-				"bal_qty": 0.0, "bal_val": 0.0,
-				"val_rate": 0.0
+				"opening_qty": 0.0,
+				"in_qty": 0.0,
+				"out_qty": 0.0,
+				"bal_qty": 0.0
 			})
 
 		qty_dict = iwb_map[(d.company, d.item_code)]
@@ -194,26 +188,18 @@ def get_item_warehouse_map(filters, sle):
 		else:
 			qty_diff = flt(d.actual_qty)
 
-		value_diff = flt(d.stock_value) - flt(qty_dict.bal_val)
-
 		if d.posting_date < from_date:
 			qty_dict.opening_qty += qty_diff
-			qty_dict.opening_val += value_diff
 
 		elif d.posting_date >= from_date and d.posting_date <= to_date:
 			if flt(qty_diff, float_precision) >= 0:
 				qty_dict.in_qty += qty_diff
-				qty_dict.in_val += value_diff
 			else:
 				qty_dict.out_qty += abs(qty_diff)
-				qty_dict.out_val += abs(value_diff)
 
-		qty_dict.val_rate = d.valuation_rate
 		qty_dict.bal_qty += qty_diff
-		qty_dict.bal_val += value_diff
 
 	iwb_map = filter_items_with_no_transactions(iwb_map, float_precision)
-	frappe.msgprint(d.item_code + str(qty_dict.bal_val))
 
 	return iwb_map
 
