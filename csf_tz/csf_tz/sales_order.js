@@ -105,7 +105,7 @@ frappe.ui.keys.add_shortcut({
                         d.show();  
                     }
                     else {
-                        frappe.show_alert({message:__('There is No Records'), indicator:'red'}, 5);
+                        frappe.show_alert({message:__('There are no records'), indicator:'red'}, 5);
                     }
                 }
             });     
@@ -185,7 +185,7 @@ frappe.ui.keys.add_shortcut({
                         c.show();  
                     }
                     else {
-                        frappe.show_alert({message:__('There is No Records'), indicator:'red'}, 5);
+                        frappe.show_alert({message:__('There are no records'), indicator:'red'}, 5);
                     }
                 }
             });     
@@ -260,7 +260,7 @@ frappe.ui.keys.add_shortcut({
                         e.show();  
                     }
                     else {
-                        frappe.show_alert({message:__('There is No Records'), indicator:'red'}, 5);
+                        frappe.show_alert({message:__('There are no records'), indicator:'red'}, 5);
                     }
                 }
             });     
