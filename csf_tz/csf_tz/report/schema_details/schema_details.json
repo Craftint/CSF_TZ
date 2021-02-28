@@ -7,15 +7,19 @@
  "doctype": "Report",
  "idx": 0,
  "is_standard": "Yes",
- "modified": "2020-10-18 05:30:10.312888",
+ "modified": "2021-02-27 08:49:19.237327",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Schema Details",
  "owner": "Administrator",
  "prepared_report": 0,
- "query": "SELECT 'DocType Field', df.parent as 'Parent', df.fieldname as 'Field Name',\n    df.label as 'Field Full Name', df.options as 'Linked To DocType', dt.istable as 'Is Child',\n    dt.issingle as 'Is Single', dt.is_tree as 'Is Tree', dt.module as 'Module Name',\n    m.app_name as 'App Name', dt.restrict_to_domain as 'Domain', dt.allow_guest_to_view as 'Allow Guest to View'\n  FROM `tabDocField` as df\n  INNER JOIN `tabDocType` as dt ON df.parent = dt.name\n  INNER JOIN `tabModule Def` as m ON dt.module = m.name\n  WHERE df.fieldtype = 'Link'\nUNION ALL\nSELECT 'Custom Field', df.dt as 'Parent', df.fieldname as 'Field Name',\n    df.label as 'Field Full Name', df.options as 'Linked To DocType', dt.istable as 'Is Child',\n    dt.issingle as 'Is Single', dt.is_tree as 'Is Tree', dt.module as 'Module Name',\n    m.app_name as 'App Name', dt.restrict_to_domain as 'Domain', dt.allow_guest_to_view as 'Allow Guest to View'\n  FROM `tabCustom Field` as df\n  INNER JOIN `tabDocType` as dt ON df.dt = dt.name\n  INNER JOIN `tabModule Def` as m ON dt.module = m.name\n  WHERE df.fieldtype = 'Link'",
+ "query": "SELECT 'DocType Field', df.parent as 'Parent', df.fieldname as 'Field Name', df.fieldtype as 'Field Type',\n    df.label as 'Field Full Name', df.options as 'Linked To DocType', dt.istable as 'Is Child',\n    dt.issingle as 'Is Single', dt.is_tree as 'Is Tree', dt.module as 'Module Name',\n    m.app_name as 'App Name', dt.restrict_to_domain as 'Domain', dt.allow_guest_to_view as 'Allow Guest to View'\n  FROM `tabDocField` as df\n  INNER JOIN `tabDocType` as dt ON df.parent = dt.name\n  INNER JOIN `tabModule Def` as m ON dt.module = m.name\n  WHERE (df.fieldtype = 'Link' or df.fieldtype = 'Dynamic Link')\nUNION ALL\nSELECT 'Custom Field', df.dt as 'Parent', df.fieldname as 'Field Name', df.fieldtype as 'Field Type',\n    df.label as 'Field Full Name', df.options as 'Linked To DocType', dt.istable as 'Is Child',\n    dt.issingle as 'Is Single', dt.is_tree as 'Is Tree', dt.module as 'Module Name',\n    m.app_name as 'App Name', dt.restrict_to_domain as 'Domain', dt.allow_guest_to_view as 'Allow Guest to View'\n  FROM `tabCustom Field` as df\n  INNER JOIN `tabDocType` as dt ON df.dt = dt.name\n  INNER JOIN `tabModule Def` as m ON dt.module = m.name\n  WHERE (df.fieldtype = 'Link' or df.fieldtype = 'Dynamic Link')",
  "ref_doctype": "CSF TZ Settings",
  "report_name": "Schema Details",
  "report_type": "Query Report",
- "roles": []
+ "roles": [
+  {
+   "role": "System Manager"
+  }
+ ]
 }
