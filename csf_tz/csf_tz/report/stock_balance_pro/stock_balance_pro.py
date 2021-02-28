@@ -160,7 +160,9 @@ def get_stock_ledger_entries(filters, items):
 			sle.item_code as name, sle.voucher_no, sle.stock_value
 		from
 			`tabStock Ledger Entry` sle force index (posting_sort_index)
-		where is_cancelled = 0
+		left outer join `tabStock Entry` se on sle.voucher_type = "Stock Entry" and se.name = sle.voucher_no
+		where sle.is_cancelled = 0
+		and (se.purpose != "Material Transfer" or se.purpose IS NULL)
 		and sle.docstatus < 2 %s %s
 		order by sle.posting_date, sle.posting_time, sle.creation, sle.actual_qty""" % #nosec
 		(item_conditions_sql, conditions), as_dict=1)
