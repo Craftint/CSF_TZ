@@ -17,6 +17,22 @@
  },
  {
   "default_value": null,
+  "doc_type": "Program",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "program_fee",
+  "modified": "2021-01-28 18:27:54.254801",
+  "name": "Program-program_fee-allow_bulk_edit",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "allow_bulk_edit",
+  "property_type": "Check",
+  "value": "1"
+ },
+ {
+  "default_value": null,
   "doc_type": "Document Attachment",
   "docstatus": 0,
   "doctype": "Property Setter",
@@ -348,22 +364,6 @@
   "parentfield": null,
   "parenttype": null,
   "property": "read_only",
-  "property_type": "Check",
-  "value": "1"
- },
- {
-  "default_value": null,
-  "doc_type": "Program",
-  "docstatus": 0,
-  "doctype": "Property Setter",
-  "doctype_or_field": "DocField",
-  "field_name": "program_fee",
-  "modified": "2021-01-28 18:27:54.254801",
-  "name": "Program-program_fee-allow_bulk_edit",
-  "parent": null,
-  "parentfield": null,
-  "parenttype": null,
-  "property": "allow_bulk_edit",
   "property_type": "Check",
   "value": "1"
  }
