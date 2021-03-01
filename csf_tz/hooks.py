@@ -150,6 +150,11 @@ fixtures = [
     )]]},
 ]
 
+# Override Document Class
+override_doctype_class = {
+	'Salary Slip': 'csf_tz.overrides.csftz_SalarySlip'
+}
+
 # Includes in <head>
 # ------------------
 
@@ -317,6 +322,9 @@ doc_events = {
     "Student Applicant": {
         "on_update_after_submit": "csf_tz.csftz_hooks.student_applicant.make_student_applicant_fees",
     },
+    # "Salary Slip": {
+    #     "after_save": "csf_tz.csftz_hooks.payroll.delete_duplicate_earning",
+    # },
 }
 
 # Scheduled Tasks
