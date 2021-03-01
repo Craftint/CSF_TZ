@@ -1,0 +1,21 @@
+{
+ "add_total_row": 1,
+ "creation": "2021-02-23 11:00:09.796927",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "idx": 0,
+ "is_standard": "Yes",
+ "modified": "2021-02-23 11:00:09.796927",
+ "modified_by": "Administrator",
+ "module": "CSF TZ",
+ "name": "Excise Duty Report",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "query": "SELECT si.name AS \"Sales Invoice No:Link/Sales Invoice:100\", si.customer AS \"Customer:Link/Customer:250\",\n       si.posting_date AS \"Invoice Date:Date:100\",\n       si.base_net_total AS \"VAT Exclusive:Currency/currency:200\",\n       si.base_net_total * 0.09090909  AS \"Excise Duty:Currency/currency:200\"\nFROM `tabSales Invoice` si\nWHERE si.excise_duty\n  AND si.posting_date BETWEEN %(from_date)s AND %(to_date)s",
+ "ref_doctype": "Purchase Invoice",
+ "report_name": "Excise Duty Report",
+ "report_type": "Query Report",
+ "roles": []
+}

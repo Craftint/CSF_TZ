@@ -18,7 +18,11 @@ frappe.ui.form.on("Sales Order", {
         }
           }, 1000);   
     },
-});
+    default_item_discount: function (frm) {
+        frm.doc.items.forEach(item => {
+            frappe.model.set_value(item.doctype, item.name, 'discount_percentage', frm.doc.default_item_discount);
+        });
+    },});
 
 frappe.ui.keys.add_shortcut({
     shortcut: 'ctrl+q',
@@ -101,7 +105,7 @@ frappe.ui.keys.add_shortcut({
                         d.show();  
                     }
                     else {
-                        frappe.show_alert({message:__('There is No Records'), indicator:'red'}, 5);
+                        frappe.show_alert({message:__('There are no records'), indicator:'red'}, 5);
                     }
                 }
             });     
@@ -181,7 +185,7 @@ frappe.ui.keys.add_shortcut({
                         c.show();  
                     }
                     else {
-                        frappe.show_alert({message:__('There is No Records'), indicator:'red'}, 5);
+                        frappe.show_alert({message:__('There are no records'), indicator:'red'}, 5);
                     }
                 }
             });     
@@ -256,7 +260,7 @@ frappe.ui.keys.add_shortcut({
                         e.show();  
                     }
                     else {
-                        frappe.show_alert({message:__('There is No Records'), indicator:'red'}, 5);
+                        frappe.show_alert({message:__('There are no records'), indicator:'red'}, 5);
                     }
                 }
             });     

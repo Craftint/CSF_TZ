@@ -123,6 +123,11 @@ fixtures = [
         "BOM-scrap_warehouse",
         "BOM-source_warehouse",
         "BOM-column_break_15",
+        "Landed Cost Voucher-import_file",
+        "Sales Order-default_item_discount",
+        "Sales Invoice-section_break_80",
+        "Sales Invoice-default_item_tax_template",
+        "Sales Invoice-column_break_178",
     )]]},
     {"doctype": "Property Setter", "filters": [["name", "in", (
         "Sales Invoice-pos_profile-in_standard_filter",
@@ -146,8 +151,15 @@ fixtures = [
         "Student Applicant-application_status-read_only",
         "Operation-image_field",
         "Document Attachment-attachment-in_list_view",
+        "Program-program_fee-allow_bulk_edit",
+        "Piecework Type-search_fields",
     )]]},
 ]
+
+# Override Document Class
+override_doctype_class = {
+	'Salary Slip': 'csf_tz.overrides.csftz_SalarySlip'
+}
 
 # Includes in <head>
 # ------------------
@@ -283,7 +295,7 @@ doc_events = {
         "before_insert": "csf_tz.custom_api.set_fee_abbr",
         "after_insert": "csf_tz.bank_api.set_callback_token",
         "on_submit": "csf_tz.bank_api.invoice_submission",
-        "before_cancel": "csf_tz.bank_api.cancel_invoice",
+        "before_cancel": "csf_tz.custom_api.on_cancel_fees",
     },
     "Program Enrollment": {
         "onload": "csf_tz.csftz_hooks.program_enrollment.create_course_enrollments_override",
@@ -316,6 +328,9 @@ doc_events = {
     "Student Applicant": {
         "on_update_after_submit": "csf_tz.csftz_hooks.student_applicant.make_student_applicant_fees",
     },
+    # "Salary Slip": {
+    #     "after_save": "csf_tz.csftz_hooks.payroll.delete_duplicate_earning",
+    # },
 }
 
 # Scheduled Tasks
