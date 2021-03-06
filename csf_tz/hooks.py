@@ -127,6 +127,8 @@ fixtures = [
         "Sales Order-default_item_discount",
         "Sales Invoice-section_break_80",
         "Sales Invoice-default_item_tax_template",
+        "Sales Invoice-excise_duty_applicable",
+        "Item-excisable_item",
     )]]},
     {"doctype": "Property Setter", "filters": [["name", "in", (
         "Sales Invoice-pos_profile-in_standard_filter",
