@@ -5,11 +5,10 @@ from __future__ import unicode_literals
 import frappe
 import erpnext
 from frappe import _
-from frappe.utils import flt, cint, getdate, date_diff
+from frappe.utils import flt, cint, getdate
 from erpnext.stock.utils import add_additional_uom_columns
 from erpnext.stock.report.stock_ledger.stock_ledger import get_item_group_condition
 
-from erpnext.stock.report.stock_ageing.stock_ageing import get_fifo_queue, get_average_age
 
 from six import iteritems
 
@@ -19,9 +18,6 @@ def execute(filters=None):
         filters = {}
 
     validate_filters(filters)
-
-    from_date = filters.get('from_date')
-    to_date = filters.get('to_date')
 
     if filters.get("company"):
         company_currency = erpnext.get_company_currency(filters.get("company"))

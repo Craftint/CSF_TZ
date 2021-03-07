@@ -82,11 +82,6 @@ frappe.query_reports["Stock Balance Pro"] = {
 			"label": __("Show Variant Attributes"),
 			"fieldtype": "Check"
 		},
-		{
-			"fieldname": 'show_stock_ageing_data',
-			"label": __('Show Stock Ageing Data'),
-			"fieldtype": 'Check'
-		},
 	],
 
 	"formatter": function (value, row, column, data, default_formatter) {
