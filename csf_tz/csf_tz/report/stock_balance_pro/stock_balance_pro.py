@@ -34,17 +34,12 @@ def execute(filters=None):
     items = get_items(filters)
     sle = get_stock_ledger_entries(filters, items)
 
-    if filters.get('show_stock_ageing_data'):
-        filters['show_warehouse_wise_stock'] = True
-        item_wise_fifo_queue = get_fifo_queue(filters, sle)
-
     # if no stock ledger entry found return
     if not sle:
         return columns, []
 
     iwb_map = get_item_warehouse_map(filters, sle)
     item_map = get_item_details(items, sle, filters)
-    item_reorder_detail_map = get_item_reorder_details(item_map.keys())
 
     data = []
     conversion_factors = {}
@@ -54,18 +49,11 @@ def execute(filters=None):
     for (company, item) in sorted(iwb_map):
         if item_map.get(item):
             qty_dict = iwb_map[(company, item)]
-            item_reorder_level = 0
-            item_reorder_qty = 0
-            if item in item_reorder_detail_map:
-                item_reorder_level = item_reorder_detail_map[item]["warehouse_reorder_level"]
-                item_reorder_qty = item_reorder_detail_map[item]["warehouse_reorder_qty"]
 
             report_data = {
                 'currency': company_currency,
                 'item_code': item,
                 'company': company,
-                'reorder_level': item_reorder_level,
-                'reorder_qty': item_reorder_qty,
             }
             report_data.update(item_map[item])
             report_data.update(qty_dict)
@@ -73,28 +61,6 @@ def execute(filters=None):
             if include_uom:
                 conversion_factors.setdefault(
                     item, item_map[item].conversion_factor)
-
-            if filters.get('show_stock_ageing_data'):
-                fifo_queue = item_wise_fifo_queue[(item)].get('fifo_queue')
-
-                stock_ageing_data = {
-                    'average_age': 0,
-                    'earliest_age': 0,
-                    'latest_age': 0
-                }
-                if fifo_queue:
-                    fifo_queue = sorted(filter(_func, fifo_queue), key=_func)
-                    if not fifo_queue:
-                        continue
-
-                    stock_ageing_data['average_age'] = get_average_age(
-                        fifo_queue, to_date)
-                    stock_ageing_data['earliest_age'] = date_diff(
-                        to_date, fifo_queue[0][1])
-                    stock_ageing_data['latest_age'] = date_diff(
-                        to_date, fifo_queue[-1][1])
-
-                report_data.update(stock_ageing_data)
 
             data.append(report_data)
 
@@ -112,27 +78,19 @@ def get_columns(filters):
          "fieldtype": "Link", "options": "Item Group", "width": 100},
         {"label": _("Stock UOM"), "fieldname": "stock_uom",
          "fieldtype": "Link", "options": "UOM", "width": 90},
-        {"label": _("Balance Qty"), "fieldname": "bal_qty",
-         "fieldtype": "Float", "width": 100, "convertible": "qty"},
         {"label": _("Opening Qty"), "fieldname": "opening_qty",
          "fieldtype": "Float", "width": 100, "convertible": "qty"},
         {"label": _("In Qty"), "fieldname": "in_qty",
          "fieldtype": "Float", "width": 80, "convertible": "qty"},
         {"label": _("Out Qty"), "fieldname": "out_qty",
          "fieldtype": "Float", "width": 80, "convertible": "qty"},
-        {"label": _("Reorder Level"), "fieldname": "reorder_level",
-         "fieldtype": "Float", "width": 80, "convertible": "qty"},
-        {"label": _("Reorder Qty"), "fieldname": "reorder_qty",
-         "fieldtype": "Float", "width": 80, "convertible": "qty"},
+        {"label": _("Excise Qty"), "fieldname": "excise_stock",
+         "fieldtype": "Float", "width": 100, "convertible": "qty"},
+        {"label": _("Balance Qty"), "fieldname": "bal_qty",
+         "fieldtype": "Float", "width": 100, "convertible": "qty"},
         {"label": _("Company"), "fieldname": "company",
          "fieldtype": "Link", "options": "Company", "width": 100}
     ]
-
-    if filters.get('show_stock_ageing_data'):
-        columns += [{'label': _('Average Age'), 'fieldname': 'average_age', 'width': 100},
-                    {'label': _('Earliest Age'),
-                     'fieldname': 'earliest_age', 'width': 100},
-                    {'label': _('Latest Age'), 'fieldname': 'latest_age', 'width': 100}]
 
     if filters.get('show_variant_attributes'):
         columns += [{'label': att_name, 'fieldname': att_name, 'width': 100}
@@ -181,17 +139,42 @@ def get_stock_ledger_entries(filters, items):
 
     return frappe.db.sql("""
 		select
-			sle.item_code, warehouse, sle.posting_date, sle.actual_qty, sle.valuation_rate,
+			sle.item_code, sle.warehouse, sle.posting_date, sle.actual_qty, sle.valuation_rate,
 			sle.company, sle.voucher_type, sle.qty_after_transaction, sle.stock_value_difference,
-			sle.item_code as name, sle.voucher_no, sle.stock_value
+			sle.item_code as name, sle.voucher_no, sle.stock_value, sle.actual_qty as excise_stock
 		from
 			`tabStock Ledger Entry` sle force index (posting_sort_index)
-		left outer join `tabStock Entry` se on sle.voucher_type = "Stock Entry" and se.name = sle.voucher_no
+		inner join `tabStock Entry` se on sle.voucher_type = "Stock Entry" and se.name = sle.voucher_no
+		inner join `tabItem` i on sle.item_code = i.name
 		where sle.is_cancelled = 0
-		and (se.purpose != "Material Transfer" or se.purpose IS NULL)
-		and sle.docstatus < 2 %s %s
-		order by sle.posting_date, sle.posting_time, sle.creation, sle.actual_qty""" %  # nosec
-                         (item_conditions_sql, conditions), as_dict=1)
+            and (se.purpose != "Material Transfer")
+            and i.excisable_item = 1
+            and sle.docstatus < 2 %s %s
+		UNION ALL
+		select
+			sle.item_code, sle.warehouse, sle.posting_date, sle.actual_qty, sle.valuation_rate,
+			sle.company, sle.voucher_type, sle.qty_after_transaction, sle.stock_value_difference,
+			sle.item_code as name, sle.voucher_no, sle.stock_value, sle.actual_qty * si.excise_duty_applicable as excise_stock
+		from
+			`tabStock Ledger Entry` sle force index (posting_sort_index)
+		inner join `tabSales Invoice` si on sle.voucher_type = "Sales Invoice" and si.name = sle.voucher_no
+		inner join `tabItem` i on sle.item_code = i.name
+		where sle.is_cancelled = 0
+            and i.excisable_item = 1
+            and sle.docstatus < 2 %s %s
+		UNION ALL
+		select
+			sle.item_code, sle.warehouse, sle.posting_date, sle.actual_qty, sle.valuation_rate,
+			sle.company, sle.voucher_type, sle.qty_after_transaction, sle.stock_value_difference,
+			sle.item_code as name, sle.voucher_no, sle.stock_value, 0 as excise_stock
+		from
+			`tabStock Ledger Entry` sle force index (posting_sort_index)
+		inner join `tabItem` i on sle.item_code = i.name
+		where sle.is_cancelled = 0
+            and sle.voucher_type NOT IN ("Stock Entry", "Sales Invoice")
+            and i.excisable_item = 1
+            and sle.docstatus < 2 %s %s""" %  # nosec
+                         (item_conditions_sql, conditions, item_conditions_sql, conditions, item_conditions_sql, conditions), as_dict=1)
 
 
 def get_item_warehouse_map(filters, sle):
@@ -208,6 +191,7 @@ def get_item_warehouse_map(filters, sle):
                 "opening_qty": 0.0,
                 "in_qty": 0.0,
                 "out_qty": 0.0,
+                "excise_stock": 0.0,
                 "bal_qty": 0.0
             })
 
@@ -228,6 +212,7 @@ def get_item_warehouse_map(filters, sle):
                 qty_dict.out_qty += abs(qty_diff)
 
         qty_dict.bal_qty += qty_diff
+        qty_dict.excise_stock += abs(d.excise_stock or 0)
 
     iwb_map = filter_items_with_no_transactions(iwb_map, float_precision)
 
@@ -300,20 +285,6 @@ def get_item_details(items, sle, filters):
                         for k, v in iteritems(item_details)}
 
     return item_details
-
-
-def get_item_reorder_details(items):
-    item_reorder_details = frappe._dict()
-
-    if items:
-        item_reorder_details = frappe.db.sql("""
-			select parent, sum(warehouse_reorder_qty) as 'warehouse_reorder_qty', sum(warehouse_reorder_level) as 'warehouse_reorder_level'
-			from `tabItem Reorder`
-			where parent in ({0})
-			group by parent
-		""".format(', '.join([frappe.db.escape(i, percent=False) for i in items])), as_dict=1)
-
-    return dict((d.parent, d) for d in item_reorder_details)
 
 
 def validate_filters(filters):
