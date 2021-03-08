@@ -68,24 +68,24 @@ def get_columns(filters):
     """return columns"""
     columns = [
         {"label": _("Item"), "fieldname": "item_code",
-         "fieldtype": "Link", "options": "Item", "width": 100},
+        "fieldtype": "Link", "options": "Item", "width": 100},
         {"label": _("Item Name"), "fieldname": "item_name", "width": 150},
         {"label": _("Item Group"), "fieldname": "item_group",
-         "fieldtype": "Link", "options": "Item Group", "width": 100},
+        "fieldtype": "Link", "options": "Item Group", "width": 100},
         {"label": _("Stock UOM"), "fieldname": "stock_uom",
-         "fieldtype": "Link", "options": "UOM", "width": 90},
-        {"label": _("Opening Qty"), "fieldname": "opening_qty",
-         "fieldtype": "Float", "width": 100, "convertible": "qty"},
-        {"label": _("In Qty"), "fieldname": "in_qty",
-         "fieldtype": "Float", "width": 80, "convertible": "qty"},
-        {"label": _("Out Qty"), "fieldname": "out_qty",
-         "fieldtype": "Float", "width": 80, "convertible": "qty"},
-        {"label": _("Excise Qty"), "fieldname": "excise_stock",
-         "fieldtype": "Float", "width": 100, "convertible": "qty"},
+        "fieldtype": "Link", "options": "UOM", "width": 90},
         {"label": _("Balance Qty"), "fieldname": "bal_qty",
-         "fieldtype": "Float", "width": 100, "convertible": "qty"},
+        "fieldtype": "Float", "width": 100, "convertible": "qty"},
+        {"label": _("Opening Qty"), "fieldname": "opening_qty",
+        "fieldtype": "Float", "width": 100, "convertible": "qty"},
+        {"label": _("In Qty"), "fieldname": "in_qty",
+        "fieldtype": "Float", "width": 80, "convertible": "qty"},
+        {"label": _("Out Qty"), "fieldname": "out_qty",
+        "fieldtype": "Float", "width": 80, "convertible": "qty"},
+        {"label": _("Excise Qty"), "fieldname": "excise_stock",
+        "fieldtype": "Float", "width": 100, "convertible": "qty"},
         {"label": _("Company"), "fieldname": "company",
-         "fieldtype": "Link", "options": "Company", "width": 100}
+        "fieldtype": "Link", "options": "Company", "width": 100}
     ]
 
     if filters.get('show_variant_attributes'):
@@ -115,12 +115,12 @@ def get_conditions(filters):
                                                 filters.get("warehouse"), ["lft", "rgt"], as_dict=1)
         if warehouse_details:
             conditions += " and exists (select name from `tabWarehouse` wh \
-				where wh.lft >= %s and wh.rgt <= %s and sle.warehouse = wh.name)" % (warehouse_details.lft,
-                                                                         warehouse_details.rgt)
+                where wh.lft >= %s and wh.rgt <= %s and sle.warehouse = wh.name)" % (warehouse_details.lft,
+                                                                        warehouse_details.rgt)
 
     if filters.get("warehouse_type") and not filters.get("warehouse"):
         conditions += " and exists (select name from `tabWarehouse` wh \
-			where wh.warehouse_type = '%s' and sle.warehouse = wh.name)" % (filters.get("warehouse_type"))
+            where wh.warehouse_type = '%s' and sle.warehouse = wh.name)" % (filters.get("warehouse_type"))
 
     return conditions
 
@@ -134,43 +134,43 @@ def get_stock_ledger_entries(filters, items):
     conditions = get_conditions(filters)
 
     return frappe.db.sql("""
-		select
-			sle.item_code, sle.warehouse, sle.posting_date, sle.actual_qty, sle.valuation_rate,
-			sle.company, sle.voucher_type, sle.qty_after_transaction, sle.stock_value_difference,
-			sle.item_code as name, sle.voucher_no, sle.stock_value, 0 as excise_stock
-		from
-			`tabStock Ledger Entry` sle force index (posting_sort_index)
-		inner join `tabStock Entry` se on sle.voucher_type = "Stock Entry" and se.name = sle.voucher_no
-		inner join `tabItem` i on sle.item_code = i.name
-		where sle.is_cancelled = 0
+        select
+            sle.item_code, sle.warehouse, sle.posting_date, sle.actual_qty, sle.valuation_rate,
+            sle.company, sle.voucher_type, sle.qty_after_transaction, sle.stock_value_difference,
+            sle.item_code as name, sle.voucher_no, sle.stock_value, 0 as excise_stock
+        from
+            `tabStock Ledger Entry` sle force index (posting_sort_index)
+        inner join `tabStock Entry` se on sle.voucher_type = "Stock Entry" and se.name = sle.voucher_no
+        inner join `tabItem` i on sle.item_code = i.name
+        where sle.is_cancelled = 0
             and (se.purpose != "Material Transfer")
             and i.excisable_item = 1
             and sle.docstatus < 2 %s %s
-		UNION ALL
-		select
-			sle.item_code, sle.warehouse, sle.posting_date, sle.actual_qty, sle.valuation_rate,
-			sle.company, sle.voucher_type, sle.qty_after_transaction, sle.stock_value_difference,
-			sle.item_code as name, sle.voucher_no, sle.stock_value, sle.actual_qty * si.excise_duty_applicable as excise_stock
-		from
-			`tabStock Ledger Entry` sle force index (posting_sort_index)
-		inner join `tabSales Invoice` si on sle.voucher_type = "Sales Invoice" and si.name = sle.voucher_no
-		inner join `tabItem` i on sle.item_code = i.name
-		where sle.is_cancelled = 0
+        UNION ALL
+        select
+            sle.item_code, sle.warehouse, sle.posting_date, sle.actual_qty, sle.valuation_rate,
+            sle.company, sle.voucher_type, sle.qty_after_transaction, sle.stock_value_difference,
+            sle.item_code as name, sle.voucher_no, sle.stock_value, sle.actual_qty * si.excise_duty_applicable as excise_stock
+        from
+            `tabStock Ledger Entry` sle force index (posting_sort_index)
+        inner join `tabSales Invoice` si on sle.voucher_type = "Sales Invoice" and si.name = sle.voucher_no
+        inner join `tabItem` i on sle.item_code = i.name
+        where sle.is_cancelled = 0
             and i.excisable_item = 1
             and sle.docstatus < 2 %s %s
-		UNION ALL
-		select
-			sle.item_code, sle.warehouse, sle.posting_date, sle.actual_qty, sle.valuation_rate,
-			sle.company, sle.voucher_type, sle.qty_after_transaction, sle.stock_value_difference,
-			sle.item_code as name, sle.voucher_no, sle.stock_value, 0 as excise_stock
-		from
-			`tabStock Ledger Entry` sle force index (posting_sort_index)
-		inner join `tabItem` i on sle.item_code = i.name
-		where sle.is_cancelled = 0
+        UNION ALL
+        select
+            sle.item_code, sle.warehouse, sle.posting_date, sle.actual_qty, sle.valuation_rate,
+            sle.company, sle.voucher_type, sle.qty_after_transaction, sle.stock_value_difference,
+            sle.item_code as name, sle.voucher_no, sle.stock_value, 0 as excise_stock
+        from
+            `tabStock Ledger Entry` sle force index (posting_sort_index)
+        inner join `tabItem` i on sle.item_code = i.name
+        where sle.is_cancelled = 0
             and sle.voucher_type NOT IN ("Stock Entry", "Sales Invoice")
             and i.excisable_item = 1
             and sle.docstatus < 2 %s %s""" %  # nosec
-                         (item_conditions_sql, conditions, item_conditions_sql, conditions, item_conditions_sql, conditions), as_dict=1)
+                        (item_conditions_sql, conditions, item_conditions_sql, conditions, item_conditions_sql, conditions), as_dict=1)
 
 
 def get_item_warehouse_map(filters, sle):
@@ -206,9 +206,9 @@ def get_item_warehouse_map(filters, sle):
                 qty_dict.in_qty += qty_diff
             else:
                 qty_dict.out_qty += abs(qty_diff)
+            qty_dict.excise_stock += abs(d.excise_stock) or 0
 
         qty_dict.bal_qty += qty_diff
-        qty_dict.excise_stock += abs(d.excise_stock or 0)
 
     iwb_map = filter_items_with_no_transactions(iwb_map, float_precision)
 
@@ -244,7 +244,7 @@ def get_items(filters):
     items = []
     if conditions:
         items = frappe.db.sql_list("""select name from `tabItem` item where {}"""
-                                   .format(" and ".join(conditions)), filters)
+                                .format(" and ".join(conditions)), filters)
     return items
 
 
@@ -263,14 +263,14 @@ def get_item_details(items, sle, filters):
             % frappe.db.escape(filters.get("include_uom"))
 
     res = frappe.db.sql("""
-		select
-			item.name, item.item_name, item.description, item.item_group, item.brand, item.stock_uom %s
-		from
-			`tabItem` item
-			%s
-		where
-			item.name in (%s)
-	""" % (cf_field, cf_join, ','.join(['%s'] * len(items))), items, as_dict=1)
+        select
+            item.name, item.item_name, item.description, item.item_group, item.brand, item.stock_uom %s
+        from
+            `tabItem` item
+            %s
+        where
+            item.name in (%s)
+    """ % (cf_field, cf_join, ','.join(['%s'] * len(items))), items, as_dict=1)
 
     for item in res:
         item_details.setdefault(item.name, item)
@@ -301,8 +301,8 @@ def get_variant_values_for(items):
     '''Returns variant values for items.'''
     attribute_map = {}
     for attr in frappe.db.sql('''select parent, attribute, attribute_value
-		from `tabItem Variant Attribute` where parent in (%s)
-		''' % ", ".join(["%s"] * len(items)), tuple(items), as_dict=1):
+        from `tabItem Variant Attribute` where parent in (%s)
+        ''' % ", ".join(["%s"] * len(items)), tuple(items), as_dict=1):
         attribute_map.setdefault(attr['parent'], {})
         attribute_map[attr['parent']].update(
             {attr['attribute']: attr['attribute_value']})
