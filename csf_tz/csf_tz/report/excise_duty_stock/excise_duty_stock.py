@@ -169,7 +169,8 @@ def get_stock_ledger_entries(filters, items):
         where sle.is_cancelled = 0
             and sle.voucher_type NOT IN ("Stock Entry", "Sales Invoice")
             and i.excisable_item = 1
-            and sle.docstatus < 2 %s %s""" %  # nosec
+            and sle.docstatus < 2 %s %s
+        order by 3""" %  # nosec
                         (item_conditions_sql, conditions, item_conditions_sql, conditions, item_conditions_sql, conditions), as_dict=1)
 
 
