@@ -20,7 +20,7 @@ def get_boms(item):
         "docstatus": 1,
         "is_active": 1,
         "transfer_material_against": "Work Order",
-        "item": item,
+        "parent_item": item,
     })
     return boms
 
