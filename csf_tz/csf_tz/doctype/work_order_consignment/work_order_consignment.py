@@ -35,7 +35,7 @@ def create_orders(doc):
 def crate_work_order(bom_name, item_name, qty, company):
     bom = frappe.get_doc("BOM", bom_name)
     wo_order = frappe.new_doc("Work Order")
-    wo_order.production_item = item_name
+    wo_order.production_item = bom.item
     wo_order.bom_no = bom_name
     wo_order.qty = qty
     wo_order.wip_warehouse = bom.wip_warehouse
