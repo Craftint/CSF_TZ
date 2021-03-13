@@ -37,7 +37,7 @@ def crate_work_order(bom_name, doc):
     wo_order.production_item = bom.item
     wo_order.bom_no = bom_name
     wo_order.qty = doc.quantity
-    wo_order.source_warehouse = bom.default_source_warehouse
+    wo_order.source_warehouse = doc.default_source_warehouse
     wo_order.wip_warehouse = bom.wip_warehouse
     wo_order.fg_warehouse = bom.fg_warehouse
     wo_order.scrap_warehouse = bom.fg_warehouse
