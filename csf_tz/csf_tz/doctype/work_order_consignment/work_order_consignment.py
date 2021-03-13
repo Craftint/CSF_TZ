@@ -26,34 +26,36 @@ def get_boms(item):
 
 
 def create_orders(doc):
-    for row in doc.vehicle_consignment_detail:
+    for row in doc.work_order_consignment_detail:
         if row.bom:
-            crate_work_order(row.bom, doc.parent_item,
-                             doc.quantity, doc.company)
+            crate_work_order(row.bom, doc)
 
 
-def crate_work_order(bom_name, item_name, qty, company):
+def crate_work_order(bom_name, doc):
     bom = frappe.get_doc("BOM", bom_name)
     wo_order = frappe.new_doc("Work Order")
     wo_order.production_item = bom.item
     wo_order.bom_no = bom_name
-    wo_order.qty = qty
+    wo_order.qty = doc.quantity
+    wo_order.source_warehouse = bom.default_source_warehouse
     wo_order.wip_warehouse = bom.wip_warehouse
     wo_order.fg_warehouse = bom.fg_warehouse
     wo_order.scrap_warehouse = bom.fg_warehouse
-    wo_order.company = company
+    wo_order.company = doc.company
     wo_order.stock_uom = bom.uom
     wo_order.use_multi_level_bom = 0
     wo_order.skip_transfer = 0
     wo_order.get_items_and_operations_from_bom()
     wo_order.planned_start_date = now()
+    wo_order.parent_item = doc.parent_item
+    wo_order.work_order_consignment = doc.name
 
     if bom.source_warehouse:
         for item in wo_order.get("required_items"):
             item.source_warehouse = bom.source_warehouse
 
     wo_order.insert(ignore_permissions=True)
-    wo_order.submit()
+    # wo_order.submit()
 
     frappe.msgprint(_("Work Order created: {0}").format(
         wo_order.name), alert=True)
