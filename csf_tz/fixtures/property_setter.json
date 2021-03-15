@@ -13,6 +13,7 @@
   "parenttype": null,
   "property": "search_fields",
   "property_type": "Data",
+  "row_name": null,
   "value": "task_name"
  },
  {
@@ -29,6 +30,7 @@
   "parenttype": null,
   "property": "allow_bulk_edit",
   "property_type": "Check",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -45,6 +47,7 @@
   "parenttype": null,
   "property": "in_list_view",
   "property_type": "Check",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -61,6 +64,7 @@
   "parenttype": null,
   "property": "image_field",
   "property_type": "Data",
+  "row_name": null,
   "value": "image"
  },
  {
@@ -77,6 +81,7 @@
   "parenttype": null,
   "property": "collapsible",
   "property_type": "Check",
+  "row_name": null,
   "value": "0"
  },
  {
@@ -93,6 +98,7 @@
   "parenttype": null,
   "property": "collapsible",
   "property_type": "Check",
+  "row_name": null,
   "value": "0"
  },
  {
@@ -109,6 +115,7 @@
   "parenttype": null,
   "property": "columns",
   "property_type": "Int",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -125,6 +132,7 @@
   "parenttype": null,
   "property": "columns",
   "property_type": "Int",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -141,6 +149,7 @@
   "parenttype": null,
   "property": "in_list_view",
   "property_type": "Check",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -157,6 +166,7 @@
   "parenttype": null,
   "property": "label",
   "property_type": "Data",
+  "row_name": null,
   "value": "TIN"
  },
  {
@@ -173,6 +183,7 @@
   "parenttype": null,
   "property": "width",
   "property_type": "Data",
+  "row_name": null,
   "value": "23"
  },
  {
@@ -189,6 +200,7 @@
   "parenttype": null,
   "property": "columns",
   "property_type": "Int",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -205,6 +217,7 @@
   "parenttype": null,
   "property": "columns",
   "property_type": "Int",
+  "row_name": null,
   "value": "0"
  },
  {
@@ -221,6 +234,7 @@
   "parenttype": null,
   "property": "columns",
   "property_type": "Int",
+  "row_name": null,
   "value": "3"
  },
  {
@@ -237,6 +251,7 @@
   "parenttype": null,
   "property": "in_list_view",
   "property_type": "Check",
+  "row_name": null,
   "value": "0"
  },
  {
@@ -253,6 +268,7 @@
   "parenttype": null,
   "property": "columns",
   "property_type": "Int",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -269,6 +285,7 @@
   "parenttype": null,
   "property": "in_list_view",
   "property_type": "Check",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -285,6 +302,7 @@
   "parenttype": null,
   "property": "in_standard_filter",
   "property_type": "Check",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -301,6 +319,7 @@
   "parenttype": null,
   "property": "in_list_view",
   "property_type": "Check",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -317,6 +336,7 @@
   "parenttype": null,
   "property": "in_standard_filter",
   "property_type": "Check",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -333,6 +353,7 @@
   "parenttype": null,
   "property": "fetch_from",
   "property_type": "Small Text",
+  "row_name": null,
   "value": "repack_template.default_warehouse"
  },
  {
@@ -349,6 +370,7 @@
   "parenttype": null,
   "property": "options",
   "property_type": "Text",
+  "row_name": null,
   "value": "Applied\nApproved\nRejected\nAdmitted\nAwaiting Registration Fees"
  },
  {
@@ -365,6 +387,24 @@
   "parenttype": null,
   "property": "read_only",
   "property_type": "Check",
+  "row_name": null,
   "value": "1"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Payment Schedule",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "payment_amount",
+  "modified": "2021-03-15 23:02:28.863728",
+  "name": "Payment Schedule-payment_amount-options",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "options",
+  "property_type": "Small Text",
+  "row_name": null,
+  "value": "Company:company:default_currency"
  }
 ]

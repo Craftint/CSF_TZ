@@ -155,6 +155,7 @@ fixtures = [
         "Document Attachment-attachment-in_list_view",
         "Program-program_fee-allow_bulk_edit",
         "Piecework Type-search_fields",
+        "Payment Schedule-payment_amount-options",
     )]]},
 ]
 
