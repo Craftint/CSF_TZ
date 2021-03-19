@@ -130,6 +130,7 @@ fixtures = [
         "Sales Invoice-excise_duty_applicable",
         "Item-excisable_item",
         "Item-default_tax_template",
+        "Custom DocPerm-dependent",
     )]]},
     {"doctype": "Property Setter", "filters": [["name", "in", (
         "Sales Invoice-pos_profile-in_standard_filter",
@@ -331,9 +332,9 @@ doc_events = {
     "Student Applicant": {
         "on_update_after_submit": "csf_tz.csftz_hooks.student_applicant.make_student_applicant_fees",
     },
-    # "Salary Slip": {
-    #     "after_save": "csf_tz.csftz_hooks.payroll.delete_duplicate_earning",
-    # },
+    "Custom DocPerm": {
+        "validate": "csf_tz.csftz_hooks.custom_docperm.grant_dependant_access",
+    },
 }
 
 # Scheduled Tasks
