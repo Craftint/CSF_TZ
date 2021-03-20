@@ -11,19 +11,21 @@ def grant_dependant_access(doc, method):
     doctypes_granted_access = []
     for field in fields:
         if field.get("fieldtype") in ["Link", "Dynamic Link"]:
-            if create_custom_docperm(field.options, doc.role):
+            if create_custom_docperm(field.options, doc.role, doc.parent):
                 doctypes_granted_access += [field.options]
         if field.get("fieldtype") in ["Table"]:
             child_fields = frappe.get_meta(field.options).fields
             for child_field in child_fields:
                 if child_field.get("fieldtype") in ["Link", "Dynamic Link"]:
-                    if create_custom_docperm(child_field.options, doc.role):
+                    if create_custom_docperm(child_field.options, doc.role, doc.parent):
                         doctypes_granted_access += [child_field.options]
 
     if len(doctypes_granted_access) > 0:
         frappe.msgprint(_("Auto granted SELECT access to the following doctypes: " + str(doctypes_granted_access)))
 
-def create_custom_docperm(doctype, role):
+def create_custom_docperm(doctype, role, parent):
+    if doctype == parent:
+        return
     is_permission_exists = frappe.get_all("Custom DocPerm", filters = {"parent": doctype, "role": role})
     if len(is_permission_exists) > 0:
         return False
