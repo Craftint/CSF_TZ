@@ -327,9 +327,8 @@ def get_repack_template(template_name,qty):
 def create_delivery_note(doc=None, method=None, doc_name=None):
     if not doc and doc_name:
         doc = frappe.get_doc("Sales Invoice", doc_name)
-    elif doc:
-        if not frappe.get_value("Company",doc.company,"enabled_auto_create_delivery_notes"):
-            return
+    if not frappe.get_value("Company",doc.company,"enabled_auto_create_delivery_notes"):
+        return
     if not doc.enabled_auto_create_delivery_notes:
         return
     if doc.update_stock:
@@ -347,8 +346,6 @@ def create_delivery_note(doc=None, method=None, doc_name=None):
             from_delivery_note = True
         if check_item_is_maintain(item.item_code):
             i += 1
-    if len(warehouses_list) == 0:
-            frappe.msgprint(msg="All Delivery Notes already created.", title="Warning", indicator="orange")
     if from_delivery_note or i == 0:
         return
         
@@ -356,7 +353,6 @@ def create_delivery_note(doc=None, method=None, doc_name=None):
         if not doc.is_new():
             check=get_list_pending_sales_invoice(doc.name, warehouse)
             if warehouse and len(check) == 0:
-                frappe.msgprint(msg="All Delivery Notes already created.", title="Warning", indicator="orange")
                 return
         delivery_doc = frappe.get_doc(make_delivery_note(doc.name, None, warehouse))
         delivery_doc.set_warehouse = warehouse
