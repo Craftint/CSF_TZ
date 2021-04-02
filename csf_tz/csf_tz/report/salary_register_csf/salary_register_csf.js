@@ -45,6 +45,23 @@ frappe.query_reports["Salary Register csf"] = {
 			"reqd": 1
 		},
 		{
+			"fieldname": "department",
+			"label": __("Department"),
+			"fieldtype": "Link",
+			"options": "Department",
+			"default": "",
+			"width": "100px",
+			"get_query": function () {
+				var company = frappe.query_report.get_filter_value('company');
+				return {
+					"doctype": "Department",
+					"filters": {
+						"company": company,
+					}
+				};
+			}
+		},
+		{
 			"fieldname": "docstatus",
 			"label": __("Document Status"),
 			"fieldtype": "Select",

@@ -7,6 +7,7 @@ import frappe
 import erpnext
 from frappe.utils import flt
 from frappe import _
+from erpnext.hr.doctype.department.department import get_children
 
 
 def execute(filters=None):
@@ -137,6 +138,9 @@ def get_conditions(filters, company_currency):
         conditions += " and employee = %(employee)s"
     if filters.get("currency") and filters.get("currency") != company_currency:
         conditions += " and currency = %(currency)s"
+    if filters.get("department") and filters.get("company"):
+        department_list = get_departments(filters.get("department"),filters.get("company"))
+        conditions += 'and department in (' + ','.join(("'"+n+"'" for n in department_list)) + ')'
 
     return conditions, filters
 
@@ -184,3 +188,11 @@ def get_ss_ded_map(salary_slips, currency, company_currency):
             ss_ded_map[d.parent][d.salary_component] = flt(d.amount)
 
     return ss_ded_map
+
+
+def get_departments(department,company):
+    departments_list = [department]
+    data = get_children("Department",department, company)
+    for el in data:
+        departments_list.append(el.get("value"))
+    return departments_list
