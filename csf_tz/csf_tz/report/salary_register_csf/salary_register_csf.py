@@ -97,7 +97,7 @@ def get_columns(salary_slips):
 
     for component in frappe.db.sql("""select distinct sd.salary_component, sc.type
         from `tabSalary Detail` sd, `tabSalary Component` sc
-        where sc.name=sd.salary_component and sd.amount != 0 and sd.parent in (%s)""" %
+        where sc.do_not_include_in_total = 0 and sc.name=sd.salary_component and sd.amount != 0 and sd.parent in (%s)""" %
                                    (', '.join(['%s']*len(salary_slips))), tuple([d.name for d in salary_slips]), as_dict=1):
         salary_components[_(component.type)].append(component.salary_component)
 
