@@ -162,7 +162,7 @@ class ReceivablePayableReport(object):
 				row.paid -= gle_balance
 		if row.account_currency != self.company_currency:
 			if row.voucher_type in ["Sales Invoice","Purchase Invoice"]:
-				row.foreign_currency, row.foreign_amount = frappe.get_value(row.voucher_type, row.voucher_no, ["currency","net_total"]) or ""
+				row.foreign_currency, row.foreign_amount = frappe.get_value(row.voucher_type, row.voucher_no, ["currency","rounded_total"]) or ""
 			elif row.voucher_type in ["Payment Entry","Journal Entry"]:
 				row.foreign_amount = gle.credit_in_account_currency or gle.debit_in_account_currency
 				row.foreign_currency = row.account_currency
