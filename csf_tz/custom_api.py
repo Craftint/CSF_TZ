@@ -5,6 +5,9 @@ from frappe import _
 import frappe.permissions
 import frappe.share
 import traceback
+import pyqrcode
+import io
+import base64
 from frappe.utils import flt, cint, getdate, get_datetime, nowdate, nowtime
 from frappe.model.mapper import get_mapped_doc
 from frappe.desk.form.linked_with import get_linked_docs, get_linked_doctypes
@@ -13,6 +16,14 @@ from erpnext.stock.doctype.batch.batch import get_batch_qty
 from erpnext.accounts.utils import get_account_currency
 import csf_tz
 from csf_tz import console
+
+@frappe.whitelist()
+def generate_qrcode(qrcode_data):
+    c = pyqrcode.create(qrcode_data)
+    s = io.BytesIO()
+    c.png(s,scale=3)
+    encoded = '<img src="data:image/png;base64,'+ base64.b64encode(s.getvalue()).decode("ASCII") + '">'
+    return encoded
 
 @frappe.whitelist()
 def app_error_log(title,error):
