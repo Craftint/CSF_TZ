@@ -361,6 +361,12 @@ scheduler_events = {
     # ]
 }
 
+jenv = {
+	"methods": [
+		"generate_qrcode:csf_tz.custom_api.generate_qrcode"
+    ]
+}
+
 # Testing
 # -------
 
