@@ -161,9 +161,9 @@ fixtures = [
 ]
 
 # Override Document Class
-override_doctype_class = {
-	'Salary Slip': 'csf_tz.overrides.csftz_SalarySlip'
-}
+# override_doctype_class = {
+# 	'Salary Slip': 'csf_tz.overrides.csftz_SalarySlip'
+# }
 
 # Includes in <head>
 # ------------------
