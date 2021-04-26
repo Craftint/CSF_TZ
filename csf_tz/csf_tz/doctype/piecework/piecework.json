@@ -1,5 +1,5 @@
 {
- "autoname": "format:{date}-{task}-{###}",
+ "autoname": "format:{date}-{task}-{######}",
  "creation": "2021-01-17 00:13:39.930551",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -105,7 +105,7 @@
   }
  ],
  "is_submittable": 1,
- "modified": "2021-02-12 12:36:31.192153",
+ "modified": "2021-04-23 23:42:01.650310",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Piecework",
@@ -123,6 +123,30 @@
    "role": "System Manager",
    "share": 1,
    "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR User",
+   "share": 1,
    "write": 1
   }
  ],
