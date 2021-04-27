@@ -44,5 +44,7 @@ def validate_additional_salary(doc):
         )
         if status == 1:
             frappe.throw(
-                _("Additional Salary {0} is submited").format(row.additional_salary)
+                _(
+                    "Pieceworks cannot be cancelled once the Payroll Entry / Additional Salary {0} is submited"
+                ).format(row.additional_salary)
             )
