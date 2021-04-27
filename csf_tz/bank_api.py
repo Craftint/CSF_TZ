@@ -4,27 +4,15 @@
 
 from __future__ import unicode_literals
 import frappe
-from frappe.model.document import Document
-from frappe.utils import get_url_to_form, get_url
 from frappe import _
 import json
 import requests
-from csf_tz.custom_api import print_out
-from frappe.utils import (
-    today,
-    format_datetime,
-    now,
-    nowdate,
-    getdate,
-    get_url,
-    get_host_name,
-)
+from frappe.utils import get_host_name
 from time import sleep
 import binascii
 import os
 from werkzeug import url_fix
 import urllib.parse as urlparse
-from urllib.parse import parse_qs
 from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
 from frappe.utils.background_jobs import enqueue
 from datetime import datetime
@@ -181,6 +169,7 @@ def make_payment_entry(**kwargs):
     for key, value in kwargs.items():
         nmb_doc = value
         doc_info = get_fee_info(nmb_doc.reference)
+        accounts = get_fees_default_accounts(doc_info["company"])
 
         if doc_info["doctype"] == "Fees":
             frappe.set_user("Administrator")
@@ -195,32 +184,35 @@ def make_payment_entry(**kwargs):
                         "remarks": "Payment Entry against {0} {1} via NMB Bank Payment {2}".format(
                             "Fees", fees_name, nmb_doc.reference
                         ),
+                        "paid_to": accounts["bank"],
+                        "paid_amount": nmb_doc.amount,
                     }
                 )
                 payment_entry.flags.ignore_permissions = True
                 frappe.flags.ignore_account_permission = True
+                payment_entry.references = []
+                payment_entry.set_missing_values()
                 payment_entry.save()
                 payment_entry.submit()
             return nmb_doc
 
         elif doc_info["doctype"] == "Student Applicant Fees":
             doc = frappe.get_doc("Student Applicant Fees", doc_info["name"])
-            acounts = get_fees_default_accounts(doc.company)
             if not doc.callback_token == nmb_doc.fees_token:
                 return
             jl_rows = []
             debit_row = dict(
-                account=acounts["bank"],
+                account=accounts["bank"],
                 debit_in_account_currency=nmb_doc.amount,
-                account_currency=acounts["currency"],
+                account_currency=accounts["currency"],
                 cost_center=doc.cost_center,
             )
             jl_rows.append(debit_row)
 
             credit_row_1 = dict(
-                account=acounts["income"],
+                account=accounts["income"],
                 credit_in_account_currency=nmb_doc.amount,
-                account_currency=acounts["currency"],
+                account_currency=accounts["currency"],
                 cost_center=doc.cost_center,
             )
             jl_rows.append(credit_row_1)
@@ -362,6 +354,7 @@ def get_fee_info(bank_reference):
     if len(doc_list):
         data["name"] = doc_list[0]["name"]
         data["doctype"] = "Fees"
+        data["company"] = doc_list[0]["company"]
         return data
     else:
         doc_list = frappe.get_all(
@@ -374,6 +367,7 @@ def get_fee_info(bank_reference):
         if len(doc_list):
             data["name"] = doc_list[0]["name"]
             data["doctype"] = "Student Applicant Fees"
+            data["company"] = doc_list[0]["company"]
         return data
 
 
