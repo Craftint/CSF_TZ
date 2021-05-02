@@ -88,8 +88,15 @@ def send_nmb(method, data, company):
             r.raise_for_status()
             frappe.logger().debug({"send_nmb webhook_success": r.text})
             if json.loads(r.text)["status"] == 1:
+                frappe.msgprint(
+                    "Response from bank:<br><hr>" + json.loads(r.text)["description"]
+                )
                 return json.loads(r.text)
             else:
+                frappe.msgprint(
+                    "Error detected at bank:<br><hr>"
+                    + json.loads(r.text)["description"]
+                )
                 frappe.throw(json.loads(r.text))
         except Exception as e:
             frappe.logger().debug({"send_nmb webhook_error": e, "try": i + 1})
