@@ -38,6 +38,9 @@ def set_callback_token(doc, method):
     if not doc.abbr:
         doc.abbr = frappe.get_value("Company", doc.company, "abbr") or ""
     doc.bank_reference = reference.replace("-", "").replace("FEE" + doc.abbr, "")
+    if method == "invoice_submission":
+        doc.save()
+        frappe.db.commit()
 
 
 def get_nmb_token(company):
@@ -60,7 +63,6 @@ def get_nmb_token(company):
             r = requests.post(url, data=json.dumps(data), timeout=5)
             r.raise_for_status()
             frappe.logger().debug({"get_nmb_token webhook_success": r.text})
-            # print_out(r.text)
             if json.loads(r.text)["status"] == 1:
                 return json.loads(r.text)["token"]
             else:
@@ -107,6 +109,14 @@ def invoice_submission(doc=None, method=None, fees_name=None):
     )
     if not send_fee_details_to_bank:
         return
+    if not doc.callback_token:
+        frappe.msgprint(
+            _(
+                "This fee is not set with a token to be sent to the Bank. Generating the token..."
+            ),
+            alert=True,
+        )
+        set_callback_token(doc, "invoice_submission")
     series = frappe.get_value("Company", doc.company, "nmb_series") or ""
     abbr = frappe.get_value("Company", doc.company, "abbr") or ""
     if not series:
