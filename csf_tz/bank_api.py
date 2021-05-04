@@ -367,6 +367,7 @@ def get_fee_info(bank_reference):
             ["Fees", "bank_reference", "=", bank_reference],
             ["Fees", "docstatus", "=", 1],
         ],
+        fields=["name", "company"],
     )
     if len(doc_list):
         data["name"] = doc_list[0]["name"]
@@ -380,6 +381,7 @@ def get_fee_info(bank_reference):
                 ["Student Applicant Fees", "bank_reference", "=", bank_reference],
                 ["Student Applicant Fees", "docstatus", "=", 1],
             ],
+            fields=["name", "company"],
         )
         if len(doc_list):
             data["name"] = doc_list[0]["name"]
