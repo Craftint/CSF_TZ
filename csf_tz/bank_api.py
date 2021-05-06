@@ -191,8 +191,8 @@ def make_payment_entry(**kwargs):
         if doc_info["doctype"] == "Fees":
             frappe.set_user("Administrator")
             fees_name = doc_info["name"]
-            fees_token = frappe.get_value("Fees", fees_name, "callback_token")
-            if fees_token == nmb_doc.fees_token:
+            bank_reference = frappe.get_value("Fees", fees_name, "bank_reference")
+            if bank_reference == nmb_doc.reference:
                 payment_entry = get_payment_entry("Fees", fees_name)
                 payment_entry.update(
                     {
