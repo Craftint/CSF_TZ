@@ -7,7 +7,7 @@ import frappe
 from frappe import _
 import json
 import requests
-from frappe.utils import get_host_name
+from frappe.utils import get_host_name, flt
 from time import sleep
 import binascii
 import os
@@ -182,18 +182,20 @@ def receive_callback(*args, **kwargs):
     )
 
 
-def make_payment_entry(**kwargs):
+def make_payment_entry(method="callback", **kwargs):
     for key, value in kwargs.items():
         nmb_doc = value
         doc_info = get_fee_info(nmb_doc.reference)
         accounts = get_fees_default_accounts(doc_info["company"])
 
+        nmb_amount = flt(nmb_doc.amount)
         if doc_info["doctype"] == "Fees":
-            frappe.set_user("Administrator")
+            if method == "callback":
+                frappe.set_user("Administrator")
             fees_name = doc_info["name"]
             bank_reference = frappe.get_value("Fees", fees_name, "bank_reference")
             if bank_reference == nmb_doc.reference:
-                payment_entry = get_payment_entry("Fees", fees_name)
+                payment_entry = get_payment_entry("Fees", fees_name, party_amount=nmb_amount)
                 payment_entry.update(
                     {
                         "reference_no": nmb_doc.reference,
@@ -202,13 +204,12 @@ def make_payment_entry(**kwargs):
                             "Fees", fees_name, nmb_doc.reference
                         ),
                         "paid_to": accounts["bank"],
-                        "paid_amount": nmb_doc.amount,
                     }
                 )
                 payment_entry.flags.ignore_permissions = True
                 frappe.flags.ignore_account_permission = True
-                payment_entry.references = []
-                payment_entry.set_missing_values()
+                # payment_entry.references = []
+                # payment_entry.set_missing_values()
                 payment_entry.save()
                 payment_entry.submit()
             return nmb_doc
@@ -220,7 +221,7 @@ def make_payment_entry(**kwargs):
             jl_rows = []
             debit_row = dict(
                 account=accounts["bank"],
-                debit_in_account_currency=nmb_doc.amount,
+                debit_in_account_currency=nmb_amount,
                 account_currency=accounts["currency"],
                 cost_center=doc.cost_center,
             )
@@ -228,7 +229,7 @@ def make_payment_entry(**kwargs):
 
             credit_row_1 = dict(
                 account=accounts["income"],
-                credit_in_account_currency=nmb_doc.amount,
+                credit_in_account_currency=nmb_amount,
                 account_currency=accounts["currency"],
                 cost_center=doc.cost_center,
             )
@@ -417,3 +418,8 @@ def get_fees_default_accounts(company):
             )
         )
     return data
+
+@frappe.whitelist()
+def make_payment_entry_from_call(docname):
+    nmb_doc = frappe.get_doc("NMB Callback", docname)
+    make_payment_entry(method="frontend", kwargs=nmb_doc)
