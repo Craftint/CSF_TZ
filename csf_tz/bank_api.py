@@ -113,13 +113,13 @@ def send_nmb(method, data, company):
 
 @frappe.whitelist()
 def invoice_submission(doc=None, method=None, fees_name=None):
-    if not doc and fees_name:
-        doc = frappe.get_doc("Fees", fees_name)
     send_fee_details_to_bank = (
         frappe.get_value("Company", doc.company, "send_fee_details_to_bank") or 0
     )
     if not send_fee_details_to_bank:
         return
+    if not doc and fees_name:
+        doc = frappe.get_doc("Fees", fees_name)
     if not doc.callback_token:
         frappe.msgprint(
             _(
@@ -222,48 +222,49 @@ def make_payment_entry(method="callback", **kwargs):
             doc = frappe.get_doc("Student Applicant Fees", doc_info["name"])
             if not doc.callback_token == nmb_doc.fees_token:
                 return
-            jl_rows = []
-            debit_row = dict(
-                account=accounts["bank"],
-                debit_in_account_currency=nmb_amount,
-                account_currency=accounts["currency"],
-                cost_center=doc.cost_center,
-            )
-            jl_rows.append(debit_row)
+            # Below remarked after introducing VFD in AV solutions
+            # jl_rows = []
+            # debit_row = dict(
+            #     account=accounts["bank"],
+            #     debit_in_account_currency=nmb_amount,
+            #     account_currency=accounts["currency"],
+            #     cost_center=doc.cost_center,
+            # )
+            # jl_rows.append(debit_row)
 
-            credit_row_1 = dict(
-                account=accounts["income"],
-                credit_in_account_currency=nmb_amount,
-                account_currency=accounts["currency"],
-                cost_center=doc.cost_center,
-            )
-            jl_rows.append(credit_row_1)
+            # credit_row_1 = dict(
+            #     account=accounts["income"],
+            #     credit_in_account_currency=nmb_amount,
+            #     account_currency=accounts["currency"],
+            #     cost_center=doc.cost_center,
+            # )
+            # jl_rows.append(credit_row_1)
 
-            user_remark = (
-                "Journal Entry against {0} {1} via NMB Bank Payment {2}".format(
-                    "Student Applicant Fees", doc_info["name"], nmb_doc.reference
-                )
-            )
-            jv_doc = frappe.get_doc(
-                dict(
-                    doctype="Journal Entry",
-                    posting_date=nmb_doc.timestamp,
-                    accounts=jl_rows,
-                    company=doc.company,
-                    multi_currency=0,
-                    user_remark=user_remark,
-                )
-            )
+            # user_remark = (
+            #     "Journal Entry against {0} {1} via NMB Bank Payment {2}".format(
+            #         "Student Applicant Fees", doc_info["name"], nmb_doc.reference
+            #     )
+            # )
+            # jv_doc = frappe.get_doc(
+            #     dict(
+            #         doctype="Journal Entry",
+            #         posting_date=nmb_doc.timestamp,
+            #         accounts=jl_rows,
+            #         company=doc.company,
+            #         multi_currency=0,
+            #         user_remark=user_remark,
+            #     )
+            # )
 
-            jv_doc.flags.ignore_permissions = True
-            frappe.flags.ignore_account_permission = True
-            jv_doc.save()
-            jv_doc.submit()
-            jv_url = frappe.utils.get_url_to_form(jv_doc.doctype, jv_doc.name)
-            si_msgprint = "Journal Entry Created <a href='{0}'>{1}</a>".format(
-                jv_url, jv_doc.name
-            )
-            frappe.msgprint(_(si_msgprint))
+            # jv_doc.flags.ignore_permissions = True
+            # frappe.flags.ignore_account_permission = True
+            # jv_doc.save()
+            # jv_doc.submit()
+            # jv_url = frappe.utils.get_url_to_form(jv_doc.doctype, jv_doc.name)
+            # si_msgprint = "Journal Entry Created <a href='{0}'>{1}</a>".format(
+            #     jv_url, jv_doc.name
+            # )
+            # frappe.msgprint(_(si_msgprint))
             frappe.set_value(
                 "Student Applicant", doc.student, "application_status", "Approved"
             )
