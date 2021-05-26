@@ -109,13 +109,13 @@ def send_nmb(method, data, company):
 
 @frappe.whitelist()
 def invoice_submission(doc=None, method=None, fees_name=None):
-    if not doc and fees_name:
-        doc = frappe.get_doc("Fees", fees_name)
     send_fee_details_to_bank = (
         frappe.get_value("Company", doc.company, "send_fee_details_to_bank") or 0
     )
     if not send_fee_details_to_bank:
         return
+    if not doc and fees_name:
+        doc = frappe.get_doc("Fees", fees_name)
     if not doc.callback_token:
         frappe.msgprint(
             _(
