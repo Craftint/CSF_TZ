@@ -44,16 +44,18 @@ def set_callback_token(doc, method):
 
 
 def get_nmb_token(company):
+    url = frappe.get_value("Company", company, "nmb_url")
+    if not url:
+        frappe.throw(_("Please set NMB URL in Company {0}".format(company)))
+    url = url + str("auth")
+    frappe.msgprint(_("NMB would be contacted for token"))
+    return
     username = frappe.get_value("Company", company, "nmb_username")
     if not username:
         frappe.throw(_("Please set NMB User Name in Company {0}".format(company)))
     password = get_decrypted_password("Company", company, "nmb_password")
     if not password:
         frappe.throw(_("Please set NMB Password in Company {0}".format(company)))
-    url = frappe.get_value("Company", company, "nmb_url")
-    if not url:
-        frappe.throw(_("Please set NMB URL in Company {0}".format(company)))
-    url = url + str("auth")
     data = {
         "username": username,
         "password": password,
@@ -81,6 +83,8 @@ def send_nmb(method, data, company):
     if not url:
         frappe.throw(_("Please set NMB URL in Company {0}".format(company)))
     data["token"] = get_nmb_token(company)
+    frappe.msgprint(_("NMB would be contacted for {0}").format(method))
+    return
     url = url + str(method)
     for i in range(3):
         try:
