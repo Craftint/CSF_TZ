@@ -5,8 +5,8 @@ from frappe.model import core_doctypes_list
 
 
 def grant_dependant_access(doc, method):
-	if frappe.flags.in_install or frappe.flags.in_migrate:
-		return
+    if frappe.flags.in_install or frappe.flags.in_migrate:
+        return
     if doc.dependent:
         frappe.msgprint(
             _(
