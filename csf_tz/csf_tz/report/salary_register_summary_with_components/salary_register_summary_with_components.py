@@ -20,7 +20,8 @@ def execute(filters=None):
         "fieldname": "total",
         "label": _("Total"),
         "fieldtype": "Float",
-        "width": 300
+        "width": 300,
+		"precision": 2
     }]
     data = get_data(filters)
     return columns, data
@@ -41,8 +42,7 @@ def get_data(filters=None):
     blank_line = {"salary_component": "", "total": ""}
     total_employees = len(salary_slips)
     #frappe.msgprint(str(total_employees))
-    total_employee_record = {
-        "salary_component": "Total Employees", "total": total_employees}
+    total_employee_record = {"salary_component": "Total Employees", "total": total_employees}
     data.append(total_employee_record)
     data.append(blank_line)
 
@@ -52,36 +52,34 @@ def get_data(filters=None):
     for basic in ss_basic_map:
         t_basic = t_basic + basic["total"]
 
-    ss_earning_map = get_ss_earning_map(salary_slips, currency, company_currency)
-    #data.extend(ss_earning_map)
-    
+    ss_earning_map = get_ss_earning_map(
+        salary_slips, currency, company_currency)
+    data.extend(ss_earning_map)
+
     #frappe.msgprint(str(ss_earning_map))
     total_earnings = 0
     for earning in ss_earning_map:
-         total_earnings = total_earnings + earning["total"]
+        total_earnings = total_earnings + earning["total"]
     te_record = {"salary_component": "Total Allowances", "total": total_earnings}
-    data.append(te_record)
+    #data.append(te_record)
 
     gross_pay = total_earnings + t_basic
     gp_record = {"salary_component": "GROSS PAY", "total": gross_pay}
     data.append(gp_record)
 
     ss_deduction_map = get_ss_ded_map(salary_slips, currency, company_currency)
-    #data.extend(ss_deduction_map)
+    data.extend(ss_deduction_map)
 
     total_deduction = 0
     for deduction in ss_deduction_map:
         total_deduction = total_deduction + deduction["total"]
-        
+
     ded_record = {"salary_component": "Total Deductions", "total": total_deduction}
-    data.append(ded_record)
+    # data.append(ded_record)
 
     netpay = gross_pay + total_deduction
-    np_record = {"salary_component": "NET PAY", "total": netpay}
+    np_record = {"salary_component": "NET PAY BEFORE LOAN", "total": netpay}
     data.append(np_record)
-
-    # ss_ded_map = get_ss_ded_map(salary_slips, currency, company_currency)
-    # data.extend(ss_ded_map)
     return data
 
 
@@ -105,10 +103,9 @@ def get_ss_basic_map(salary_slips, currency, company_currency):
         AND sd.salary_component = 'Basic'
         GROUP BY sd.salary_component 
         ORDER BY sd.salary_component ASC""" %
-                                (', '.join(['%s']*len(salary_slips))), tuple([d.name for d in salary_slips]), as_dict=1)
+                             (', '.join(['%s']*len(salary_slips))), tuple([d.name for d in salary_slips]), as_dict=1)
 
     return ss_basic
-
 
 
 def get_ss_earning_map(salary_slips, currency, company_currency):
