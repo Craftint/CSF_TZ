@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "creation": "2020-06-14 23:47:22.553281",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -8,7 +9,8 @@
   "validate_net_rate",
   "fetch_default_tax_category",
   "column_break_3",
-  "auto_pos_for_role"
+  "auto_pos_for_role",
+  "is_manufacture"
  ],
  "fields": [
   {
@@ -39,10 +41,18 @@
    "fieldname": "fetch_default_tax_category",
    "fieldtype": "Check",
    "label": "Fetch Default Tax Category"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_manufacture",
+   "fieldtype": "Check",
+   "label": "Make Manufacture Entry instead of Material Receipt"
   }
  ],
+ "index_web_pages_for_search": 1,
  "issingle": 1,
- "modified": "2020-07-24 22:34:38.811578",
+ "links": [],
+ "modified": "2021-05-28 21:40:00.894658",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "CSF TZ Settings",

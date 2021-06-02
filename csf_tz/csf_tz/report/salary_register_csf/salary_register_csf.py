@@ -6,9 +6,8 @@ from __future__ import unicode_literals
 import frappe
 import erpnext
 from frappe.utils import flt
-from frappe import _
-from erpnext.hr.doctype.department.department import get_children
-
+from frappe import _, msgprint
+from frappe.utils.nestedset import get_descendants_of
 
 def execute(filters=None):
     if not filters:
@@ -191,8 +190,6 @@ def get_ss_ded_map(salary_slips, currency, company_currency):
 
 
 def get_departments(department,company):
-    departments_list = [department]
-    data = get_children("Department",department, company)
-    for el in data:
-        departments_list.append(el.get("value"))
+    departments_list = get_descendants_of("Department", department)
+    departments_list.append(department)
     return departments_list
