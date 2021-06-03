@@ -69,7 +69,6 @@ fixtures = [
                     "Fees-callback_token",
                     "Fees-from_date",
                     "Fees-to_date",
-                    "Guardian-naming_series",
                     "Item-default_tax_template",
                     "Item-excisable_item",
                     "Item-withholding_tax_rate_on_sales",
