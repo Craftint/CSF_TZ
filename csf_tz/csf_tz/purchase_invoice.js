@@ -1,5 +1,8 @@
 frappe.ui.form.on("Purchase Invoice", {
     supplier: function(frm) {
+        if (!frm.doc.supplier) {
+            return
+        }
         setTimeout(function() {
             if (!frm.doc.tax_category){
                 frappe.call({
