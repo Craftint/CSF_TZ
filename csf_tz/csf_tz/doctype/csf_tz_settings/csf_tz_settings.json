@@ -10,7 +10,8 @@
   "fetch_default_tax_category",
   "column_break_3",
   "auto_pos_for_role",
-  "is_manufacture"
+  "is_manufacture",
+  "allow_delete_in_sql_command"
  ],
  "fields": [
   {
@@ -47,12 +48,18 @@
    "fieldname": "is_manufacture",
    "fieldtype": "Check",
    "label": "Make Manufacture Entry instead of Material Receipt"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_delete_in_sql_command",
+   "fieldtype": "Check",
+   "label": "Allow Delete in SQL Command"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2021-05-28 21:40:00.894658",
+ "modified": "2021-06-04 15:16:13.589916",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "CSF TZ Settings",
