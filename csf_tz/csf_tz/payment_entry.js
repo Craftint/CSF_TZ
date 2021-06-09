@@ -37,7 +37,7 @@ frappe.ui.form.on("Payment Entry", {
 
 	get_outstanding_documents: function (frm, filters) {
 		if (typeof frappe.route_history[frappe.route_history.length - 2] != "undefined") {
-			if (frappe.route_history[frappe.route_history.length - 2][1] === "Sales Invoice") {
+			if (frappe.route_history[frappe.route_history.length - 2][1] in ["Sales Invoice", "Employee Advance", "Purchase Invoice"]) {
 				return;
 			}
 		}

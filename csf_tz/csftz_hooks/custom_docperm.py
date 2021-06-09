@@ -1,9 +1,12 @@
 import frappe
 from frappe import _
 from frappe.utils.csvutils import getlink
+from frappe.model import core_doctypes_list
 
 
 def grant_dependant_access(doc, method):
+    if frappe.flags.in_install or frappe.flags.in_migrate:
+        return
     if doc.dependent:
         frappe.msgprint(
             _(
@@ -35,7 +38,7 @@ def grant_dependant_access(doc, method):
 
 
 def create_custom_docperm(doctype, role, parent):
-    if doctype == parent:
+    if doctype == parent or doctype in core_doctypes_list:
         return
     is_permission_exists = frappe.get_all(
         "Custom DocPerm", filters={"parent": doctype, "role": role}
