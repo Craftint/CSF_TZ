@@ -29,16 +29,6 @@
         </v-card-title>
         <v-row class="mx-3">
           <v-col lg="5" md="5" cols="12">
-            <v-img
-              max-height="600"
-              max-width="600"
-              class="img-border"
-              :src="
-                cardData.operation.image ||
-                '/assets/csf_tz/js/jobcards/placeholder-image.png'
-              "
-            >
-            </v-img>
             <v-list-item-subtitle class="subtitle-1 mb-1">
               Status: {{ cardData.status }}
             </v-list-item-subtitle>
@@ -60,16 +50,6 @@
             <v-list-item-subtitle class="subtitle-1 mb-1">
               Production Item: {{ cardData.production_item }}
             </v-list-item-subtitle>
-            <v-img
-              max-height="400"
-              max-width="400"
-              class="img-border"
-              :src="
-                cardData.work_order_image ||
-                '/assets/csf_tz/js/jobcards/placeholder-image.png'
-              "
-            >
-            </v-img>
             <v-divider></v-divider>
             <v-autocomplete
               dense
@@ -228,7 +208,7 @@ export default {
     cardData: '',
     employees: '',
     members: [],
-    completed_qty: 0,
+    completed_qty: 1,
     timer: {
       hours: '00',
       minutes: '00',
@@ -257,7 +237,7 @@ export default {
       );
       row.from_time = frappe.datetime.now_datetime();
       row.name = '';
-      row.completed_qty = 0;
+      row.completed_qty = 1;
       this.cardData.job_started = 1;
       this.cardData.started_time = row.from_time;
       this.cardData.status = 'Work In Progress';
@@ -365,7 +345,7 @@ export default {
     complete_job(completed_time) {
       const idx = this.cardData.time_logs.length - 1;
       this.cardData.time_logs[idx].completed_qty = flt(this.completed_qty);
-      this.completed_qty = 0;
+      this.completed_qty = 1;
       this.cardData.time_logs.forEach((d) => {
         if (d.from_time && !d.to_time) {
           d.to_time = completed_time || frappe.datetime.now_datetime();
