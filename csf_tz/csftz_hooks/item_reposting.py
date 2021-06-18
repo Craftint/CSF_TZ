@@ -3,6 +3,7 @@ from frappe import _
 from frappe.utils import getdate, get_time, today
 from erpnext.stock.stock_ledger import update_entries_after
 from erpnext.accounts.utils import update_gl_entries_after
+from frappe.utils.background_jobs import enqueue
 
 def execute():
 	for doctype in ('repost_item_valuation', 'stock_entry_detail', 'purchase_receipt_item',
@@ -10,8 +11,11 @@ def execute():
 		frappe.reload_doc('stock', 'doctype', doctype)
 	frappe.reload_doc('buying', 'doctype', 'purchase_receipt_item_supplied')
 
-	reposting_project_deployed_on = '2020-01-01 00:00:00'
-	posting_date = '2020-01-01'
+	sle_gle_reposting_start_date = frappe.get_value("CSF TZ Settings", "CSF TZ Settings", "sle_gle_reposting_start_date")
+	if not sle_gle_reposting_start_date:
+		frappe.throw(_("SLE GLE Reposting Start Date not set in {0}").format(frappe.utils.get_url_to_form("CSF TZ Settings", "CSF TZ Settings")))
+	reposting_project_deployed_on = sle_gle_reposting_start_date + " 00:00:00"
+	posting_date = sle_gle_reposting_start_date
 	posting_time = '00:00:00'
 
 	if posting_date == today():
@@ -68,3 +72,12 @@ def execute():
 def get_creation_time():
 	return frappe.db.sql(''' SELECT create_time FROM
 		INFORMATION_SCHEMA.TABLES where TABLE_NAME = "tabRepost Item Valuation" ''', as_list=1)[0][0]
+
+@frappe.whitelist()
+def enqueue_reposting_sle_gle():
+	sle_gle_reposting_start_date = frappe.get_value("CSF TZ Settings", "CSF TZ Settings", "sle_gle_reposting_start_date")
+	if not sle_gle_reposting_start_date:
+		frappe.throw(_("SLE GLE Reposting Start Date not set in {0}").format(frappe.utils.get_url_to_form("CSF TZ Settings", "CSF TZ Settings")))
+	frappe.msgprint(_("Reposting of SLE and GLE started"), alert=True)
+	enqueue(method=execute,
+		queue='long', timeout=10000, is_async=True)
