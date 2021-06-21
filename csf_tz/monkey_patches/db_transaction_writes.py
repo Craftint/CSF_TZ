@@ -1,5 +1,6 @@
 import frappe
 from frappe import _
+from frappe.utils import cint
 from frappe.database.database import Database
 
 
@@ -19,7 +20,7 @@ def check_transaction_status(self, query, *args, **kwargs):
         return
 
     self.transaction_writes += 1
-    if self.transaction_writes > (frappe.conf._max_writes_allowed or 200000):
+    if self.transaction_writes > (cint(frappe.conf._max_writes_allowed) or 200000):
         if self.auto_commit_on_many_writes:
             self.commit()
         else:
