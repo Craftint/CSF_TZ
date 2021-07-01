@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "creation": "2020-06-14 23:47:22.553281",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -8,7 +9,13 @@
   "validate_net_rate",
   "fetch_default_tax_category",
   "column_break_3",
-  "auto_pos_for_role"
+  "auto_pos_for_role",
+  "is_manufacture",
+  "allow_delete_in_sql_command",
+  "section_break_8",
+  "sle_gle_reposting_start_date",
+  "column_break_10",
+  "start_sle_gle_reporting"
  ],
  "fields": [
   {
@@ -39,10 +46,42 @@
    "fieldname": "fetch_default_tax_category",
    "fieldtype": "Check",
    "label": "Fetch Default Tax Category"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_manufacture",
+   "fieldtype": "Check",
+   "label": "Make Manufacture Entry instead of Material Receipt"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_delete_in_sql_command",
+   "fieldtype": "Check",
+   "label": "Allow Delete in SQL Command"
+  },
+  {
+   "fieldname": "sle_gle_reposting_start_date",
+   "fieldtype": "Date",
+   "label": "SLE GLE Reposting Start Date"
+  },
+  {
+   "fieldname": "section_break_8",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_10",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "start_sle_gle_reporting",
+   "fieldtype": "Button",
+   "label": "Start SLE GLE Reporting"
   }
  ],
+ "index_web_pages_for_search": 1,
  "issingle": 1,
- "modified": "2020-07-24 22:34:38.811578",
+ "links": [],
+ "modified": "2021-06-18 21:46:02.526988",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "CSF TZ Settings",

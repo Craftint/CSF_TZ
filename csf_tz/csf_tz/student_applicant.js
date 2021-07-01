@@ -9,9 +9,9 @@ frappe.ui.form.on('Student Applicant', {
 		if (!frm.send_fee_details_to_bank) {
 			return;
 		}
-		if(frm.doc.docstatus== 1 ) {
+		if(frm.doc.docstatus == 1 && frm.doc.application_status != "Approved") {
 			frm.clear_custom_buttons();
-			if(["Applied"].includes(frm.doc.application_status)) {
+			if(frm.doc.application_status == "Applied") {
 				frm.add_custom_button(__("Reject"), function() {
 					frm.set_value("application_status", "Rejected");
 					frm.save_or_update();

@@ -1,10 +1,18 @@
 import frappe
 from frappe import _
 from frappe.utils.csvutils import getlink
+from frappe.model import core_doctypes_list
+
 
 def grant_dependant_access(doc, method):
+    if frappe.flags.in_install or frappe.flags.in_migrate:
+        return
     if doc.dependent:
-        frappe.msgprint(_("Warning! {0} is a dependant doctype. If you wish to change access to it, remove it and add again.").format(getlink("DocType", doc.parent)))
+        frappe.msgprint(
+            _(
+                "Warning! {0} is a dependant doctype. If you wish to change access to it, remove it and add again."
+            ).format(getlink("DocType", doc.parent))
+        )
         return
     fields = frappe.get_meta(doc.parent).fields
     # console(fields)
@@ -21,12 +29,20 @@ def grant_dependant_access(doc, method):
                         doctypes_granted_access += [child_field.options]
 
     if len(doctypes_granted_access) > 0:
-        frappe.msgprint(_("Auto granted SELECT access to the following doctypes: " + str(doctypes_granted_access)))
+        frappe.msgprint(
+            _(
+                "Auto granted SELECT access to the following doctypes: "
+                + str(doctypes_granted_access)
+            )
+        )
+
 
 def create_custom_docperm(doctype, role, parent):
-    if doctype == parent:
+    if doctype == parent or doctype in core_doctypes_list:
         return
-    is_permission_exists = frappe.get_all("Custom DocPerm", filters = {"parent": doctype, "role": role})
+    is_permission_exists = frappe.get_all(
+        "Custom DocPerm", filters={"parent": doctype, "role": role}
+    )
     if len(is_permission_exists) > 0:
         return False
     custom_docperm = frappe.new_doc("Custom DocPerm")
@@ -37,5 +53,5 @@ def create_custom_docperm(doctype, role, parent):
     custom_docperm.read = 0
     custom_docperm.export = 0
     custom_docperm.dependent = 1
-    custom_docperm.db_update()
+    custom_docperm.save()
     return True
