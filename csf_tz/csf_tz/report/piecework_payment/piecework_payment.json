@@ -1,0 +1,49 @@
+{
+ "add_total_row": 0,
+ "columns": [],
+ "creation": "2021-07-03 12:01:00.203026",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [
+  {
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "label": "From Date",
+   "mandatory": 1,
+   "wildcard_filter": 0
+  },
+  {
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "label": "To Date",
+   "mandatory": 1,
+   "wildcard_filter": 0
+  }
+ ],
+ "idx": 0,
+ "is_standard": "Yes",
+ "json": "{}",
+ "modified": "2021-07-03 12:09:21.973240",
+ "modified_by": "Administrator",
+ "module": "CSF TZ",
+ "name": "Piecework Payment",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "query": "SELECT  e.department AS \"Department:Link/Department:200\",\n        IFNULL(a.employee_name,'TOTAL',a.employee_name) AS \"Employee Name:Data:200\",\n        sum(a.amount) AS \"Gross:Currency:150\",\n        sum(a.amount) * 0.1 AS \"NSSF:Currency:150\",        \n        sum(a.amount) * 0.9 AS \"Net:Currency:150\"\nFROM `tabAdditional Salary` a LEFT JOIN `tabEmployee` e ON a.employee = e.name\nWHERE a.payroll_date BETWEEN %(from_date)s AND %(to_date)s\nAND a.salary_component = 'Piecework'\nGROUP BY e.department, a.employee_name WITH ROLLUP",
+ "ref_doctype": "Additional Salary",
+ "report_name": "Piecework Payment",
+ "report_type": "Query Report",
+ "roles": [
+  {
+   "role": "HR User"
+  },
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "HR Manager"
+  }
+ ]
+}

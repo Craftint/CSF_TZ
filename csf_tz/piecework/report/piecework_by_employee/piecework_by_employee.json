@@ -1,0 +1,49 @@
+{
+ "add_total_row": 0,
+ "columns": [],
+ "creation": "2021-07-03 12:01:00.169333",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [
+  {
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "label": "From Date",
+   "mandatory": 1,
+   "wildcard_filter": 0
+  },
+  {
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "label": "To Date",
+   "mandatory": 1,
+   "wildcard_filter": 0
+  }
+ ],
+ "idx": 0,
+ "is_standard": "Yes",
+ "json": "{}",
+ "modified": "2021-07-03 12:06:21.632031",
+ "modified_by": "Administrator",
+ "module": "Piecework",
+ "name": "Piecework by Employee",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "query": "SELECT  a.employee_name AS \"Employee Name:Data:200\",\n        IF(spe.task is null,\"Single\",\"Group\") as \"Test:Data:200\",\n        IFNULL(spe.task,p.task, spe.task) AS \"Task:Data:200\",\n        IFNULL(spe.task_rate,p.task_rate,spe.task_rate) as \"Rate:Currency:150\",\n        IFNULL(spe.quantity,p.quantity,spe.quantity) as \"Qty:Interger:150\",\n        SUM(a.amount) AS \"Gross:Currency:150\"\nFROM `tabAdditional Salary` a LEFT JOIN `tabEmployee` e ON a.employee = e.name\n                              LEFT JOIN `tabSingle Piecework Employees` spe ON a.name = spe.additional_salary\n                              LEFT JOIN `tabPiecework Payment Allocation` ppa ON a.name = ppa.additional_salary\n                              LEFT JOIN `tabPiecework` p on p.name = ppa.parent\nWHERE a.payroll_date BETWEEN %(from_date)s AND %(to_date)s\nAND a.salary_component = 'Piecework'\nGROUP BY a.employee,  IFNULL(spe.task,p.task, spe.task) WITH ROLLUP",
+ "ref_doctype": "Additional Salary",
+ "report_name": "Piecework by Employee",
+ "report_type": "Query Report",
+ "roles": [
+  {
+   "role": "HR User"
+  },
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "HR Manager"
+  }
+ ]
+}
