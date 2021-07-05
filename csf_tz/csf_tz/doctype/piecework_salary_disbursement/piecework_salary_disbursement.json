@@ -1,6 +1,5 @@
 {
- "actions": [],
- "autoname": "format:start_date-end_date-######",
+ "autoname": "format:{start_date}-{end_date}-{######}",
  "creation": "2021-07-01 18:11:07.506913",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -10,21 +9,27 @@
   "end_date",
   "payroll_date",
   "column_break_3",
+  "company",
   "earning_salary_component",
   "deduction_salary_component",
   "section_break_6",
-  "employee"
+  "employee",
+  "amended_from"
  ],
  "fields": [
   {
    "fieldname": "start_date",
    "fieldtype": "Date",
-   "label": "Start Date"
+   "in_list_view": 1,
+   "label": "Start Date",
+   "reqd": 1
   },
   {
    "fieldname": "end_date",
    "fieldtype": "Date",
-   "label": "End Date"
+   "in_list_view": 1,
+   "label": "End Date",
+   "reqd": 1
   },
   {
    "fieldname": "column_break_3",
@@ -33,7 +38,8 @@
   {
    "fieldname": "payroll_date",
    "fieldtype": "Date",
-   "label": "Payroll Date"
+   "label": "Payroll Date",
+   "reqd": 1
   },
   {
    "fieldname": "section_break_6",
@@ -49,24 +55,42 @@
    "fieldname": "earning_salary_component",
    "fieldtype": "Link",
    "label": "Earning Salary Component ",
-   "options": "Salary Component"
+   "options": "Salary Component",
+   "reqd": 1
   },
   {
    "fieldname": "deduction_salary_component",
    "fieldtype": "Link",
    "label": "Deduction Salary Component",
    "options": "Salary Component"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Piecework Salary Disbursement",
+   "print_hide": 1,
+   "read_only": 1
   }
  ],
- "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2021-07-03 12:37:00.405085",
+ "is_submittable": 1,
+ "modified": "2021-07-06 01:51:01.883113",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Piecework Salary Disbursement",
  "owner": "Administrator",
  "permissions": [
   {
+   "amend": 1,
+   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -76,6 +100,7 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
+   "submit": 1,
    "write": 1
   }
  ],
