@@ -8,9 +8,9 @@ from frappe import msgprint, _
 from frappe.model.document import Document
 from erpnext.accounts.utils import (get_outstanding_invoices,
 	update_reference_in_payment_entry, reconcile_against_document)
-from erpnext.controllers.accounts_controller import get_advance_payment_entries
 
 class PaymentReconciliationPro(Document):
+	@frappe.whitelist()
 	def get_unreconciled_entries(self):
 		self.get_nonreconciled_payment_entries()
 		self.get_invoice_entries()
@@ -307,3 +307,51 @@ def reconcile_dr_cr_note(dr_cr_notes, company):
 		})
 
 		jv.submit()
+
+def get_advance_payment_entries(party_type, party, party_account, order_doctype,
+		order_list=None, include_unallocated=True, against_all_orders=False, limit=None):
+	party_account_field = "paid_from" if party_type in ["Customer", "Student"] else "paid_to"
+	currency_field = "paid_from_account_currency" if party_type in ["Customer", "Student"] else "paid_to_account_currency"
+	payment_type = "Receive" if party_type in ["Customer", "Student"] else "Pay"
+	exchange_rate_field = "source_exchange_rate" if payment_type == "Receive" else "target_exchange_rate"
+
+	payment_entries_against_order, unallocated_payment_entries = [], []
+	limit_cond = "limit %s" % limit if limit else ""
+
+	if order_list or against_all_orders:
+		if order_list:
+			reference_condition = " and t2.reference_name in ({0})" \
+				.format(', '.join(['%s'] * len(order_list)))
+		else:
+			reference_condition = ""
+			order_list = []
+
+		payment_entries_against_order = frappe.db.sql("""
+			select
+				"Payment Entry" as reference_type, t1.name as reference_name,
+				t1.remarks, t2.allocated_amount as amount, t2.name as reference_row,
+				t2.reference_name as against_order, t1.posting_date,
+				t1.{0} as currency, t1.{4} as exchange_rate
+			from `tabPayment Entry` t1, `tabPayment Entry Reference` t2
+			where
+				t1.name = t2.parent and t1.{1} = %s and t1.payment_type = %s
+				and t1.party_type = %s and t1.party = %s and t1.docstatus = 1
+				and t2.reference_doctype = %s {2}
+			order by t1.posting_date {3}
+		""".format(currency_field, party_account_field, reference_condition, limit_cond, exchange_rate_field),
+													  [party_account, payment_type, party_type, party,
+													   order_doctype] + order_list, as_dict=1)
+
+	if include_unallocated:
+		unallocated_payment_entries = frappe.db.sql("""
+				select "Payment Entry" as reference_type, name as reference_name,
+				remarks, unallocated_amount as amount, {2} as exchange_rate
+				from `tabPayment Entry`
+				where
+					{0} = %s and party_type = %s and party = %s and payment_type = %s
+					and docstatus = 1 and unallocated_amount > 0
+				order by posting_date {1}
+			""".format(party_account_field, limit_cond, exchange_rate_field),
+			(party_account, party_type, party, payment_type), as_dict=1)
+
+	return list(payment_entries_against_order) + list(unallocated_payment_entries)
