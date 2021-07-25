@@ -156,6 +156,8 @@ fixtures = [
                     "Vehicle Service-spare_name",
                     "Fees-base_grand_total",
                     "Fees-advance_paid",
+                    "Employee-employee_salary_component_limits",
+                    "Employee-employee_salary_component_limit",
                 ),
             ]
         ],
