@@ -110,6 +110,9 @@ def send_nmb(method, data, company):
                 )
                 return json.loads(r.text)
             else:
+                print(json.loads(r.text)["description"])
+                if json.loads(r.text)["description"] == "Duplicate Invoice Number":
+                    return json.loads(r.text)
                 frappe.msgprint(
                     "Error detected at bank:<br><hr>"
                     + json.loads(r.text)["description"]
