@@ -76,32 +76,14 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Piecework by Employee",
-   "link_to": "Piecework by Employee",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "Piecework Net Pay",
    "link_to": "Piecework Net Pay",
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Piecework Payment",
-   "link_to": "Piecework Payment",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
   }
  ],
- "modified": "2021-07-03 12:02:29.043233",
+ "modified": "2021-07-05 17:38:33.416116",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Piecework",
