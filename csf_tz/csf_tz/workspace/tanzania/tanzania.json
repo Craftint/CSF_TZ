@@ -25,6 +25,15 @@
   {
    "hidden": 0,
    "is_query_report": 1,
+   "label": "ITX.215.03.E SDL Returns (efiling)",
+   "link_to": "ITX.215.03.E SDL Monthly Returns",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
    "label": "ITX 220.01.E",
    "link_to": "ITX 220.01.E - Employer\u2019s Half Year Certificate",
    "link_type": "Report",
@@ -74,7 +83,7 @@
    "type": "Link"
   }
  ],
- "modified": "2021-08-13 11:24:18.725215",
+ "modified": "2021-08-13 11:40:20.921492",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Tanzania",
