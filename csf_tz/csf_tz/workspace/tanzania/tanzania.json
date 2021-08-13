@@ -1,0 +1,85 @@
+{
+ "category": "Domains",
+ "charts": [],
+ "creation": "2021-07-03 11:42:22.359205",
+ "developer_mode_only": 0,
+ "disable_user_customization": 0,
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "extends_another_page": 0,
+ "hide_custom": 1,
+ "icon": "drag",
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "label": "Tanzania",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "TRA",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "ITX 220.01.E",
+   "link_to": "ITX 220.01.E - Employer\u2019s Half Year Certificate",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "NSSF",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "NSSF/CON.05",
+   "link_to": "NSSF-CON.05",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "WCF",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Setting",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Payware Settings",
+   "link_to": "Payware Settings",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2021-08-13 11:24:18.725215",
+ "modified_by": "Administrator",
+ "module": "CSF TZ",
+ "name": "Tanzania",
+ "owner": "Administrator",
+ "pin_to_bottom": 0,
+ "pin_to_top": 0,
+ "shortcuts": []
+}
