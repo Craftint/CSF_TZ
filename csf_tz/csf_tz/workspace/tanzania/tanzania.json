@@ -34,6 +34,15 @@
   {
    "hidden": 0,
    "is_query_report": 1,
+   "label": "ITX.219.03.E PAYE Returns (efiling)",
+   "link_to": "ITX.219.03.E Statement of Tax Withheld",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
    "label": "ITX 220.01.E SDL Half Yearly Certificate",
    "link_to": "ITX 220.01.E - Employer\u2019s Half Year Certificate",
    "link_type": "Report",
@@ -83,7 +92,7 @@
    "type": "Link"
   }
  ],
- "modified": "2021-08-13 12:00:46.579441",
+ "modified": "2021-08-13 12:32:44.412714",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Tanzania",
