@@ -187,7 +187,6 @@ fixtures = [
                     "Item Price-valid_from-in_list_view",
                     "Journal Entry Account-account-width",
                     "Journal Entry Account-accounting_dimensions_section-collapsible",
-                    "Journal Entry Account-cost_center-in_list_view",
                     "Journal Entry Account-party_type-columns",
                     "Journal Entry Account-party-columns",
                     "Journal Entry Account-reference_name-in_list_view",
