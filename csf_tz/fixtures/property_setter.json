@@ -1,23 +1,6 @@
 [
  {
   "default_value": null,
-  "doc_type": "Journal Entry Account",
-  "docstatus": 0,
-  "doctype": "Property Setter",
-  "doctype_or_field": "DocField",
-  "field_name": "cost_center",
-  "modified": "2020-07-24 18:04:15.156921",
-  "name": "Journal Entry Account-cost_center-in_list_view",
-  "parent": null,
-  "parentfield": null,
-  "parenttype": null,
-  "property": "in_list_view",
-  "property_type": "Check",
-  "row_name": null,
-  "value": "1"
- },
- {
-  "default_value": null,
   "doc_type": "Payment Entry",
   "docstatus": 0,
   "doctype": "Property Setter",
