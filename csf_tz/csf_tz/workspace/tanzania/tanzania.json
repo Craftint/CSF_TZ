@@ -33,7 +33,7 @@
   },
   {
    "hidden": 0,
-   "is_query_report": 0,
+   "is_query_report": 1,
    "label": "NSSF CON5 - Online Version",
    "link_to": "NSSF CON5 Monthly Contribution - Online Version",
    "link_type": "Report",
@@ -152,7 +152,7 @@
    "type": "Card Break"
   }
  ],
- "modified": "2021-08-16 16:54:11.553775",
+ "modified": "2021-08-16 17:13:38.041686",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Tanzania",
