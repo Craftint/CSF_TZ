@@ -158,6 +158,7 @@ fixtures = [
                     "Fees-advance_paid",
                     "Employee-employee_salary_component_limits",
                     "Employee-employee_salary_component_limit",
+                    "Employee-heslb_f4_index_number"
                 ),
             ]
         ],

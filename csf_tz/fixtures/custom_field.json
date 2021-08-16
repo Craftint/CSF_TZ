@@ -7259,5 +7259,20 @@
   "translatable": 0,
   "unique": 0,
   "width": null
- }
+ },
+ {
+    "name": "Employee-heslb_f4_index_number",
+    "owner": "Administrator",
+    "creation": "2021-08-16 17:52:02.294599",
+    "modified": "2021-08-16 17:52:02.294599",
+    "modified_by": "Administrator",
+    "idx": 50,
+    "dt": "Employee",
+    "label": "HESLB F4 Index Number",
+    "fieldname": "heslb_f4_index_number",
+    "insert_after": "national_identity",
+    "fieldtype": "Data",
+    "translatable": 1,
+    "doctype": "Custom Field"
+}
 ]
