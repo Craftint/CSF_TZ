@@ -17,41 +17,6 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "TRA",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "ITX.215.03.E SDL Returns (efiling)",
-   "link_to": "ITX.215.03.E SDL Monthly Returns",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "ITX.219.03.E PAYE Returns (efiling)",
-   "link_to": "ITX.219.03.E Statement of Tax Withheld",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "ITX 220.01.E SDL Half Yearly Certificate",
-   "link_to": "ITX 220.01.E - Employer\u2019s Half Year Certificate",
-   "link_type": "Report",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "NSSF",
    "link_type": "DocType",
    "onboard": 0,
@@ -69,10 +34,97 @@
   {
    "hidden": 0,
    "is_query_report": 0,
+   "label": "NSSF CON5 - Online Version",
+   "link_to": "NSSF CON5 Monthly Contribution - Online Version",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "TRA - PAYE",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "ITX.219.03.E PAYE Returns (efiling)",
+   "link_to": "ITX.219.03.E Statement of Tax Withheld",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "ITX.215.01.E PAY Half Yearly Returns (Part 1)",
+   "link_to": "ITX 215.01.E - PAYE Withheld Part 1",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "ITX.215.01.E PAY Half Yearly Returns (Part 2)",
+   "link_to": "ITX 215.01.E - PAYE Withheld Part 2",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "TRA - SDL",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "ITX.215.03.E SDL Returns (efiling)",
+   "link_to": "ITX.215.03.E SDL Monthly Returns",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "ITX 220.01.E SDL Half Yearly Certificate",
+   "link_to": "ITX 220.01.E - Employer\u2019s Half Year Certificate",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "TRA - Withholding Tax",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "WCF",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "WCF Monthly Returns",
+   "link_to": "WCF-3",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
   },
   {
    "hidden": 0,
@@ -90,9 +142,17 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "TRA - VAT",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
   }
  ],
- "modified": "2021-08-13 12:32:44.412714",
+ "modified": "2021-08-16 16:54:11.553775",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Tanzania",
