@@ -23,9 +23,10 @@ def execute(filters=None):
 	if not filters:
 		return
 	item_list = frappe.db.sql("""
-		select distinct item_code, warehouse from `tabBin` ORDER BY item_code, warehouse
+		select distinct item_code, warehouse from `tabBin` WHERE item_code = "Cefuroxime 250mg" ORDER BY item_code, warehouse
 	""", as_dict = 1)
 
+	skipped = 0
 	for item in item_list:
 	# 	item_wh_list = frappe.db.sql("""
 	# 	select distinct warehouse from `tabBin where item_code = {0}`
@@ -40,21 +41,23 @@ def execute(filters=None):
 			continue
 		total_records += len(item_wh_sle_list) or 0
 
-		prev_quantity = {"actual_qty": 0, "qty_after_transaction": 0, "voucher_no": "", "voucher_type": "First"}
+		prev_row = {"actual_qty": 0, "qty_after_transaction": 0, "voucher_no": "", "voucher_type": "First"}
 		for item_wh_sle in item_wh_sle_list:
-			if prev_quantity["voucher_type"] in ["Stock Reconciliation", "First"] or item_wh_sle.voucher_type == "Stock Reconciliation":
-				prev_quantity["voucher_no"] = prev_quantity["voucher_type"]
-				continue
-			if prev_quantity["qty_after_transaction"] + item_wh_sle.actual_qty != item_wh_sle.qty_after_transaction:
-				row = {"group": item_wh_sle.name, "voucher_type": item_wh_sle.voucher_type, "voucher_no": item_wh_sle.voucher_no, "item_code": item.item_code,"warehouse": item.warehouse, "actual_qty": item_wh_sle.actual_qty, "qty_after_transaction": item_wh_sle.qty_after_transaction}
+			if prev_row["voucher_type"] == "First" or item_wh_sle.voucher_type == "Stock Reconciliation":
+				skipped += 1
+				# frappe.msgprint(str(prev_row["qty_after_transaction"]) + " + " + str(item_wh_sle.actual_qty) + " = " + str(item_wh_sle.qty_after_transaction) + "  -- " + item_wh_sle.voucher_type + ":" + item_wh_sle.voucher_no)
+			else:
+				# frappe.msgprint(str(prev_row["qty_after_transaction"]) + " + " + str(item_wh_sle.actual_qty) + " = " + str(item_wh_sle.qty_after_transaction) + "  -- " + item_wh_sle.voucher_type + ":" + item_wh_sle.voucher_no)
+				if prev_row["qty_after_transaction"] + item_wh_sle.actual_qty != item_wh_sle.qty_after_transaction:
+					row = {"group": item_wh_sle.name, "voucher_type": item_wh_sle.voucher_type, "voucher_no": item_wh_sle.voucher_no, "item_code": item.item_code,"warehouse": item.warehouse, "actual_qty": item_wh_sle.actual_qty, "qty_after_transaction": item_wh_sle.qty_after_transaction}
 
-				data.append({"group": item_wh_sle.name, "voucher_type": prev_quantity["voucher_type"], "voucher_no": prev_quantity["voucher_no"], "item_code": item.item_code,"warehouse": item.warehouse, "actual_qty": prev_quantity["actual_qty"], "qty_after_transaction": prev_quantity["qty_after_transaction"]})
-				data.append(row)
-			prev_quantity["actual_qty"] = item_wh_sle.actual_qty
-			prev_quantity["qty_after_transaction"] = item_wh_sle.qty_after_transaction
-			prev_quantity["voucher_no"] = item_wh_sle.voucher_no
-			prev_quantity["voucher_type"] = item_wh_sle.voucher_type
-	frappe.msgprint(_("Total records to be analyzed: " + str(total_records)))
+					data.append({"group": item_wh_sle.name, "voucher_type": prev_row["voucher_type"], "voucher_no": prev_row["voucher_no"], "item_code": item.item_code,"warehouse": item.warehouse, "actual_qty": prev_row["actual_qty"], "qty_after_transaction": prev_row["qty_after_transaction"]})
+					data.append(row)
+			prev_row["actual_qty"] = item_wh_sle.actual_qty
+			prev_row["qty_after_transaction"] = item_wh_sle.qty_after_transaction
+			prev_row["voucher_no"] = item_wh_sle.voucher_no
+			prev_row["voucher_type"] = item_wh_sle.voucher_type
+	frappe.msgprint(_("Total records analyzed: " + str(total_records) + ". Skipped records: " + str(skipped)))
 
 	return columns, data
 
