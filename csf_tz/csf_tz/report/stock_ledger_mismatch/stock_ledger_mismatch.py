@@ -23,7 +23,7 @@ def execute(filters=None):
 	if not filters:
 		return
 	item_list = frappe.db.sql("""
-		select distinct item_code, warehouse from `tabBin` WHERE item_code = "Cefuroxime 250mg" ORDER BY item_code, warehouse
+		select distinct item_code, warehouse from `tabBin` ORDER BY item_code, warehouse
 	""", as_dict = 1)
 
 	skipped = 0
