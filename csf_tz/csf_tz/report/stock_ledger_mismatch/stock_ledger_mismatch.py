@@ -3,6 +3,7 @@
 
 import frappe
 from frappe import _
+from frappe.utils import flt
 
 def execute(filters=None):
 	columns, data = [], []
@@ -27,13 +28,11 @@ def execute(filters=None):
 	""", as_dict = 1)
 
 	skipped = 0
+	prev_row = {"actual_qty": 0, "qty_after_transaction": 0, "voucher_no": "", "voucher_type": "Header"}
+	data.append(prev_row)
 	for item in item_list:
-	# 	item_wh_list = frappe.db.sql("""
-	# 	select distinct warehouse from `tabBin where item_code = {0}`
-	# """.format(item))
-	# 	for item_wh in item_wh_list:
 		item_wh_sle_list = frappe.db.get_all("Stock Ledger Entry", 
-			filters = [["posting_date", "<=", filters.end_date], ["item_code", "=", item.item_code], ["warehouse", "=", item.warehouse], ["is_cancelled", "=", 0], ["docstatus", "=", 1]],
+			filters = [["posting_date", ">=", filters.from_date], ["posting_date", "<=", filters.end_date], ["item_code", "=", item.item_code], ["warehouse", "=", item.warehouse], ["is_cancelled", "=", 0], ["docstatus", "=", 1]],
 			fields = ["name", "voucher_type", "voucher_no", "actual_qty", "qty_after_transaction"],
 			order_by = "posting_date asc, posting_time asc"
 		)
@@ -45,10 +44,8 @@ def execute(filters=None):
 		for item_wh_sle in item_wh_sle_list:
 			if prev_row["voucher_type"] == "First" or item_wh_sle.voucher_type == "Stock Reconciliation":
 				skipped += 1
-				# frappe.msgprint(str(prev_row["qty_after_transaction"]) + " + " + str(item_wh_sle.actual_qty) + " = " + str(item_wh_sle.qty_after_transaction) + "  -- " + item_wh_sle.voucher_type + ":" + item_wh_sle.voucher_no)
 			else:
-				# frappe.msgprint(str(prev_row["qty_after_transaction"]) + " + " + str(item_wh_sle.actual_qty) + " = " + str(item_wh_sle.qty_after_transaction) + "  -- " + item_wh_sle.voucher_type + ":" + item_wh_sle.voucher_no)
-				if prev_row["qty_after_transaction"] + item_wh_sle.actual_qty != item_wh_sle.qty_after_transaction:
+				if flt(prev_row["qty_after_transaction"], 2) + flt(item_wh_sle.actual_qty, 2) != flt(item_wh_sle.qty_after_transaction, 2):
 					row = {"group": item_wh_sle.name, "voucher_type": item_wh_sle.voucher_type, "voucher_no": item_wh_sle.voucher_no, "item_code": item.item_code,"warehouse": item.warehouse, "actual_qty": item_wh_sle.actual_qty, "qty_after_transaction": item_wh_sle.qty_after_transaction}
 
 					data.append({"group": item_wh_sle.name, "voucher_type": prev_row["voucher_type"], "voucher_no": prev_row["voucher_no"], "item_code": item.item_code,"warehouse": item.warehouse, "actual_qty": prev_row["actual_qty"], "qty_after_transaction": prev_row["qty_after_transaction"]})
@@ -60,4 +57,3 @@ def execute(filters=None):
 	frappe.msgprint(_("Total records analyzed: " + str(total_records) + ". Skipped records: " + str(skipped)))
 
 	return columns, data
-
