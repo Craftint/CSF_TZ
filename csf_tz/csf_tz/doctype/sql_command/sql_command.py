@@ -17,6 +17,4 @@ class SQLCommand(Document):
 				# frappe.db.sql("select * from `tabBin` where warehouse = %s", self.name, as_dict=1)
 				frappe.db.commit()
 		else:
-			if "UPDATE tab" in self.sql_text or "UPDATE `tab" in self.sql_text:
-				return
 			frappe.msgprint(str(frappe.db.sql(self.sql_text, as_dict=1)))
