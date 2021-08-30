@@ -15,6 +15,6 @@ class SQLCommand(Document):
 			if delete_allowed and not self.sql_text and self.doctype_name and self.names:
 				frappe.db.sql("DELETE FROM `tab" + self.doctype_name + "` WHERE NAME IN (" + self.names + ")")
 				# frappe.db.sql("select * from `tabBin` where warehouse = %s", self.name, as_dict=1)
-				frappe.db.commit()
 		else:
 			frappe.msgprint(str(frappe.db.sql(self.sql_text, as_dict=1)))
+		frappe.db.commit()
