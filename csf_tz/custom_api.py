@@ -636,7 +636,7 @@ def delete_doc(doctype,docname):
 
 
 def get_pending_delivery_item_count(item_code, company, warehouse):
-    query = """ SELECT SUM(SIT.delivered_qty) as delivered_cont ,SUM(SIT.stock_qty) as sold_cont
+    query = """ SELECT SUM(SIT.delivered_qty) as delivered_count ,SUM(SIT.stock_qty) as sold_count
             FROM `tabSales Order` AS SI 
             INNER JOIN `tabSales Order Item` AS SIT ON SIT.parent = SI.name 
             WHERE 
@@ -650,11 +650,11 @@ def get_pending_delivery_item_count(item_code, company, warehouse):
 
     counts = frappe.db.sql(query,as_dict=True)
     if len(counts) > 0:
-        if not counts[0]["sold_cont"]:
-            counts[0]["sold_cont"] = 0
-        if not counts[0]["delivered_cont"]:
-            counts[0]["delivered_cont"] = 0
-        return counts[0]["sold_cont"] - counts[0]["delivered_cont"]
+        if not counts[0]["sold_count"]:
+            counts[0]["sold_count"] = 0
+        if not counts[0]["delivered_count"]:
+            counts[0]["delivered_count"] = 0
+        return counts[0]["sold_count"] - counts[0]["delivered_count"]
     else:
         return 0
 
@@ -698,7 +698,7 @@ def validate_item_remaining_qty(item_code, company, warehouse = None, stock_qty 
         # The float(stock_qty) is removed to allow ignore the item itself
         item_remaining_qty =  item_balance - pending_delivery_item_count - float(stock_qty)
         if float(stock_qty) > item_remaining_qty:
-            frappe.throw(_("Item Balance: '{2}', Pending delivery: '{3}', Remaining Qty for '{0}' Is: '{1}'".format(item_code, item_remaining_qty, item_balance, pending_delivery_item_count)))
+            frappe.throw(_("Item Balance: '{2}', Pending delivery: '{3}', Remaining Qty for '{0}' Is: '{1}'. Current request is {4}".format(item_code, item_remaining_qty, item_balance, pending_delivery_item_count, float(stock_qty))))
 
 
 def validate_items_remaining_qty(doc, methohd):
