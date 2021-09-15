@@ -635,17 +635,39 @@ def delete_doc(doctype,docname):
 
 
 
+def get_pending_si_delivery_item_count(item_code, company, warehouse):
+    query = """ SELECT SUM(SII.delivered_qty) as delivered_count ,SUM(SII.stock_qty) as sold_count
+            FROM `tabSales Invoice` AS SI 
+            INNER JOIN `tabSales Invoice Item` AS SII ON SI.name = SII.parent
+            WHERE
+                SII.item_code = '%s'
+                AND SII.parent = SI.name
+                AND SI.docstatus= 1
+                AND SI.company = '%s'
+                AND SII.warehouse = '%s'
+                AND SII.so_detail IS NULL
+                AND SII.delivered_qty != SII.stock_qty
+            """ %(item_code,company,warehouse)
+
+    counts = frappe.db.sql(query,as_dict=True)
+    if len(counts) > 0:
+        if not counts[0]["sold_count"]:
+            counts[0]["sold_count"] = 0
+        if not counts[0]["delivered_count"]:
+            counts[0]["delivered_count"] = 0
+        return counts[0]["sold_count"] - counts[0]["delivered_count"]
+
 def get_pending_delivery_item_count(item_code, company, warehouse):
-    query = """ SELECT SUM(SIT.delivered_qty) as delivered_count ,SUM(SIT.stock_qty) as sold_count
-            FROM `tabSales Order` AS SI 
-            INNER JOIN `tabSales Order Item` AS SIT ON SIT.parent = SI.name 
+    query = """ SELECT SUM(SOI.delivered_qty) as delivered_count ,SUM(SOI.stock_qty) as sold_count
+            FROM `tabSales Order` AS SO
+            INNER JOIN `tabSales Order Item` AS SOI ON SO.name = SOI.parent
             WHERE 
-                SIT.item_code = '%s' 
-                AND SIT.parent = SI.name 
-                AND SI.docstatus= 1 
-                AND SI.company = '%s' 
-                AND SIT.warehouse = '%s' 
-                AND SI.status NOT IN ('Closed', 'On Hold', 'Cancelled')
+                SOI.item_code = '%s' 
+                AND SOI.parent = SO.name 
+                AND SO.docstatus= 1 
+                AND SO.company = '%s' 
+                AND SOI.warehouse = '%s' 
+                AND SO.status NOT IN ('Closed', 'On Hold', 'Cancelled')
             """ %(item_code,company,warehouse)
 
     counts = frappe.db.sql(query,as_dict=True)
@@ -684,7 +706,7 @@ def get_item_balance(item_code, company, warehouse=None):
 
 
 @frappe.whitelist()
-def validate_item_remaining_qty(item_code, company, warehouse = None, stock_qty = None):
+def validate_item_remaining_qty(item_code, company, warehouse = None, stock_qty = None, so_detail = None):
     if not warehouse:
         return
     if frappe.db.get_single_value("Stock Settings", "allow_negative_stock"):
@@ -695,16 +717,25 @@ def validate_item_remaining_qty(item_code, company, warehouse = None, stock_qty 
         if not item_balance:
             frappe.throw(_("<B>{0}</B> item balance is ZERO. Cannot proceed unless Allow Over Sell").format(item_code))
         pending_delivery_item_count = get_pending_delivery_item_count(item_code, company, warehouse) or 0
+        pending_si = get_pending_si_delivery_item_count(item_code, company, warehouse) or 0
         # The float(stock_qty) is removed to allow ignore the item itself
-        item_remaining_qty =  item_balance - pending_delivery_item_count - float(stock_qty)
-        if float(stock_qty) > item_remaining_qty:
-            frappe.throw(_("Item Balance: '{2}', Pending delivery: '{3}', Remaining Qty for '{0}' Is: '{1}'. Current request is {4}".format(item_code, item_remaining_qty, item_balance, pending_delivery_item_count, float(stock_qty))))
+        if so_detail:
+            if pending_delivery_item_count > float(stock_qty):
+                qty_to_reduce = pending_delivery_item_count
+            else:
+                qty_to_reduce = float(stock_qty)
+        else:
+            qty_to_reduce = pending_delivery_item_count + float(stock_qty)
+
+        item_remaining_qty = item_balance - qty_to_reduce - pending_si
+        if item_remaining_qty < 0:
+            frappe.throw(_("Item Balance: '{2}'<br>Pending Sales Order: '{3}'<br>Pending Direct Sales Invoice: {5}<br>Current request is {4}<br><b>Results into balance Qty for '{0}' to '{1}'</b>".format(item_code, item_remaining_qty, item_balance, pending_delivery_item_count, float(stock_qty), pending_si)))
 
 
-def validate_items_remaining_qty(doc, methohd):
+def validate_items_remaining_qty(doc, method):
     for item in doc.items:
         if not item.allow_over_sell:
-            validate_item_remaining_qty(item.item_code, doc.company, item.warehouse ,item.stock_qty)
+            validate_item_remaining_qty(item.item_code, doc.company, item.warehouse ,item.stock_qty, item.so_detail)
 
 
 def on_cancel_fees(doc, method):

@@ -140,6 +140,7 @@ var validate_item_remaining_qty = function (frm, cdt, cdn) {
             company: frm.doc.company,
             warehouse: item_row.warehouse,
             stock_qty: item_row.qty * conversion_factor,
+            so_detail: item_row.so_detail,
         },
         async: false,
     });
