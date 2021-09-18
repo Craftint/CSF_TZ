@@ -1,0 +1,263 @@
+{
+ "actions": [],
+ "creation": "2021-09-18 23:15:04.291031",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "vehicle",
+  "billstatus",
+  "billid",
+  "approvedby",
+  "billdescription",
+  "billpayed",
+  "billreference",
+  "billedamount",
+  "billcontrolnumber",
+  "billequivalentamount",
+  "expirydate",
+  "generateddate",
+  "miscellaneousamount",
+  "payeremail",
+  "remarks",
+  "payerphone",
+  "column_break_16",
+  "payername",
+  "reminderflag",
+  "spsystemid",
+  "billpaytype",
+  "receivedtime",
+  "currency",
+  "applicationid",
+  "collectioncode",
+  "type",
+  "createdby",
+  "itemid",
+  "parkingdetailsid",
+  "section_break_29",
+  "bilitems",
+  "parkingdetails"
+ ],
+ "fields": [
+  {
+   "fieldname": "billstatus",
+   "fieldtype": "Text",
+   "label": "billStatus",
+   "read_only": 1
+  },
+  {
+   "fieldname": "billid",
+   "fieldtype": "Data",
+   "label": "billId",
+   "read_only": 1
+  },
+  {
+   "fieldname": "approvedby",
+   "fieldtype": "Data",
+   "label": "approvedBy",
+   "read_only": 1
+  },
+  {
+   "fieldname": "billdescription",
+   "fieldtype": "Data",
+   "label": "billDescription",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "billpayed",
+   "fieldtype": "Check",
+   "label": "billPayed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "billreference",
+   "fieldtype": "Data",
+   "label": "billReference",
+   "read_only": 1
+  },
+  {
+   "fieldname": "billedamount",
+   "fieldtype": "Float",
+   "label": "billedAmount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "billcontrolnumber",
+   "fieldtype": "Data",
+   "label": "billControlNumber",
+   "read_only": 1
+  },
+  {
+   "fieldname": "billequivalentamount",
+   "fieldtype": "Float",
+   "label": "billEquivalentAmount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "expirydate",
+   "fieldtype": "Date",
+   "label": "expiryDate",
+   "read_only": 1
+  },
+  {
+   "fieldname": "generateddate",
+   "fieldtype": "Data",
+   "label": "generatedDate",
+   "read_only": 1
+  },
+  {
+   "fieldname": "miscellaneousamount",
+   "fieldtype": "Float",
+   "label": "miscellaneousAmount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "payeremail",
+   "fieldtype": "Data",
+   "label": "payerEmail",
+   "read_only": 1
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Data",
+   "label": "remarks",
+   "read_only": 1
+  },
+  {
+   "fieldname": "payerphone",
+   "fieldtype": "Data",
+   "label": "payerPhone",
+   "read_only": 1
+  },
+  {
+   "fieldname": "payername",
+   "fieldtype": "Data",
+   "label": "payerName",
+   "read_only": 1
+  },
+  {
+   "fieldname": "reminderflag",
+   "fieldtype": "Data",
+   "label": "reminderFlag",
+   "read_only": 1
+  },
+  {
+   "fieldname": "spsystemid",
+   "fieldtype": "Data",
+   "label": "spSystemId",
+   "read_only": 1
+  },
+  {
+   "fieldname": "billpaytype",
+   "fieldtype": "Data",
+   "label": "billPayType",
+   "read_only": 1
+  },
+  {
+   "fieldname": "receivedtime",
+   "fieldtype": "Data",
+   "label": "receivedTime",
+   "read_only": 1
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Data",
+   "label": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "applicationid",
+   "fieldtype": "Data",
+   "label": "applicationId",
+   "read_only": 1
+  },
+  {
+   "fieldname": "collectioncode",
+   "fieldtype": "Data",
+   "label": "collectionCode",
+   "read_only": 1
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Data",
+   "label": "type",
+   "read_only": 1
+  },
+  {
+   "fieldname": "createdby",
+   "fieldtype": "Data",
+   "label": "createdBy",
+   "read_only": 1
+  },
+  {
+   "fieldname": "itemid",
+   "fieldtype": "Data",
+   "label": "itemId",
+   "read_only": 1
+  },
+  {
+   "fieldname": "parkingdetailsid",
+   "fieldtype": "Data",
+   "label": "parkingDetailsId",
+   "read_only": 1
+  },
+  {
+   "fieldname": "bilitems",
+   "fieldtype": "Table",
+   "label": "BilItems",
+   "options": "Parking Bil Items",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_16",
+   "fieldtype": "Column Break",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_29",
+   "fieldtype": "Section Break",
+   "read_only": 1
+  },
+  {
+   "fieldname": "vehicle",
+   "fieldtype": "Link",
+   "label": "Vehicle",
+   "options": "Vehicle",
+   "read_only": 1
+  },
+  {
+   "fieldname": "parkingdetails",
+   "fieldtype": "Table",
+   "label": "parkingDetails",
+   "options": "Parking Bill Details",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2021-09-18 23:49:00.958173",
+ "modified_by": "Administrator",
+ "module": "CSF TZ",
+ "name": "Parking Bil",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1,
+ "track_seen": 1,
+ "track_views": 1
+}
