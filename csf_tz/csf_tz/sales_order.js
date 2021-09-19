@@ -1,5 +1,8 @@
 frappe.ui.form.on("Sales Order", {
     customer: function(frm) {
+        if (!frm.doc.customer) {
+            return
+        }
         setTimeout(function() {
             if (!frm.doc.tax_category){
                 frappe.call({
