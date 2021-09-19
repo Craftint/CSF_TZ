@@ -8,11 +8,10 @@ from frappe import _
 from frappe.utils import getdate
 import requests
 from requests.exceptions import Timeout
-from csf_tz import console
 from frappe.model.document import Document
 
 
-class ParkingBil(Document):
+class ParkingBill(Document):
     pass
 
 
@@ -23,7 +22,7 @@ def check_bills_all_vehicles():
             bill = get_bills(vehicle["name"])
             if (
                 bill and bill.code == 6000
-            ):  # not frappe.db.exists("Parking Bil", bill.billReference)
+            ):
                 update_bill(vehicle["name"], bill)
         except Exception as e:
             frappe.log_error(frappe.get_traceback(), str(e))
@@ -38,9 +37,7 @@ def get_bills(number_plate):
     try:
         response = requests.get(url=url, timeout=5)
         if response.status_code == 200:
-            # console(json.loads(response.text))
             return frappe._dict(json.loads(response.text))
-
         else:
             res = None
             try:
@@ -60,15 +57,13 @@ def update_bill(number_plate, bills):
     if not bills.get("data"):
         return
     for row in bills.data:
-        console(row)
-
         row = frappe._dict(row)
         data = frappe._dict(row.bill)
 
-        if frappe.db.exists("Parking Bil", data.billReference):
-            doc = frappe.get_doc("Parking Bil", data.billReference)
+        if frappe.db.exists("Parking Bill", data.billReference):
+            doc = frappe.get_doc("Parking Bill", data.billReference)
         else:
-            doc = frappe.new_doc("Parking Bil")
+            doc = frappe.new_doc("Parking Bill")
             doc.billreference = data.billReference
         doc.vehicle = number_plate
         doc.billstatus = row.billStatus

@@ -214,7 +214,7 @@
    "fieldname": "bilitems",
    "fieldtype": "Table",
    "label": "BilItems",
-   "options": "Parking Bil Items",
+   "options": "Parking Bill Items",
    "read_only": 1
   },
   {
@@ -250,10 +250,10 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-09-20 00:34:20.388290",
+ "modified": "2021-09-20 01:04:22.385365",
  "modified_by": "Administrator",
  "module": "CSF TZ",
- "name": "Parking Bil",
+ "name": "Parking Bill",
  "owner": "Administrator",
  "permissions": [
   {
