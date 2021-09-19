@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "autoname": "field:billreference",
  "creation": "2021-09-18 23:15:04.291031",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -18,16 +19,16 @@
   "expirydate",
   "generateddate",
   "miscellaneousamount",
+  "column_break_16",
   "payeremail",
   "remarks",
   "payerphone",
-  "column_break_16",
   "payername",
   "reminderflag",
   "spsystemid",
   "billpaytype",
   "receivedtime",
-  "currency",
+  "billcurrency",
   "applicationid",
   "collectioncode",
   "type",
@@ -41,7 +42,7 @@
  "fields": [
   {
    "fieldname": "billstatus",
-   "fieldtype": "Text",
+   "fieldtype": "Data",
    "label": "billStatus",
    "read_only": 1
   },
@@ -60,6 +61,8 @@
   {
    "fieldname": "billdescription",
    "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "billDescription",
    "read_only": 1
   },
@@ -67,18 +70,24 @@
    "default": "0",
    "fieldname": "billpayed",
    "fieldtype": "Check",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "billPayed",
    "read_only": 1
   },
   {
    "fieldname": "billreference",
    "fieldtype": "Data",
+   "in_standard_filter": 1,
    "label": "billReference",
-   "read_only": 1
+   "read_only": 1,
+   "unique": 1
   },
   {
    "fieldname": "billedamount",
    "fieldtype": "Float",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "billedAmount",
    "read_only": 1
   },
@@ -97,12 +106,16 @@
   {
    "fieldname": "expirydate",
    "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "expiryDate",
    "read_only": 1
   },
   {
    "fieldname": "generateddate",
-   "fieldtype": "Data",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "generatedDate",
    "read_only": 1
   },
@@ -121,6 +134,7 @@
   {
    "fieldname": "remarks",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "remarks",
    "read_only": 1
   },
@@ -158,12 +172,6 @@
    "fieldname": "receivedtime",
    "fieldtype": "Data",
    "label": "receivedTime",
-   "read_only": 1
-  },
-  {
-   "fieldname": "currency",
-   "fieldtype": "Data",
-   "label": "currency",
    "read_only": 1
   },
   {
@@ -232,11 +240,17 @@
    "label": "parkingDetails",
    "options": "Parking Bill Details",
    "read_only": 1
+  },
+  {
+   "fieldname": "billcurrency",
+   "fieldtype": "Data",
+   "label": "currency",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-09-18 23:49:00.958173",
+ "modified": "2021-09-20 00:34:20.388290",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Parking Bil",
@@ -257,6 +271,7 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "title_field": "vehicle",
  "track_changes": 1,
  "track_seen": 1,
  "track_views": 1
