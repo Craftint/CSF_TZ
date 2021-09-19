@@ -123,7 +123,9 @@ frappe.ui.form.on("Delivery Note", {
 
     },
     customer: function(frm) {
-        console.log(frm.doc.name);
+        if (!frm.doc.customer) {
+            return
+        }
         setTimeout(function() {
             if (!frm.doc.tax_category){
                 frappe.call({
