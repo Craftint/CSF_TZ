@@ -158,7 +158,7 @@ fixtures = [
                     "Fees-advance_paid",
                     "Employee-employee_salary_component_limits",
                     "Employee-employee_salary_component_limit",
-                    "Employee-heslb_f4_index_number"
+                    "Employee-heslb_f4_index_number",
                 ),
             ]
         ],
@@ -445,6 +445,11 @@ scheduler_events = {
     # "all": [
     # 	"csf_tz.tasks.all"
     # ],
+    "cron": {
+        "0 */6 * * *": [
+            "csf_tz.csf_tz.doctype.parking_bill.parking_bill.check_bills_all_vehicles"
+        ]
+    },
     "daily": [
         "csf_tz.custom_api.create_delivery_note_for_all_pending_sales_invoice",
         "csf_tz.csf_tz.doctype.visibility.visibility.trigger_daily_alerts",
