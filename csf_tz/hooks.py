@@ -202,8 +202,6 @@ fixtures = [
                     "Payment Entry Reference-reference_doctype-columns",
                     "Payment Entry Reference-reference_doctype-in_list_view",
                     "Payment Entry Reference-reference_name-columns",
-                    "Payment Entry-cost_center-fetch_from",
-                    "Payment Entry-cost_center-fetch_if_empty",
                     "Payment Entry-letter_head-fetch_from",
                     "Payment Entry-payment_accounts_section-collapsible",
                     "Payment Entry-section_break_12-collapsible",
