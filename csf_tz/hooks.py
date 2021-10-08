@@ -202,8 +202,6 @@ fixtures = [
                     "Payment Entry Reference-reference_doctype-columns",
                     "Payment Entry Reference-reference_doctype-in_list_view",
                     "Payment Entry Reference-reference_name-columns",
-                    "Payment Entry-cost_center-fetch_from",
-                    "Payment Entry-cost_center-fetch_if_empty",
                     "Payment Entry-letter_head-fetch_from",
                     "Payment Entry-payment_accounts_section-collapsible",
                     "Payment Entry-section_break_12-collapsible",
@@ -448,13 +446,13 @@ scheduler_events = {
     # ],
     "cron": {
         "0 */6 * * *": [
-            "csf_tz.csf_tz.doctype.parking_bill.parking_bill.check_bills_all_vehicles"
+            "csf_tz.csf_tz.doctype.parking_bill.parking_bill.check_bills_all_vehicles",
+            "csf_tz.csf_tz.doctype.vehicle_fine_record.vehicle_fine_record.check_fine_all_vehicles",
         ]
     },
     "daily": [
         "csf_tz.custom_api.create_delivery_note_for_all_pending_sales_invoice",
         "csf_tz.csf_tz.doctype.visibility.visibility.trigger_daily_alerts",
-        "csf_tz.csf_tz.doctype.vehicle_fine_record.vehicle_fine_record.check_fine_all_vehicles",
         "csf_tz.bank_api.reconciliation",
     ],
     # "hourly": [
