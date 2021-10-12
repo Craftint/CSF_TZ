@@ -646,6 +646,7 @@ def get_pending_si_delivery_item_count(item_code, company, warehouse):
                 AND SI.company = '%s'
                 AND SII.warehouse = '%s'
                 AND SII.so_detail IS NULL
+                AND SII.is_ignored_in_pending_qty != 1
                 AND SII.delivered_qty != SII.stock_qty
             """ %(item_code,company,warehouse)
 

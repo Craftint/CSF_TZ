@@ -209,6 +209,7 @@ def make_payment_entry(method="callback", **kwargs):
         accounts = get_fees_default_accounts(doc_info["company"])
 
         nmb_amount = flt(nmb_doc.amount)
+        frappe.flags.ignore_account_permission = True
         if doc_info["doctype"] == "Fees":
             if method == "callback":
                 frappe.set_user("Administrator")
@@ -229,7 +230,6 @@ def make_payment_entry(method="callback", **kwargs):
                     }
                 )
                 payment_entry.flags.ignore_permissions = True
-                frappe.flags.ignore_account_permission = True
                 # payment_entry.references = []
                 # payment_entry.set_missing_values()
                 payment_entry.save()
