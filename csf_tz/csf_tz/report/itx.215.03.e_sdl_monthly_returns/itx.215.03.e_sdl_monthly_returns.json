@@ -11,20 +11,20 @@
    "fieldname": "from_date",
    "fieldtype": "Date",
    "label": "From Date",
-   "mandatory": 0,
+   "mandatory": 1,
    "wildcard_filter": 0
   },
   {
    "fieldname": "to_date",
    "fieldtype": "Date",
    "label": "To Date",
-   "mandatory": 0,
+   "mandatory": 1,
    "wildcard_filter": 0
   }
  ],
  "idx": 0,
  "is_standard": "Yes",
- "modified": "2021-08-13 12:28:53.160494",
+ "modified": "2021-10-07 15:46:15.318993",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "ITX.215.03.E SDL Monthly Returns",
