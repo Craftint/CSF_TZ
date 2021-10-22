@@ -1040,6 +1040,8 @@ def get_pending_sales_invoice(*args):
                     SIT.parent = SI.name                  
                     AND SI.docstatus= 1              
                     AND SI.update_stock != 1 
+                    AND SI.is_return = 0
+                    AND SI.status NOT IN ("Credit Note Issued", "Internal Transfer")
                     AND SIT.stock_qty != SIT.delivered_qty 
                     %s    
                 GROUP BY SI.name, SIT.name
