@@ -737,7 +737,7 @@ def delete_doc(doctype, docname):
 
 
 def get_pending_si_delivery_item_count(item_code, company, warehouse):
-    query = """ SELECT SUM(SII.delivered_qty) as delivered_count ,SUM(SII.stock_qty) as sold_count
+    query = """SELECT SUM(SII.delivered_qty) as delivered_count ,SUM(SII.stock_qty) as sold_count
             FROM `tabSales Invoice` AS SI 
             INNER JOIN `tabSales Invoice Item` AS SII ON SI.name = SII.parent
             WHERE
@@ -747,6 +747,8 @@ def get_pending_si_delivery_item_count(item_code, company, warehouse):
                 AND SI.company = '%s'
                 AND SII.warehouse = '%s'
                 AND SII.so_detail IS NULL
+                AND (SII.so_detail IS NOT NULL AND SII.delivery_note IS NOT NULL)
+                AND SI.update_stock = 0
                 AND SII.is_ignored_in_pending_qty != 1
                 AND SII.delivered_qty != SII.stock_qty
             """ % (
@@ -874,7 +876,7 @@ def validate_item_remaining_qty(
 
 def validate_items_remaining_qty(doc, method):
     for item in doc.items:
-        if not item.allow_over_sell:
+        if not item.allow_over_sell and not (item.so_detail and item.delivery_note):
             validate_item_remaining_qty(
                 item.item_code,
                 doc.company,
