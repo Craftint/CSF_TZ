@@ -161,8 +161,8 @@ def get_checkin_data(filters):
 			INNER JOIN `tabEmployee` emp ON emp.name = chec.employee and emp.employee_name = chec.employee_name
 			INNER JOIN `tabShift Type` sh ON chec.shift = sh.name
 		WHERE chec.log_type = "IN" 
-        AND chec.shift != ""
-        AND emp.default_shift != ""
+        AND chec.shift IS NOT NULL
+        AND emp.default_shift IS NOT NULL
 		AND emp.status = "Active" {conditions}
 
 		UNION ALL
@@ -181,8 +181,8 @@ def get_checkin_data(filters):
 			INNER JOIN `tabEmployee` emp ON emp.name = chec.employee and emp.employee_name = chec.employee_name
 			INNER JOIN `tabShift Type` sh ON chec.shift = sh.name
 		WHERE chec.log_type = "IN" 
-        AND  chec.shift != ""
-        AND emp.default_shift = ""
+        AND  chec.shift IS NOT NULL
+        AND emp.default_shift IS NULL
 		AND emp.status = "Active" {conditions}
 
         UNION ALL
@@ -202,8 +202,8 @@ def get_checkin_data(filters):
 			LEFT JOIN `tabShift Assignment` sha ON chec.employee = sha.employee AND chec.employee_name = sha.employee_name
 			LEFT JOIN `tabShift Type` sh ON sha.shift_type = sh.name
 		WHERE chec.log_type = "IN"
-        AND chec.shift = ""
-        AND emp.default_shift = ""
+        AND chec.shift IS NULL
+        AND emp.default_shift IS NULL
 		AND emp.status = "Active" {conditions}
 		AND sha.start_date BETWEEN %(from_date)s AND %(to_date)s
         
@@ -224,8 +224,8 @@ def get_checkin_data(filters):
 			INNER JOIN `tabShift Assignment` sha ON chec.employee = sha.employee AND chec.employee_name = sha.employee_name
 			INNER JOIN `tabShift Type` sh ON sha.shift_type = sh.name
 		WHERE chec.log_type = "IN"
-        AND chec.shift = ""
-        AND emp.default_shift != ""
+        AND chec.shift IS NULL
+        AND emp.default_shift IS NULL
 		AND emp.status = "Active" {conditions}
 		AND sha.start_date BETWEEN %(from_date)s AND %(to_date)s
 		""".format(conditions=conditions), filters, as_dict=1,
@@ -253,8 +253,8 @@ def get_checkout_data(filters):
 			INNER JOIN `tabEmployee` emp ON emp.name = chec.employee and emp.employee_name = chec.employee_name
 			INNER JOIN `tabShift Type` sh ON chec.shift = sh.name
 		WHERE chec.log_type = "OUT" 
-        AND chec.shift != ""
-        AND emp.default_shift != ""
+        AND chec.shift IS NOT NULL
+        AND emp.default_shift IS NOT NULL
 		AND emp.status = "Active" {conditions}
 
 		UNION ALL
@@ -273,8 +273,8 @@ def get_checkout_data(filters):
 			INNER JOIN `tabEmployee` emp ON emp.name = chec.employee and emp.employee_name = chec.employee_name
 			INNER JOIN `tabShift Type` sh ON chec.shift = sh.name
 		WHERE chec.log_type = "OUT" 
-        AND chec.shift != ""
-        AND emp.default_shift = ""
+        AND chec.shift IS NOT NULL
+        AND emp.default_shift IS NULL
 		AND emp.status = "Active" {conditions}
 
         UNION ALL
@@ -294,8 +294,8 @@ def get_checkout_data(filters):
 			LEFT JOIN `tabShift Assignment` sha ON chec.employee = sha.employee AND chec.employee_name = sha.employee_name
 			LEFT JOIN `tabShift Type` sh ON sha.shift_type = sh.name
 		WHERE chec.log_type = "OUT" 
-        AND chec.shift = ""
-        AND emp.default_shift = ""
+        AND chec.shift IS NULL
+        AND emp.default_shift IS NULL
 		AND emp.status = "Active" {conditions}
 		AND sha.start_date BETWEEN %(from_date)s AND %(to_date)s
 
@@ -316,8 +316,8 @@ def get_checkout_data(filters):
 			INNER JOIN `tabShift Assignment` sha ON chec.employee = sha.employee AND chec.employee_name = sha.employee_name
 			INNER JOIN `tabShift Type` sh ON sha.shift_type = sh.name
 		WHERE chec.log_type = "OUT" 
-        AND chec.shift = ""
-        AND emp.default_shift != ""
+        AND chec.shift IS NULL
+        AND emp.default_shift IS NOT NULL
 		AND emp.status = "Active" {conditions}
 		AND sha.start_date BETWEEN %(from_date)s AND %(to_date)s
 		""".format(conditions=conditions), filters, as_dict=1,
