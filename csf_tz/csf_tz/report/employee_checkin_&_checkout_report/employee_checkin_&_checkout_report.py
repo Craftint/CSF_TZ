@@ -97,7 +97,7 @@ def get_columns(filters):
             "fieldtype": "Time",
         },
         {
-            "fieldname": "chechout_time",
+            "fieldname": "checkout_time",
             "label": _("Checkout Time"),
             "fieldtype": "Time",
         },
@@ -191,12 +191,12 @@ def get_checkin_data(filters):
 			chec.employee AS employee,
 			chec.employee_name AS employee_name,
 			emp.department AS department,
-			sha.shift_type AS shift,
+			IF(sha.shift_type IS NOT NULL, sha.shift_type, "") AS shift,
 			DATE_FORMAT(chec.time, '%%Y-%%m-%%d') AS date,
-			DATE_FORMAT(sh.start_time, '%%T') AS actual_checkin_time,
+			IF(sha.shift_type IS NOT NULL, DATE_FORMAT(sh.start_time, '%%T'), "") AS actual_checkin_time,
 			DATE_FORMAT(chec.time, '%%T') AS checkin_time,
-			SEC_TO_TIME(sh.late_entry_grace_period * 60) AS late_entry,
-			IF((SUBTIME(TIME(chec.time), SEC_TO_TIME(sh.late_entry_grace_period * 60))) <= sh.start_time, "Early Checkin", "Late Checkin") AS checkin_status
+			IF(sha.shift_type IS NOT NULL, SEC_TO_TIME(sh.late_entry_grace_period * 60), "") AS late_entry,
+			IF(sha.shift_type IS NOT NULL, IF((SUBTIME(TIME(chec.time), SEC_TO_TIME(sh.late_entry_grace_period * 60))) <= sh.start_time, "Early Checkin", "Late Checkin"), "") AS checkin_status
 		FROM `tabEmployee Checkin` chec
 			INNER JOIN `tabEmployee` emp ON emp.name = chec.employee and emp.employee_name = chec.employee_name
 			LEFT JOIN `tabShift Assignment` sha ON chec.employee = sha.employee AND chec.employee_name = sha.employee_name
@@ -213,12 +213,12 @@ def get_checkin_data(filters):
 			chec.employee AS employee,
 			chec.employee_name AS employee_name,
 			emp.department AS department,
-			sha.shift_type AS shift,
+			IF(sha.shift_type IS NOT NULL, sha.shift_type, "") AS shift,
 			DATE_FORMAT(chec.time, '%%Y-%%m-%%d') AS date,
-			DATE_FORMAT(sh.start_time, '%%T') AS actual_checkin_time,
+			IF(sha.shift_type IS NOT NULL, DATE_FORMAT(sh.start_time, '%%T'), "") AS actual_checkin_time,
 			DATE_FORMAT(chec.time, '%%T') AS checkin_time,
-			SEC_TO_TIME(sh.late_entry_grace_period * 60) AS late_entry,
-			IF((SUBTIME(TIME(chec.time), SEC_TO_TIME(sh.late_entry_grace_period * 60))) <= sh.start_time, "Early Checkin", "Late Checkin") AS checkin_status
+			IF(sha.shift_type IS NOT NULL, SEC_TO_TIME(sh.late_entry_grace_period * 60), "") AS late_entry,
+			IF(sha.shift_type IS NOT NULL, IF((SUBTIME(TIME(chec.time), SEC_TO_TIME(sh.late_entry_grace_period * 60))) <= sh.start_time, "Early Checkin", "Late Checkin"), "") AS checkin_status
 		FROM `tabEmployee Checkin` chec 
 			INNER JOIN `tabEmployee` emp ON emp.name = chec.employee and emp.employee_name = chec.employee_name
 			INNER JOIN `tabShift Assignment` sha ON chec.employee = sha.employee AND chec.employee_name = sha.employee_name
@@ -246,7 +246,7 @@ def get_checkout_data(filters):
 			chec.shift AS shift,
 			DATE_FORMAT(chec.time, '%%Y-%%m-%%d') AS date,
 			DATE_FORMAT(sh.end_time, '%%T') AS actual_checkout_time,
-			DATE_FORMAT(chec.time, '%%T') AS checkin_time,
+			DATE_FORMAT(chec.time, '%%T') AS checkout_time,
 			SEC_TO_TIME(sh.early_exit_grace_period * 60) AS early_exit,
 			IF((ADDTIME(TIME(chec.time), SEC_TO_TIME(sh.early_exit_grace_period * 60))) >= sh.end_time, "Late Checkout", "Early Checkout") AS checkout_status
 		FROM `tabEmployee Checkin` chec 
@@ -266,7 +266,7 @@ def get_checkout_data(filters):
 			chec.shift AS shift,
 			DATE_FORMAT(chec.time, '%%Y-%%m-%%d') AS date,
 			DATE_FORMAT(sh.end_time, '%%T') AS actual_checkout_time,
-			DATE_FORMAT(chec.time, '%%T') AS checkin_time,
+			DATE_FORMAT(chec.time, '%%T') AS checkout_time,
 			SEC_TO_TIME(sh.early_exit_grace_period * 60) AS early_exit,
 			IF((ADDTIME(TIME(chec.time), SEC_TO_TIME(sh.early_exit_grace_period * 60))) >= sh.end_time, "Late Checkout", "Early Checkout") AS checkout_status
 		FROM `tabEmployee Checkin` chec
@@ -283,12 +283,12 @@ def get_checkout_data(filters):
 			chec.employee AS employee,
 			chec.employee_name AS employee_name,
 			emp.department AS department,
-			sha.shift_type AS shift,
+			IF(sha.shift_type IS NOT NULL, sha.shift_type, "")  AS shift,
 			DATE_FORMAT(chec.time, '%%Y-%%m-%%d') AS date,
-			DATE_FORMAT(sh.end_time, '%%T') AS actual_checkout_time,
-			DATE_FORMAT(chec.time, '%%T') AS checkin_time,
-			SEC_TO_TIME(sh.early_exit_grace_period * 60) AS early_exit,
-			if((ADDTIME(TIME(chec.time), SEC_TO_TIME(sh.early_exit_grace_period * 60))) >= sh.end_time, "Late Checkout", "Early Checkout") AS checkout_status
+			IF(sha.shift_type IS NOT NULL, DATE_FORMAT(sh.end_time, '%%T'), "") AS actual_checkout_time,
+			DATE_FORMAT(chec.time, '%%T') AS checkout_time,
+			IF(sha.shift_type IS NOT NULL, SEC_TO_TIME(sh.early_exit_grace_period * 60), "") AS early_exit,
+			IF(sha.shift_type IS NOT NULL, IF((ADDTIME(TIME(chec.time), SEC_TO_TIME(sh.early_exit_grace_period * 60))) >= sh.end_time, "Late Checkout", "Early Checkout"), "") AS checkout_status
 		FROM `tabEmployee Checkin` chec
 			INNER JOIN `tabEmployee` emp ON emp.name = chec.employee and emp.employee_name = chec.employee_name
 			LEFT JOIN `tabShift Assignment` sha ON chec.employee = sha.employee AND chec.employee_name = sha.employee_name
@@ -305,12 +305,12 @@ def get_checkout_data(filters):
 			chec.employee AS employee,
 			chec.employee_name AS employee_name,
 			emp.department AS department,
-			sha.shift_type AS shift,
+			IF(sha.shift_type IS NOT NULL, sha.shift_type, "")  AS shift,
 			DATE_FORMAT(chec.time, '%%Y-%%m-%%d') AS date,
-			DATE_FORMAT(sh.end_time, '%%T') AS actual_checkout_time,
-			DATE_FORMAT(chec.time, '%%T') AS checkin_time,
-			SEC_TO_TIME(sh.early_exit_grace_period * 60) AS early_exit,
-			IF((ADDTIME(TIME(chec.time), SEC_TO_TIME(sh.early_exit_grace_period * 60))) >= sh.end_time, "Late Checkout", "Early Checkout") AS checkout_status
+			IF(sha.shift_type IS NOT NULL, DATE_FORMAT(sh.end_time, '%%T'), "") AS actual_checkout_time,
+			DATE_FORMAT(chec.time, '%%T') AS checkout_time,
+			IF(sha.shift_type IS NOT NULL, SEC_TO_TIME(sh.early_exit_grace_period * 60), "") AS early_exit,
+			IF(sha.shift_type IS NOT NULL, IF((ADDTIME(TIME(chec.time), SEC_TO_TIME(sh.early_exit_grace_period * 60))) >= sh.end_time, "Late Checkout", "Early Checkout"), "") AS checkout_status
 		FROM `tabEmployee Checkin` chec
 			INNER JOIN `tabEmployee` emp ON emp.name = chec.employee and emp.employee_name = chec.employee_name
 			INNER JOIN `tabShift Assignment` sha ON chec.employee = sha.employee AND chec.employee_name = sha.employee_name
