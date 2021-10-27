@@ -15,19 +15,7 @@ def execute(filters=None):
     checkin_records = get_checkin_data(filters)
     checkout_records = get_checkout_data(filters)
 
-    if not (checkin_records and checkout_records):
-        msgprint(
-            "No Record found for the filters From Date: {0},To Date: {1}, Company: {2}, Department: {3} and Employee: {4}\
-			you specified...!!!, Please set different filters and Try again..!!!".format(
-                frappe.bold(filters.from_date),
-				frappe.bold(filters.to_date),
-                frappe.bold(filters.company),
-                frappe.bold(filters.department),
-				frappe.bold(filters.employee),
-            )
-        )
-
-    else:
+    if (checkin_records and checkout_records):
         checkin_colnames = [key for key in checkin_records[0].keys()]
         checkin_data = pd.DataFrame.from_records(
             checkin_records, columns=checkin_colnames
@@ -46,6 +34,25 @@ def execute(filters=None):
         df.fillna("empty", inplace=True)
 
         data += df.values.tolist()
+    
+    elif (checkin_records or checkout_records):
+        if checkin_records:
+            data += checkin_records
+        
+        if checkout_records:
+            data += checkout_records
+
+    else:
+        msgprint(
+            "No Record found for the filters From Date: {0},To Date: {1}, Company: {2}, Department: {3} and Employee: {4}\
+			you specified...!!!, Please set different filters and Try again..!!!".format(
+                frappe.bold(filters.from_date),
+				frappe.bold(filters.to_date),
+                frappe.bold(filters.company),
+                frappe.bold(filters.department),
+				frappe.bold(filters.employee),
+            )
+        )
 
     return columns, data
 
