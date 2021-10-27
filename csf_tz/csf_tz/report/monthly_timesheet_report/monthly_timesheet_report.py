@@ -17,11 +17,11 @@ def execute(filters=None):
 		
 		records = hours_per_day_data(conditions, filters)
 		if not records:
-			frappe.throw("No Record found for the filters From Date: {0}, To Date: {1}, Employee: {2} you specified..., \
+			frappe.throw("No Record found for the filters From Date: {0}, To Date: {1}, Hours Per Day: {2} you specified..., \
 			Please change your filters and try again..!!".format(
 				frappe.bold(filters.from_date),
 				frappe.bold(filters.to_date),
-				frappe.bold(filters.employee),
+				frappe.bold(filters.hours_per_day),
 			))
 		
 		df_colnames = [key for key in records[0].keys()]
@@ -50,12 +50,11 @@ def execute(filters=None):
 		project_details = hours_per_project_data(conditions, filters)
 
 		if not project_details:
-			frappe.throw("No Record found for the filters From Date: {0}, To Date: {1}, Employee: {2} and Project: {3} you specified..., \
+			frappe.throw("No Record found for the filters From Date: {0}, To Date: {1} and Hours Per Project: {2} you specified..., \
 			Please change your filters and try again..!!".format(
 				frappe.bold(filters.from_date),
 				frappe.bold(filters.to_date),
-				frappe.bold(filters.employee),
-				frappe.bold(filters.project)
+				frappe.bold(filters.hours_per_project)
 			))
 		
 		project_colnames = [key for key in project_details[0].keys()]
@@ -80,6 +79,13 @@ def execute(filters=None):
 	
 	else:
 		timesheet_rows = timesheet_details(conditions, filters)
+
+		if not timesheet_rows:
+			frappe.throw("No Record found for the filters From Date: {0}, To Date: {1} you specified..., \
+			Please change your filters and try again..!!".format(
+				frappe.bold(filters.from_date),
+				frappe.bold(filters.to_date),
+			))
 
 		for row in timesheet_rows:
 			data.append(row)
