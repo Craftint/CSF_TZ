@@ -4,120 +4,59 @@
 import frappe
 import pandas as pd
 import numpy as np
+import datetime
 from frappe import msgprint, _
 from frappe.utils.nestedset import get_descendants_of
 
 
 def execute(filters=None):
+    conditions, filters = get_conditions(filters)
+
     columns = get_columns(filters)
 
     data = []
-    checkin_records = get_checkin_data(filters)
-    checkout_records = get_checkout_data(filters)
+    checkin_data = get_data(conditions, filters)
 
-    if (checkin_records and checkout_records):
-        checkin_colnames = [key for key in checkin_records[0].keys()]
-        checkin_data = pd.DataFrame.from_records(
-            checkin_records, columns=checkin_colnames
-        )
-
-        checkout_colnames = [key for key in checkout_records[0].keys()]
-        checkout_data = pd.DataFrame.from_records(
-            checkout_records, columns=checkout_colnames
-        )
-
-        df = checkin_data.merge(
-            checkout_data,
-            how="inner",
-            on=["employee", "employee_name", "department", "shift", "date"],
-        )
-        df.fillna("empty", inplace=True)
-
-        data += df.values.tolist()
+    if checkin_data: data += checkin_data
     
-    elif (checkin_records or checkout_records):
-        if checkin_records:
-            data += checkin_records
-        
-        if checkout_records:
-            data += checkout_records
-
-    else:
-        msgprint(
-            "No Record found for the filters From Date: {0},To Date: {1}, Company: {2}, Department: {3} and Employee: {4}\
-			you specified...!!!, Please set different filters and Try again..!!!".format(
-                frappe.bold(filters.from_date),
-				frappe.bold(filters.to_date),
-                frappe.bold(filters.company),
-                frappe.bold(filters.department),
-				frappe.bold(filters.employee),
-            )
-        )
-
     return columns, data
 
 
 def get_columns(filters):
     columns = [
-        {
-            "fieldname": "employee",
-            "label": _("Employee No"),
-            "fieldtype": "Data",
-        },
-        {
-            "fieldname": "employee_name",
-            "label": _("Employee Name"),
-            "fieldtype": "Data",
-        },
+        {"fieldname": "employee", "label": _("Employee No"), "fieldtype": "Data"},
+        {"fieldname": "employee_name", "label": _("Employee Name"), "fieldtype": "Data"},
         {"fieldname": "department", "label": _("Department"), "fieldtype": "Data"},
         {"fieldname": "shift", "label": _("Shift"), "fieldtype": "Data"},
-        {
-            "fieldname": "date",
-            "label": _("Date"),
-            "fieldtype": "Date",
-        },
+        {"fieldname": "date", "label": _("Date"), "fieldtype": "Date"},
+
         # for checkin
-        {
-            "fieldname": "actual_checkin_time",
-            "label": _("Actual Time to Checkin"),
-            "fieldtype": "Time",
-        },
-        {
-            "fieldname": "checkin_time",
-            "label": _("Checkin Time"),
-            "fieldtype": "Time",
-        },
-        {
-            "fieldname": "late_entry",
-            "label": _("Late Entry Grace Period"),
-            "fieldtype": "Time",
-        },
-        {
-            "fieldname": "checkin_status",
-            "label": _("Checkin Status"),
-            "fieldtype": "Data",
-        },
+        {"fieldname": "actual_checkin_time", "label": _("Actual Time to Checkin"), "fieldtype": "Time"},
+        {"fieldname": "checkin_time", "label": _("Checkin Time"), "fieldtype": "Time"},
+        {"fieldname": "late_grace_time", "label": _("Late Entry Grace Period"), "fieldtype": "Time"},
+        {"fieldname": "checkin_status", "label": _("Checkin Status"), "fieldtype": "Data"},
+
         # for checkout
-        {
-            "fieldname": "actual_checkout_time",
-            "label": _("Actual Time to Checkout"),
-            "fieldtype": "Time",
-        },
-        {
-            "fieldname": "checkout_time",
-            "label": _("Checkout Time"),
-            "fieldtype": "Time",
-        },
-        {
-            "fieldname": "early_exit",
-            "label": _("Early Exit Grace Period"),
-            "fieldtype": "Time",
-        },
-        {
-            "fieldname": "checkout_status",
-            "label": _("Checkout Status"),
-            "fieldtype": "Data",
-        },
+        # {
+        #     "fieldname": "actual_checkout_time",
+        #     "label": _("Actual Time to Checkout"),
+        #     "fieldtype": "Time",
+        # },
+        # {
+        #     "fieldname": "checkout_time",
+        #     "label": _("Checkout Time"),
+        #     "fieldtype": "Time",
+        # },
+        # {
+        #     "fieldname": "early_exit",
+        #     "label": _("Early Exit Grace Period"),
+        #     "fieldtype": "Time",
+        # },
+        # {
+        #     "fieldname": "checkout_status",
+        #     "label": _("Checkout Status"),
+        #     "fieldtype": "Data",
+        # },
     ]
     return columns
 
@@ -141,193 +80,121 @@ def get_conditions(filters):
         )
     if filters.get("employee"):
         conditions += " AND emp.employee = %(employee)s"
-    return conditions
-
+    return conditions, filters
 
 def get_department(department, company):
     department_list = get_descendants_of("Department", department)
     department_list.append(department)
     return department_list
 
+def get_data(conditions, filters):
+    checkin_data = [],
+    # checkout_data = []
+    employee_checkin_data = get_employee_data(conditions, filters)
 
-def get_checkin_data(filters):
-    conditions = get_conditions(filters)
+    chift_type_details = frappe.get_all("Shift Type", ["name", "start_time", "end_time", "late_entry_grace_period", "early_exit_grace_period"])
+    msgprint("chift_type_details: " + str(chift_type_details))
+    
+    for employee in employee_checkin_data:
+        for shift in chift_type_details:
+            if employee.shift == shift.name and employee.log_type == "IN":
+                late_grace_time = datetime.time(0, shift.late_entry_grace_period)
+                # checkin_time = employee["datetime_as"].strftime("%H:%M:%S")
+                time_diff = employee["checkin_time"] - late_grace_time
+                if time_diff <= shift.start_time:
+                    checkin_status = "Early Checkin"
+                else:
+                    checkin_status = "Late Checkin"
 
-    checkin_data = frappe.db.sql("""
-		SELECT 
-			chec.employee AS employee,
-			chec.employee_name AS employee_name,
-			emp.department AS department,
-			chec.shift AS shift,
-			DATE_FORMAT(chec.time, '%%Y-%%m-%%d') AS date,
-			DATE_FORMAT(sh.start_time, '%%T') AS actual_checkin_time,
-			DATE_FORMAT(chec.time, '%%T') AS checkin_time,
-			SEC_TO_TIME(sh.late_entry_grace_period * 60) AS late_entry,
-			IF((SUBTIME(TIME(chec.time), SEC_TO_TIME(sh.late_entry_grace_period * 60))) <= sh.start_time, "Early Checkin", "Late Checkin") AS checkin_status
-		FROM `tabEmployee Checkin` chec 
-			INNER JOIN `tabEmployee` emp ON emp.name = chec.employee and emp.employee_name = chec.employee_name
-			INNER JOIN `tabShift Type` sh ON chec.shift = sh.name
-		WHERE chec.log_type = "IN" 
-        AND chec.shift IS NOT NULL
-        AND emp.default_shift IS NOT NULL
-		AND emp.status = "Active" {conditions}
+                complete_row = employee.update({
+                    "actual_checkin_time": shift.start_time,
+                    "checkin_time": employee.checkin_time,
+                    "late_grace_time": late_grace_time,
+                    "checkin_status": checkin_status
+                })
+                checkin_data.append(complete_row)
 
-		UNION ALL
+            if not employee.shift and employee.log_type == "IN":
+                employee.update({
+                    "checkin_time": employee.checkin_time
+                })
+                checkin_data.append(employee)
 
-        SELECT 
-			chec.employee AS employee,
-			chec.employee_name AS employee_name,
-			emp.department AS department,
-			chec.shift AS shift,
-			DATE_FORMAT(chec.time, '%%Y-%%m-%%d') AS date,
-			DATE_FORMAT(sh.start_time, '%%T') AS actual_checkin_time,
-			DATE_FORMAT(chec.time, '%%T') AS checkin_time,
-			SEC_TO_TIME(sh.late_entry_grace_period * 60) AS late_entry,
-			IF((SUBTIME(TIME(chec.time), SEC_TO_TIME(sh.late_entry_grace_period * 60))) <= sh.start_time, "Early Checkin", "Late Checkin") AS checkin_status
-		FROM `tabEmployee Checkin` chec 
-			INNER JOIN `tabEmployee` emp ON emp.name = chec.employee and emp.employee_name = chec.employee_name
-			INNER JOIN `tabShift Type` sh ON chec.shift = sh.name
-		WHERE chec.log_type = "IN" 
-        AND  chec.shift IS NOT NULL
-        AND emp.default_shift IS NULL
-		AND emp.status = "Active" {conditions}
+            # if em.shift == shift.name and em.log_type == "OUT":
+            #     complete_em = em.update({
+            #         "actual_checkout_time": shift.end_time,
+            #         "late_checkout_time": shif.early_exit_grace_period
+            #     })
+            #     checkout_data.append(complete_em)
 
-       UNION ALL
-
-        SELECT 
-			chec.employee AS employee,
-			chec.employee_name AS employee_name,
-			emp.department AS department,
-			sha.shift_type AS shift,
-			DATE_FORMAT(chec.time, '%%Y-%%m-%%d') AS date,
-			DATE_FORMAT(sh.start_time, '%%T') AS actual_checkin_time,
-			DATE_FORMAT(chec.time, '%%T') AS checkin_time,
-			SEC_TO_TIME(sh.late_entry_grace_period * 60) AS late_entry,
-			IF((SUBTIME(TIME(chec.time), SEC_TO_TIME(sh.late_entry_grace_period * 60))) <= sh.start_time, "Early Checkin", "Late Checkin") AS checkin_status
-		FROM `tabEmployee Checkin` chec 
-			INNER JOIN `tabEmployee` emp ON emp.name = chec.employee and emp.employee_name = chec.employee_name
-			INNER JOIN `tabShift Assignment` sha ON chec.employee = sha.employee AND chec.employee_name = sha.employee_name
-			INNER JOIN `tabShift Type` sh ON sha.shift_type = sh.name
-		WHERE chec.log_type = "IN"
-        AND chec.shift IS NULL
-        AND emp.default_shift IS NOT NULL
-		AND emp.status = "Active" {conditions}
-		AND sha.start_date BETWEEN %(from_date)s AND %(to_date)s
-
-        UNION ALL
-
-		SELECT 
-			chec.employee AS employee,
-			chec.employee_name AS employee_name,
-			emp.department AS department,
-			IF(sha.shift_type IS NOT NULL, sha.shift_type, "") AS shift,
-			DATE_FORMAT(chec.time, '%%Y-%%m-%%d') AS date,
-			IF(sha.shift_type IS NOT NULL, DATE_FORMAT(sh.start_time, '%%T'), "") AS actual_checkin_time,
-			DATE_FORMAT(chec.time, '%%T') AS checkin_time,
-			IF(sha.shift_type IS NOT NULL, SEC_TO_TIME(sh.late_entry_grace_period * 60), "") AS late_entry,
-			IF(sha.shift_type IS NOT NULL, IF((SUBTIME(TIME(chec.time), SEC_TO_TIME(sh.late_entry_grace_period * 60))) <= sh.start_time, "Early Checkin", "Late Checkin"), "") AS checkin_status
-		FROM `tabEmployee Checkin` chec
-			INNER JOIN `tabEmployee` emp ON emp.name = chec.employee and emp.employee_name = chec.employee_name
-			LEFT JOIN `tabShift Assignment` sha ON chec.employee = sha.employee AND chec.employee_name = sha.employee_name
-			LEFT JOIN `tabShift Type` sh ON sha.shift_type = sh.name
-		WHERE chec.log_type = "IN"
-        AND chec.shift IS NULL
-        AND emp.default_shift IS NULL
-		AND emp.status = "Active" {conditions}
-		AND sha.start_date BETWEEN %(from_date)s AND %(to_date)s
-		""".format(conditions=conditions), filters, as_dict=1,
-    )
+            # if not em.shift and em.log_type == "OUT":
+            #     checkout_data.append(em)
+    msgprint("checkin_data: " + str(checkin_data))
 
     return checkin_data
 
+def get_employee_data(conditions, filters):
+    employee_data = []
+    checkin_details = get_checkin_details(conditions, filters)
+    
+    assignment_details = frappe.db.get_all("Shift Assignment", 
+        filters=[
+            ["start_date", "between", [filters.from_date, filters.to_date]],
+            ["company", "=", filters.company], ["department", "=", filters.department], 
+            ["employee", "=", filters.employee]
+        ],
+        fields=["employee", "employee_name", "company", "shift_type", "start_date", "end_date"]
+    )
+    msgprint("assignment_details: " + str(assignment_details))
 
-def get_checkout_data(filters):
-    conditions = get_conditions(filters)
+    for chec in checkin_details:
+        for assignment in assignment_details:
+            if (chec["employee"] == assignment["employee"] and 
+                (assignment["start_date"] <= chec["date"] <= assignment["end_date"])
+                and not chec.shift):
+                chec.update({"shift": assignment["shift_type"]})
+                employee_data.append(chec)
 
-    checkout_data = frappe.db.sql(
-        """
-		SELECT 
+    msgprint("employee_data: " + str(employee_data))
+    return employee_data
+
+def get_checkin_details(conditions, filters):
+    msgprint("filters: "+str(filters))
+    data = frappe.db.sql("""
+        SELECT 
 			chec.employee AS employee,
 			chec.employee_name AS employee_name,
 			emp.department AS department,
 			chec.shift AS shift,
 			DATE_FORMAT(chec.time, '%%Y-%%m-%%d') AS date,
-			DATE_FORMAT(sh.end_time, '%%T') AS actual_checkout_time,
-			DATE_FORMAT(chec.time, '%%T') AS checkout_time,
-			SEC_TO_TIME(sh.early_exit_grace_period * 60) AS early_exit,
-			IF((ADDTIME(TIME(chec.time), SEC_TO_TIME(sh.early_exit_grace_period * 60))) >= sh.end_time, "Late Checkout", "Early Checkout") AS checkout_status
+            DATE_FORMAT(chec.time, '%%T') AS checkin_time,
+            chec.log_type
 		FROM `tabEmployee Checkin` chec 
 			INNER JOIN `tabEmployee` emp ON emp.name = chec.employee and emp.employee_name = chec.employee_name
-			INNER JOIN `tabShift Type` sh ON chec.shift = sh.name
-		WHERE chec.log_type = "OUT" 
-        AND chec.shift IS NOT NULL
-        AND emp.default_shift IS NOT NULL
-		AND emp.status = "Active" {conditions}
+		WHERE chec.log_type = "IN" {conditions}
+    """.format(conditions=conditions), filters, as_dict=1)
+    return data
 
-		UNION ALL
 
-		SELECT 
-			chec.employee AS employee,
-			chec.employee_name AS employee_name,
-			emp.department AS department,
-			chec.shift AS shift,
-			DATE_FORMAT(chec.time, '%%Y-%%m-%%d') AS date,
-			DATE_FORMAT(sh.end_time, '%%T') AS actual_checkout_time,
-			DATE_FORMAT(chec.time, '%%T') AS checkout_time,
-			SEC_TO_TIME(sh.early_exit_grace_period * 60) AS early_exit,
-			IF((ADDTIME(TIME(chec.time), SEC_TO_TIME(sh.early_exit_grace_period * 60))) >= sh.end_time, "Late Checkout", "Early Checkout") AS checkout_status
-		FROM `tabEmployee Checkin` chec
-			INNER JOIN `tabEmployee` emp ON emp.name = chec.employee and emp.employee_name = chec.employee_name
-			INNER JOIN `tabShift Type` sh ON chec.shift = sh.name
-		WHERE chec.log_type = "OUT" 
-        AND chec.shift IS NOT NULL
-        AND emp.default_shift IS NULL
-		AND emp.status = "Active" {conditions}
+# def gg_data(filters):
+#     checkin_records, checkout_records = get_data(conditions, filters)
+#     checkin_status = ""
+#     for record in checkin_records:
+#         if record.late_entry_grace_period:
+#             late_grace_time = datetime.time(0, record["late_entry_grace_period"])
+#             checkin_time = record["datetime_as"].strftime("%H:%M:%S")
+#             time_diff = checkin_time - late_grace_time
+#             if time_diff <= record.actual_checkin_time:
+#                 checkin_status = "Early Checkin"
+#             else:
+#                 checkin_status = "Late Checkin"
 
-        UNION ALL
+#             d.update({
+#                 "late_grace_time": late_grace_time,
+#                 "checkin_status": checkin_status
+#             })
+#         else:
+#             continue
+    
+#     return 
 
-		SELECT 
-			chec.employee AS employee,
-			chec.employee_name AS employee_name,
-			emp.department AS department,
-			sha.shift_type  AS shift,
-			DATE_FORMAT(chec.time, '%%Y-%%m-%%d') AS date,
-			DATE_FORMAT(sh.end_time, '%%T') AS actual_checkout_time,
-			DATE_FORMAT(chec.time, '%%T') AS checkout_time,
-			SEC_TO_TIME(sh.early_exit_grace_period * 60) AS early_exit,
-			IF((ADDTIME(TIME(chec.time), SEC_TO_TIME(sh.early_exit_grace_period * 60))) >= sh.end_time, "Late Checkout", "Early Checkout") AS checkout_status
-		FROM `tabEmployee Checkin` chec
-			INNER JOIN `tabEmployee` emp ON emp.name = chec.employee and emp.employee_name = chec.employee_name
-			INNER JOIN `tabShift Assignment` sha ON chec.employee = sha.employee AND chec.employee_name = sha.employee_name
-			INNER JOIN `tabShift Type` sh ON sha.shift_type = sh.name
-		WHERE chec.log_type = "OUT" 
-        AND chec.shift IS NULL
-        AND emp.default_shift IS NOT NULL
-		AND emp.status = "Active" {conditions}
-		AND sha.start_date BETWEEN %(from_date)s AND %(to_date)s
-
-        UNION ALL
-
-		SELECT 
-			chec.employee AS employee,
-			chec.employee_name AS employee_name,
-			emp.department AS department,
-			IF(sha.shift_type IS NOT NULL, sha.shift_type, "")  AS shift,
-			DATE_FORMAT(chec.time, '%%Y-%%m-%%d') AS date,
-			IF(sha.shift_type IS NOT NULL, DATE_FORMAT(sh.end_time, '%%T'), "") AS actual_checkout_time,
-			DATE_FORMAT(chec.time, '%%T') AS checkout_time,
-			IF(sha.shift_type IS NOT NULL, SEC_TO_TIME(sh.early_exit_grace_period * 60), "") AS early_exit,
-			IF(sha.shift_type IS NOT NULL, IF((ADDTIME(TIME(chec.time), SEC_TO_TIME(sh.early_exit_grace_period * 60))) >= sh.end_time, "Late Checkout", "Early Checkout"), "") AS checkout_status
-		FROM `tabEmployee Checkin` chec
-			INNER JOIN `tabEmployee` emp ON emp.name = chec.employee and emp.employee_name = chec.employee_name
-			LEFT JOIN `tabShift Assignment` sha ON chec.employee = sha.employee AND chec.employee_name = sha.employee_name
-			LEFT JOIN `tabShift Type` sh ON sha.shift_type = sh.name
-		WHERE chec.log_type = "OUT" 
-        AND chec.shift IS NULL
-        AND emp.default_shift IS NULL
-		AND emp.status = "Active" {conditions}
-		AND sha.start_date BETWEEN %(from_date)s AND %(to_date)s
-		""".format(conditions=conditions), filters, as_dict=1,
-    )
-
-    return checkout_data
