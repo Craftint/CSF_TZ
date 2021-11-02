@@ -476,6 +476,6 @@ jenv = {"methods": ["generate_qrcode:csf_tz.custom_api.generate_qrcode"]}
 # Overriding Whitelisted Methods
 # ------------------------------
 #
-# override_whitelisted_methods = {
-# 	"frappe.desk.doctype.event.event.get_events": "csf_tz.event.get_events"
-# }
+override_whitelisted_methods = {
+	"frappe.desk.query_report.get_script": "csf_tz.csftz_hooks.query_report.get_script"
+}
