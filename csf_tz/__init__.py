@@ -59,4 +59,4 @@ frappe.connect = custom_connect
 #     return get_hooks(*args, **kwargs)
 
 
-# frappe.connect = custom_get_hooks
+# frappe.get_hooks = custom_get_hooks
