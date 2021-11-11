@@ -448,7 +448,10 @@ scheduler_events = {
         "0 */6 * * *": [
             "csf_tz.csf_tz.doctype.parking_bill.parking_bill.check_bills_all_vehicles",
             "csf_tz.csf_tz.doctype.vehicle_fine_record.vehicle_fine_record.check_fine_all_vehicles",
-        ]
+        ],
+        "*/15 * * * *": [
+            "csf_tz.csftz_hooks.items_revaluation.process_incorrect_balance_qty"
+        ],
     },
     "daily": [
         "csf_tz.custom_api.create_delivery_note_for_all_pending_sales_invoice",
@@ -477,5 +480,5 @@ jenv = {"methods": ["generate_qrcode:csf_tz.custom_api.generate_qrcode"]}
 # ------------------------------
 #
 override_whitelisted_methods = {
-	"frappe.desk.query_report.get_script": "csf_tz.csftz_hooks.query_report.get_script"
+    "frappe.desk.query_report.get_script": "csf_tz.csftz_hooks.query_report.get_script"
 }
