@@ -38,12 +38,6 @@ def get_outstanding_reference_documents(args):
     company_currency = frappe.get_cached_value(
         'Company',  args.get("company"),  "default_currency")
 
-    # Get negative outstanding sales /purchase invoices
-    negative_outstanding_invoices = []
-    if args.get("party_type") not in ["Student", "Employee"] and not args.get("voucher_no"):
-        negative_outstanding_invoices = get_negative_outstanding_invoices(args.get("party_type"), args.get("party"),
-            args.get("party_account"), args.get("company"), party_account_currency, company_currency)
-
     # Get positive outstanding sales /purchase invoices/ Fees
     condition = ""
     if args.get("voucher_type") and args.get("voucher_no"):
@@ -89,7 +83,13 @@ def get_outstanding_reference_documents(args):
     if (args.get("party_type") != "Student"):
         orders_to_be_billed = get_orders_to_be_billed(args.get("posting_date"), args.get("party_type"),
             args.get("party"), args.get("company"), party_account_currency, company_currency, filters=args)
-
+    
+    # Get negative outstanding sales /purchase invoices
+    negative_outstanding_invoices = []
+    if args.get("party_type") not in ["Student", "Employee"] and not args.get("voucher_no"):
+        negative_outstanding_invoices = get_negative_outstanding_invoices(args.get("party_type"), args.get("party"),
+            args.get("party_account"), args.get("company"), party_account_currency, company_currency, condition=condition)
+    
     data = negative_outstanding_invoices + \
         outstanding_invoices + orders_to_be_billed
 
