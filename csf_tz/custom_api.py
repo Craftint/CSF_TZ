@@ -205,12 +205,18 @@ def get_stock_ledger_entries(item_code):
         conditions = " and is_cancelled = 0 and item_code = '%s'" % item_code
     return frappe.db.sql(
         """
-        select item_code, batch_no, warehouse, sum(actual_qty) as actual_qty
-        from `tabStock Ledger Entry`
-        where docstatus = 1 %s
-        group by batch_no, item_code, warehouse
-        having sum(actual_qty) > 0
-        order by item_code, warehouse"""
+        select sle.batch_no, sle.item_code, sle.warehouse, sle.qty_after_transaction as actual_qty
+            from `tabStock Ledger Entry` sle
+            inner join (
+            SELECT batch_no, item_code, warehouse, max(TIMESTAMP(posting_date, posting_time)) as timestamp
+                from `tabStock Ledger Entry`
+                group by batch_no, item_code, warehouse) as sle_max
+            on sle.batch_no = sle_max.batch_no
+                and sle.item_code = sle_max.item_code
+                and sle.warehouse = sle_max.warehouse
+                and TIMESTAMP(sle.posting_date, sle.posting_time) = sle_max.timestamp
+        where sle.docstatus = 1 %s
+        order by sle.warehouse, sle.item_code, sle.batch_no"""
         % conditions,
         as_dict=1,
     )
