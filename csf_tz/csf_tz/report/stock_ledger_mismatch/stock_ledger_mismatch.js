@@ -5,17 +5,23 @@
 frappe.query_reports["Stock Ledger Mismatch"] = {
 	"filters": [
 		{
-			"fieldname":"from_date",
-			"label": __("From Date"),
-			"fieldtype": "Date",
-			"reqd": 1
+			label: __("Company"),
+			fieldtype: "Link",
+			fieldname: "company",
+			options: "Company",
+			default: frappe.defaults.get_user_default("Company"),
+			reqd: 1
 		},
 		{
-			"fieldname":"end_date",
-			"label": __("End Date"),
-			"fieldtype": "Date",
-			"reqd": 1,
-			"default": frappe.datetime.get_today(),
+			label: __('Item Code'),
+			fieldtype: 'Link',
+			fieldname: 'item_code',
+			options: 'Item'
 		},
+		{
+			label: __('Warehouse'),
+			fieldtype: 'Link',
+			fieldname: 'warehouse'
+		}
 	]
 };

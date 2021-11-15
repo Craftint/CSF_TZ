@@ -47,3 +47,16 @@ def custom_connect(*args, **kwargs):
 
 
 frappe.connect = custom_connect
+
+
+# # For Web Patches
+
+# get_hooks = frappe.get_hooks
+
+
+# def custom_get_hooks(*args, **kwargs):
+#     load_monkey_patches()
+#     return get_hooks(*args, **kwargs)
+
+
+# frappe.get_hooks = custom_get_hooks
