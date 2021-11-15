@@ -39,7 +39,7 @@ def execute(filters=None):
             how="outer",
             on=["employee", "employee_name", "department", "shift", "date"]
         )
-        df.fillna("empty", inplace=True)
+        df.fillna("", inplace=True)
         
         data += df.values.tolist()
     
@@ -126,17 +126,20 @@ def get_checkin_data(conditions, filters, chift_type_details):
         if checkin_d.shift:
             for shift_type in chift_type_details:
                 if checkin_d.shift == shift_type.name:
-
-                    checkin_time_delta = add_to_date(checkin_d.checkin_time, minutes=( - +(shift_type.late_entry_grace_period)), as_string=False, as_datetime=True)
-                    checkin_time_delta_into_time = get_time(checkin_time_delta)
+                    checkin_time_diff = get_time(checkin_d.checkin_time)
 
                     late_entry_grace_time = str("00:" + cstr(shift_type.late_entry_grace_period) + ":00")
                     start_time = get_time(str(shift_type.start_time))
 
-                    if checkin_time_delta_into_time <= start_time:
+                    start_time_diff = get_time(add_to_date(str(shift_type.start_time), minutes=shift_type.late_entry_grace_period, as_string=False, as_datetime=True))
+                    
+                    if checkin_time_diff <= start_time:
                         checkin_status = "Early Checkin"
                     else:
-                        checkin_status = "Late Checkin"
+                        if checkin_time_diff <= start_time_diff:
+                            checkin_status = "On Time"
+                        else:
+                            checkin_status = "Late Checkin"
 
                     complete_row = {
                         "employee": checkin_d.employee,
@@ -144,7 +147,7 @@ def get_checkin_data(conditions, filters, chift_type_details):
                         "department": checkin_d.department,
                         "shift": checkin_d.shift,
                         "date": checkin_d.date,
-                        "actual_checkin_time": shift_type.start_time,
+                        "actual_checkin_time": str(shift_type.start_time),
                         "checkin_time": checkin_d.checkin_time,
                         "late_entry_grace_time": late_entry_grace_time,
                         "checkin_status": checkin_status
@@ -169,7 +172,7 @@ def get_checkin_data(conditions, filters, chift_type_details):
             }
 
             checkin_data.append(half_row)
-
+    
     return checkin_data
 
 def get_checkout_data(conditions, filters, chift_type_details):
@@ -186,16 +189,20 @@ def get_checkout_data(conditions, filters, chift_type_details):
         if checkout_d.shift:
             for shift_type in chift_type_details:
                 if checkout_d.shift == shift_type.name:
-                    checkout_time_delta = add_to_date(checkout_d.checkout_time, minutes=shift_type.early_exit_grace_period, as_string=False, as_datetime=True)
-                    checkout_time_delta_into_time = get_time(time_add)
+                    checkout_time_diff = get_time(checkout_d.checkout_time)
 
-                    early_entry_grace_time = str("00:" + cstr(shift_type.early_exit_grace_period) + ":00")
+                    early_exit_grace_time = str("00:" + cstr(shift_type.early_exit_grace_period) + ":00")
                     end_time = get_time(str(shift_type.end_time))
 
-                    if checkout_time_delta_into_time <= end_time:
+                    end_time_diff = get_time(add_to_date(str(shift_type.end_time), minutes=(- + (shift_type.early_exit_grace_period)), as_string=False, as_datetime=True))
+                    
+                    if checkout_time_diff <= end_time_diff:
                         checkout_status = "Early Checkout"
                     else:
-                        checkout_status = "Late Checkout"
+                        if checkout_time_diff <= end_time:
+                            checkout_status = "On Time"
+                        else:
+                            checkout_status = "Late Checkout"
 
                     complete_row = {
                         "employee": checkout_d.employee,
@@ -203,12 +210,12 @@ def get_checkout_data(conditions, filters, chift_type_details):
                         "department": checkout_d.department,
                         "shift": checkout_d.shift,
                         "date": checkout_d.date,
-                        "actual_checkout_time":  shift_type.end_time,
+                        "actual_checkout_time":  str(shift_type.end_time),
                         "checkout_time": checkout_d.checkout_time,
-                        "early_exit_grace_time": early_entry_grace_time,
+                        "early_exit_grace_time": early_exit_grace_time,
                         "checkout_status": checkout_status
                     }
-
+                    
                     checkout_data.append(complete_row)
 
                 else:
@@ -228,7 +235,7 @@ def get_checkout_data(conditions, filters, chift_type_details):
             }
 
             checkout_data.append(half_row)
-
+    
     return checkout_data
 
 def get_checkin_details(conditions, filters):
