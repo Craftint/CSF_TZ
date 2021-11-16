@@ -200,9 +200,9 @@ def print_out(message, alert=False, add_traceback=False, to_error_log=False):
 
 def get_stock_ledger_entries(item_code):
     if get_version() == 12:
-        conditions = " and item_code = '%s'" % item_code
+        conditions = " and sle.item_code = '%s'" % item_code
     else:
-        conditions = " and is_cancelled = 0 and item_code = '%s'" % item_code
+        conditions = " and sle.is_cancelled = 0 and sle.item_code = '%s'" % item_code
     return frappe.db.sql(
         """
         select sle.batch_no, sle.item_code, sle.warehouse, sle.qty_after_transaction as actual_qty
