@@ -33,7 +33,7 @@ frappe.query_reports["Employee Checkin & Checkout Report"] = {
 			"options": "Department",
 			"default": "",
 			"width": "150px",
-			"reqd": 0,
+			"reqd": 1,
 			"get_query": function () {
 				var company = frappe.query_report.get_filter_value("company");
 				return {
