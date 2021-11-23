@@ -208,9 +208,9 @@ def get_stock_ledger_entries(item_code):
         select sle.batch_no, sle.item_code, sle.warehouse, sle.qty_after_transaction as actual_qty
             from `tabStock Ledger Entry` sle
             inner join (
-            SELECT batch_no, item_code, warehouse, max(TIMESTAMP(posting_date, posting_time)) as timestamp
+            SELECT IF(batch_no IS NULL, '', batch_no), item_code, warehouse, max(TIMESTAMP(posting_date, posting_time)) as timestamp
                 from `tabStock Ledger Entry`
-                group by batch_no, item_code, warehouse) as sle_max
+                group by IF(batch_no IS NULL, '', batch_no), item_code, warehouse) as sle_max
             on sle.batch_no = sle_max.batch_no
                 and sle.item_code = sle_max.item_code
                 and sle.warehouse = sle_max.warehouse
