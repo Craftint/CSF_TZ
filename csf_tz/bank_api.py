@@ -283,7 +283,7 @@ def make_payment_entry(method="callback", **kwargs):
             #     jv_url, jv_doc.name
             # )
             # frappe.msgprint(_(si_msgprint))
-            frappe.set_value(
+            frappe.db.set_value(
                 "Student Applicant", doc.student, "application_status", "Approved"
             )
             return nmb_doc
