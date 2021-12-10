@@ -14,7 +14,9 @@ frappe.ui.form.on("Payment Entry", {
 			}
 			else if (frm.doc.payment_type == "Pay") {
 				frm.set_value("naming_series", "PE-.YYYY.-");
-				frm.set_value("party_type", "Supplier");
+				if (frm.doc.party_type != "Employee") {
+					frm.set_value("party_type", "Supplier");
+				}
 			}
 			else if (frm.doc.payment_type == "Internal Transfer") {
 				frm.set_value("naming_series", "IT-.YYYY.-");
