@@ -6,15 +6,17 @@ frappe.ui.form.on("Stock Entry", {
         frm.trigger("set_warehouse_options");
     },
     onload: function(frm) {
-        frm.trigger("stock_entry_type");
-        frm.set_query("repack_template", function() {
-			return {
-				"filters": {
-					"docstatus": 1
-				}
-			};
-        });
-        frm.trigger("set_warehouse_options");
+        if (frm.docstatus == 0) {
+            frm.trigger("stock_entry_type");
+            frm.set_query("repack_template", function() {
+                return {
+                    "filters": {
+                        "docstatus": 1
+                    }
+                };
+            });
+            frm.trigger("set_warehouse_options");
+        }
     },
     company: function (frm) {
         frm.trigger("set_warehouse_options");
