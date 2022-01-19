@@ -1,11 +1,20 @@
 {
+ "actions": [],
  "autoname": "field:import_file_number",
  "creation": "2021-01-20 10:53:40.586792",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "import_file_number"
+  "import_file_number",
+  "bl_number",
+  "no_of_containers",
+  "clearing_agent_name",
+  "column_break_6",
+  "supplier_name",
+  "supplier_invoice_no",
+  "invoice_currency",
+  "invoice_amount"
  ],
  "fields": [
   {
@@ -13,9 +22,51 @@
    "fieldtype": "Data",
    "label": "Import File Number",
    "unique": 1
+  },
+  {
+   "fieldname": "bl_number",
+   "fieldtype": "Data",
+   "label": "BL Number"
+  },
+  {
+   "fieldname": "no_of_containers",
+   "fieldtype": "Data",
+   "label": "No of Containers"
+  },
+  {
+   "fieldname": "clearing_agent_name",
+   "fieldtype": "Data",
+   "label": "Clearing Agent Name"
+  },
+  {
+   "fieldname": "supplier_name",
+   "fieldtype": "Link",
+   "label": "Supplier Name",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "supplier_invoice_no",
+   "fieldtype": "Data",
+   "label": "Supplier Invoice No"
+  },
+  {
+   "fieldname": "invoice_currency",
+   "fieldtype": "Link",
+   "label": "Invoice Currency",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "invoice_amount",
+   "fieldtype": "Currency",
+   "label": "Invoice Amount"
   }
  ],
- "modified": "2021-01-20 10:53:44.840575",
+ "links": [],
+ "modified": "2022-01-18 14:10:13.454609",
  "modified_by": "Administrator",
  "module": "Clearing And Forwarding",
  "name": "Import File",
@@ -34,6 +85,7 @@
    "write": 1
   }
  ],
+ "search_fields": "supplier_name, bl_number, supplier_invoice_no",
  "sort_field": "modified",
  "sort_order": "DESC",
  "track_changes": 1
