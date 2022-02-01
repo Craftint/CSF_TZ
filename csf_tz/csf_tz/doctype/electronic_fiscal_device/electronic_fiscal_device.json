@@ -1,4 +1,6 @@
 {
+ "actions": [],
+ "allow_rename": 1,
  "autoname": "format:{location}-{make}-{model}",
  "creation": "2019-08-14 11:09:46.080727",
  "doctype": "DocType",
@@ -53,7 +55,8 @@
    "label": "Model"
   }
  ],
- "modified": "2020-05-04 19:38:43.580918",
+ "links": [],
+ "modified": "2022-02-01 15:57:35.183105",
  "modified_by": "Administrator",
  "module": "CSF TZ",
  "name": "Electronic Fiscal Device",
