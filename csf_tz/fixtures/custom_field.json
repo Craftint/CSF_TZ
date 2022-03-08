@@ -1736,20 +1736,6 @@
     "options": "Module Def"
   },
   {
-    "name": "Vehicle-hidden_status",
-    "owner": "Administrator",
-    "creation": "2022-03-08 00:33:43.714276",
-    "modified": "2022-03-08 00:50:55.883524",
-    "modified_by": "Administrator",
-    "module_def": "CSF TZ",
-    "dt": "Vehicle",
-    "label": "Hidden Status",
-    "fieldname": "hidden_status",
-    "insert_after": "status",
-    "fieldtype": "Int",
-    "doctype": "Custom Field"
-  },
-  {
     "name": "Vehicle-status",
     "owner": "Administrator",
     "creation": "2022-03-08 00:33:44.056337",
@@ -1917,5 +1903,36 @@
     "insert_after": "number_plate",
     "fieldtype": "Data",
     "doctype": "Custom Field"
+  },
+  {
+    "name": "Journal Entry-referance_doctype",
+    "owner": "Administrator",
+    "creation": "2022-03-08 23:21:44.038734",
+    "modified": "2022-03-08 23:23:52.276124",
+    "modified_by": "Administrator",
+    "dt": "Journal Entry",
+    "label": "Referance DocType",
+    "fieldname": "referance_doctype",
+    "insert_after": "payment_order",
+    "fieldtype": "Link",
+    "options": "DocType",
+    "doctype": "Custom Field",
+    "module_def": "CSF TZ"
+  },
+  {
+    "name": "Journal Entry-referance_docname",
+    "owner": "Administrator",
+    "creation": "2022-03-08 23:22:14.510215",
+    "modified": "2022-03-08 23:24:03.811966",
+    "modified_by": "Administrator",
+    "idx": 53,
+    "dt": "Journal Entry",
+    "label": "Referance DocName",
+    "fieldname": "referance_docname",
+    "insert_after": "referance_doctype",
+    "fieldtype": "Dynamic Link",
+    "options": "referance_doctype",
+    "doctype": "Custom Field",
+    "module_def": "CSF TZ"
   }
 ]
