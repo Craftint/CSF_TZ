@@ -30,12 +30,16 @@ def check_bills_all_vehicles():
 
 
 def get_bills(number_plate):
+    headers = {
+        'x-transfer-key': 'e9f3e572-db87-4eff-9ed6-66922f1f7f24',
+    }
+
     url = (
-        "http://196.192.79.27:6003/termis-parking-service/api/v1/parkingDetails/debts/plateNumber/"
+        "https://termis.tarura.go.tz:6003/termis-parking-service/api/v1/parkingDetails/debts/plateNumber/"
         + number_plate
     )
     try:
-        response = requests.get(url=url, timeout=5)
+        response = requests.get(url=url, headers=headers, timeout=5)
         if response.status_code == 200:
             return frappe._dict(json.loads(response.text))
         else:
