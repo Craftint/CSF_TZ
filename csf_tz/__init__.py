@@ -18,10 +18,13 @@ def load_monkey_patches():
     """
     global patches_loaded
 
-    if patches_loaded or app_name not in frappe.get_installed_apps():
+    if patches_loaded:
         return
 
     patches_loaded = True
+
+    if app_name not in frappe.get_installed_apps():
+        return
 
     for module_name in os.listdir(frappe.get_app_path(app_name, "monkey_patches")):
         if not module_name.endswith(".py") or module_name == "__init__.py":
