@@ -1,4 +1,5 @@
 from frappe.utils import flt
+from erpnext import __version__ as erpnext_version
 from erpnext.controllers.taxes_and_totals import calculate_taxes_and_totals
 
 
@@ -78,4 +79,6 @@ def calculate_item_values(self):
             )
             item.item_tax_amount = 0.0
 
-calculate_taxes_and_totals.calculate_item_values = calculate_item_values
+
+if erpnext_version.startswith("13.2"):
+    calculate_taxes_and_totals.calculate_item_values = calculate_item_values
