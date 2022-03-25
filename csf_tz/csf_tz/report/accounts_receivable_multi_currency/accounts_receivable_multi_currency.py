@@ -335,6 +335,7 @@ class ReceivablePayableReport(object):
 			select name, due_date, bill_no, bill_date
 			from `tabJournal Entry`
 			where posting_date <= %s
+				and voucher_type != "Exchange Rate Revaluation"
 		""", self.filters.report_date, as_dict=1)
 
 		for je in journal_entries:
@@ -485,6 +486,7 @@ class ReceivablePayableReport(object):
 				and je.posting_date > %s
 				and jea.party_type = %s
 				and jea.reference_name is not null and jea.reference_name != ''
+				and je.voucher_type != "Exchange Rate Revaluation"
 			group by je.name, jea.reference_name
 			having future_amount > 0
 			""".format(amount_field), (self.filters.report_date, self.party_type), as_dict=1)
@@ -589,6 +591,7 @@ class ReceivablePayableReport(object):
 				`tabGL Entry`
 			where
 				docstatus < 2
+				and (against_voucher_type IS NULL OR against_voucher_type != "Exchange Rate Revaluation")
 				and party_type=%s
 				and (party is not null and party != '')
 				{1} {2} {3}"""
