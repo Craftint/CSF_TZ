@@ -127,10 +127,17 @@ def get_gl_entries(filters):
 	select_fields = """, debit, credit, debit_in_account_currency,
 		credit_in_account_currency """
 
+<<<<<<< HEAD
 	order_by_statement = "group by `tabPayment Entry`.reference_date"
 
 	if filters.get("group_by") == _("Group by Voucher"):
 		order_by_statement = "order by `tabPayment Entry`.reference_date, voucher_type, voucher_no"
+=======
+	order_by_statement = "order by posting_date, account, creation"
+
+	if filters.get("group_by") == _("Group by Voucher"):
+		order_by_statement = "order by posting_date, voucher_type, voucher_no"
+>>>>>>> 1dd7294fa9ae3df5218afb18f785f955677423ec
 
 	if filters.get("include_default_book_entries"):
 		filters['company_fb'] = frappe.db.get_value("Company",
@@ -138,6 +145,7 @@ def get_gl_entries(filters):
 
 	gl_entries = frappe.db.sql(
 		"""
+<<<<<<< HEAD
 		select `tabGL Entry`.posting_date as posting_date,
 		`tabPayment Entry`.posting_date as posting_date1,
 		`tabPayment Entry`.reference_date as reference_date,
@@ -154,6 +162,15 @@ def get_gl_entries(filters):
 		from `tabGL Entry`
 		LEFT JOIN `tabPayment Entry` ON `tabGL Entry`.posting_date =`tabPayment Entry`.posting_date
 		where `tabGL Entry`.company=%(company)s {conditions}
+=======
+		select
+			name as gl_entry, posting_date, account, party_type, party,
+			voucher_type, voucher_no, cost_center, project,
+			against_voucher_type, against_voucher, account_currency,
+			remarks, against, is_opening {select_fields}
+		from `tabGL Entry`
+		where company=%(company)s {conditions}
+>>>>>>> 1dd7294fa9ae3df5218afb18f785f955677423ec
 		{order_by_statement}
 		""".format(
 			select_fields=select_fields, conditions=get_conditions(filters),
@@ -197,7 +214,11 @@ def get_conditions(filters):
 	if filters.get("voucher_type"):
 		conditions.append("voucher_type=%(voucher_type)s")
 
+<<<<<<< HEAD
 	conditions.append("(`tabPayment Entry`.reference_date <=%(to_date)s or is_opening = 'Yes')")
+=======
+	conditions.append("(posting_date <=%(to_date)s or is_opening = 'Yes')")
+>>>>>>> 1dd7294fa9ae3df5218afb18f785f955677423ec
 
 	if filters.get("project"):
 		conditions.append("project in %(project)s")
@@ -266,6 +287,7 @@ def get_data_with_opening_closing(filters, account_details, gl_entries):
 	# closing
 	data.append(totals.closing)
 
+<<<<<<< HEAD
 	#reference date
 	
 	# for d in data:
@@ -276,6 +298,8 @@ def get_data_with_opening_closing(filters, account_details, gl_entries):
 	# 		print(data)
 
 
+=======
+>>>>>>> 1dd7294fa9ae3df5218afb18f785f955677423ec
 	return data
 
 def get_totals_dict():
@@ -328,7 +352,11 @@ def get_accountwise_gle(filters, gl_entries, gle_map):
 
 	from_date, to_date = getdate(filters.from_date), getdate(filters.to_date)
 	for gle in gl_entries:
+<<<<<<< HEAD
 		if (gle.reference_date < from_date or
+=======
+		if (gle.posting_date < from_date or
+>>>>>>> 1dd7294fa9ae3df5218afb18f785f955677423ec
 			(cstr(gle.is_opening) == "Yes" and not filters.get("show_opening_entries"))):
 			update_value_in_dict(gle_map[gle.get(group_by)].totals, 'opening', gle)
 			update_value_in_dict(totals, 'opening', gle)
@@ -336,7 +364,11 @@ def get_accountwise_gle(filters, gl_entries, gle_map):
 			update_value_in_dict(gle_map[gle.get(group_by)].totals, 'closing', gle)
 			update_value_in_dict(totals, 'closing', gle)
 
+<<<<<<< HEAD
 		elif gle.reference_date <= to_date:
+=======
+		elif gle.posting_date <= to_date:
+>>>>>>> 1dd7294fa9ae3df5218afb18f785f955677423ec
 			update_value_in_dict(gle_map[gle.get(group_by)].totals, 'total', gle)
 			update_value_in_dict(totals, 'total', gle)
 			if filters.get("group_by") != _('Group by Voucher (Consolidated)'):
@@ -405,8 +437,13 @@ def get_columns(filters):
 			"hidden": 1
 		},
 		{
+<<<<<<< HEAD
 			"label": _("Reference Date"),
 			"fieldname": "reference_date",
+=======
+			"label": _("Posting Date"),
+			"fieldname": "posting_date",
+>>>>>>> 1dd7294fa9ae3df5218afb18f785f955677423ec
 			"fieldtype": "Date",
 			"width": 90
 		},
