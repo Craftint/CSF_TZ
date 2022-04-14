@@ -7,12 +7,14 @@
   "doctype_or_field": "DocField",
   "field_name": "payment_accounts_section",
   "modified": "2019-01-07 16:30:11.505408",
+  "module_def": null,
   "name": "Payment Entry-payment_accounts_section-collapsible",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
   "property": "collapsible",
   "property_type": "Check",
+  "row_name": null,
   "value": "0"
  },
  {
@@ -23,12 +25,14 @@
   "doctype_or_field": "DocField",
   "field_name": "section_break_12",
   "modified": "2019-02-04 16:02:42.315910",
+  "module_def": null,
   "name": "Payment Entry-section_break_12-collapsible",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
   "property": "collapsible",
   "property_type": "Check",
+  "row_name": null,
   "value": "0"
  },
  {
@@ -39,12 +43,14 @@
   "doctype_or_field": "DocField",
   "field_name": "payment_entry",
   "modified": "2019-12-06 09:49:57.146453",
+  "module_def": null,
   "name": "Bank Reconciliation Detail-payment_entry-columns",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
   "property": "columns",
   "property_type": "Int",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -55,12 +61,14 @@
   "doctype_or_field": "DocField",
   "field_name": "posting_date",
   "modified": "2019-12-06 09:50:14.703149",
+  "module_def": null,
   "name": "Bank Reconciliation Detail-posting_date-columns",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
   "property": "columns",
   "property_type": "Int",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -71,12 +79,14 @@
   "doctype_or_field": "DocField",
   "field_name": "posting_date",
   "modified": "2019-12-06 09:50:38.578267",
+  "module_def": null,
   "name": "Bank Reconciliation Detail-posting_date-in_list_view",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
   "property": "in_list_view",
   "property_type": "Check",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -87,12 +97,14 @@
   "doctype_or_field": "DocField",
   "field_name": "tax_id",
   "modified": "2019-12-06 10:07:41.251289",
+  "module_def": null,
   "name": "Customer-tax_id-label",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
   "property": "label",
   "property_type": "Data",
+  "row_name": null,
   "value": "TIN"
  },
  {
@@ -103,12 +115,14 @@
   "doctype_or_field": "DocField",
   "field_name": "due_date",
   "modified": "2019-12-06 10:31:31.992236",
+  "module_def": null,
   "name": "Payment Entry Reference-due_date-width",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
   "property": "width",
   "property_type": "Data",
+  "row_name": null,
   "value": "23"
  },
  {
@@ -119,12 +133,14 @@
   "doctype_or_field": "DocField",
   "field_name": "due_date",
   "modified": "2019-12-06 10:31:56.965709",
+  "module_def": null,
   "name": "Payment Entry Reference-due_date-columns",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
   "property": "columns",
   "property_type": "Int",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -135,12 +151,14 @@
   "doctype_or_field": "DocField",
   "field_name": "reference_doctype",
   "modified": "2019-12-06 10:32:26.831812",
+  "module_def": null,
   "name": "Payment Entry Reference-reference_doctype-columns",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
   "property": "columns",
   "property_type": "Int",
+  "row_name": null,
   "value": "0"
  },
  {
@@ -151,12 +169,14 @@
   "doctype_or_field": "DocField",
   "field_name": "reference_name",
   "modified": "2019-12-06 12:12:18.979443",
+  "module_def": null,
   "name": "Payment Entry Reference-reference_name-columns",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
   "property": "columns",
   "property_type": "Int",
+  "row_name": null,
   "value": "3"
  },
  {
@@ -167,12 +187,14 @@
   "doctype_or_field": "DocField",
   "field_name": "reference_doctype",
   "modified": "2019-12-06 12:12:35.564887",
+  "module_def": null,
   "name": "Payment Entry Reference-reference_doctype-in_list_view",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
   "property": "in_list_view",
   "property_type": "Check",
+  "row_name": null,
   "value": "0"
  },
  {
@@ -183,12 +205,14 @@
   "doctype_or_field": "DocField",
   "field_name": "posting_date",
   "modified": "2019-12-06 14:53:06.273025",
+  "module_def": null,
   "name": "Payment Reconciliation Payment-posting_date-columns",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
   "property": "columns",
   "property_type": "Int",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -199,12 +223,14 @@
   "doctype_or_field": "DocField",
   "field_name": "posting_date",
   "modified": "2019-12-06 14:53:38.910392",
+  "module_def": null,
   "name": "Payment Reconciliation Payment-posting_date-in_list_view",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
   "property": "in_list_view",
   "property_type": "Check",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -215,12 +241,14 @@
   "doctype_or_field": "DocField",
   "field_name": "is_pos",
   "modified": "2019-12-06 14:58:23.980385",
+  "module_def": null,
   "name": "Sales Invoice-is_pos-in_standard_filter",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
   "property": "in_standard_filter",
   "property_type": "Check",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -231,12 +259,14 @@
   "doctype_or_field": "DocField",
   "field_name": "posting_date",
   "modified": "2019-12-06 15:02:23.144783",
+  "module_def": null,
   "name": "Sales Invoice-posting_date-in_list_view",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
   "property": "in_list_view",
   "property_type": "Check",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -247,12 +277,14 @@
   "doctype_or_field": "DocField",
   "field_name": "pos_profile",
   "modified": "2019-12-06 15:02:39.589803",
+  "module_def": null,
   "name": "Sales Invoice-pos_profile-in_standard_filter",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
   "property": "in_standard_filter",
   "property_type": "Check",
+  "row_name": null,
   "value": "1"
  },
  {
@@ -263,12 +295,14 @@
   "doctype_or_field": "DocField",
   "field_name": "from_warehouse",
   "modified": "2020-06-23 16:15:02.913991",
+  "module_def": null,
   "name": "Stock Entry-from_warehouse-fetch_from",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
   "property": "fetch_from",
   "property_type": "Small Text",
+  "row_name": null,
   "value": "repack_template.default_warehouse"
  },
  {
@@ -279,12 +313,14 @@
   "doctype_or_field": "DocField",
   "field_name": "application_status",
   "modified": "2020-09-08 19:22:45.547824",
+  "module_def": null,
   "name": "Student Applicant-application_status-options",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
   "property": "options",
   "property_type": "Text",
+  "row_name": null,
   "value": "Applied\nApproved\nRejected\nAdmitted\nAwaiting Registration Fees"
  },
  {
@@ -295,12 +331,14 @@
   "doctype_or_field": "DocField",
   "field_name": "application_status",
   "modified": "2020-09-08 19:26:19.746716",
+  "module_def": null,
   "name": "Student Applicant-application_status-read_only",
   "parent": null,
   "parentfield": null,
   "parenttype": null,
   "property": "read_only",
   "property_type": "Check",
+  "row_name": null,
   "value": "1"
  }
 ]
