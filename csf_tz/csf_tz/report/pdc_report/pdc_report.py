@@ -405,7 +405,7 @@ def get_columns(filters):
 			"hidden": 1
 		},
 		{
-			"label": _("Reference Date"),
+			"label": _("Ref Date"),
 			"fieldname": "reference_date",
 			"fieldtype": "Date",
 			"width": 90
